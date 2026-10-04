@@ -1,0 +1,67 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.app__subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.card__detail,
+.card__hint {
+  margin: 0.25rem 0;
+  color: var(--muted);
+}
+
+.card__hint {
+  font-size: 0.85rem;
+}
+
+.card--online {
+  border-left-color: var(--ok);
+}
+
+.card--offline {
+  border-left-color: var(--bad);
+}
+
+.card--checking {
+  border-left-color: var(--warn);
+}
+
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}

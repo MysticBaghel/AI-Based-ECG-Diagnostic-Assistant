@@ -1,0 +1,9 @@
+# backend/django - install with: pip install -r requirements.txt
+Django==6.1.1
+djangorestframework==3.18.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+python-dotenv==1.2.4
+# Already installed as a dependency of djangorestframework-simplejwt; declared
+# because devices/tokens.py imports it directly (and FastAPI will too).
+PyJWT==2.15.1
