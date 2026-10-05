@@ -1,6 +1,26 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
+
+
+class UserManager(BaseUserManager):
+    """User manager that keeps ``role`` in step with the staff/superuser flags.
+
+    Without this, ``manage.py createsuperuser`` produced a user whose role was
+    the column default - "patient" - so the freshly created administrator could
+    log into ``/admin/`` but was refused by every role-gated API endpoint. The
+    role and the flags are two views of the same fact, so they are set together.
+
+    An explicit ``role=...`` always wins, which is what the fixtures use.
+    """
+
+    def _create_user(self, username, email=None, password=None, **extra_fields):
+        if "role" not in extra_fields:
+            if extra_fields.get("is_superuser") or extra_fields.get("is_staff"):
+                extra_fields["role"] = User.Role.ADMIN
+            else:
+                extra_fields["role"] = User.Role.PATIENT
+        return super()._create_user(username, email, password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -21,6 +41,8 @@ class User(AbstractUser):
         choices=Role.choices,
         default=Role.PATIENT,
     )
+
+    objects = UserManager()
 
     def __str__(self):
         return self.username

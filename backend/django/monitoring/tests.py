@@ -40,6 +40,17 @@ def test_doctor_cannot_use_another_doctors_device(
     assert "device" in response.data
 
 
+def test_disabled_device_cannot_start_a_session(
+    client_for, doctor_a, patient_a, disabled_device
+):
+    """A disabled device is refused at the point where it would be used."""
+    response = _start(client_for(doctor_a), patient_a, disabled_device)
+
+    assert response.status_code == 400
+    assert "device" in response.data
+    assert Session.objects.count() == 0
+
+
 def test_doctor_can_start_and_stop_a_session(client_for, doctor_a, patient_a, device_a):
     client = client_for(doctor_a)
 
@@ -140,3 +151,36 @@ def test_patient_cannot_stop_a_session(client_for, doctor_a, patient_a, device_a
     )
 
     assert response.status_code == 403
+
+
+def test_patient_can_read_their_own_session_detail(
+    client_for, doctor_a, patient_a, device_a
+):
+    started = _start(client_for(doctor_a), patient_a, device_a)
+
+    response = client_for(patient_a).get(f"/api/sessions/{started.data['id']}/")
+
+    assert response.status_code == 200
+    assert response.data["id"] == started.data["id"]
+    assert response.data["patient"] == patient_a.patient_profile.id
+
+
+def test_session_detail_is_404_for_someone_elses_session(
+    client_for, doctor_a, doctor_b, patient_a, patient_b, device_a, device_b
+):
+    """Reading is scoped by the queryset, so an outsider gets 404, not 403."""
+    started = _start(client_for(doctor_b), patient_b, device_b)
+    url = f"/api/sessions/{started.data['id']}/"
+
+    assert client_for(doctor_a).get(url).status_code == 404
+    assert client_for(patient_a).get(url).status_code == 404
+
+
+def test_session_detail_is_visible_to_the_assigned_doctor_and_to_admins(
+    client_for, admin_user, doctor_a, patient_a, device_a
+):
+    started = _start(client_for(doctor_a), patient_a, device_a)
+    url = f"/api/sessions/{started.data['id']}/"
+
+    assert client_for(doctor_a).get(url).status_code == 200
+    assert client_for(admin_user).get(url).status_code == 200

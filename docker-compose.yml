@@ -1,0 +1,32 @@
+# Phase 2 telemetry database.
+#
+# Two schemas in one PostgreSQL instance:
+#   core      - reserved for Django (Phase 9 moves Django onto it; Phase 2 does
+#               not touch it beyond creating it so the split is already there)
+#   telemetry - everything FastAPI owns
+#
+# FastAPI is the only service whose schema is managed by Alembic. Django keeps
+# its own migrations.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: ecg-postgres
+    environment:
+      POSTGRES_USER: ecg
+      POSTGRES_PASSWORD: ecg
+      POSTGRES_DB: ecg
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Runs once, on an empty data directory: creates the `core` schema.
+      # `telemetry` is created by Alembic itself (version_table_schema).
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecg -d ecg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

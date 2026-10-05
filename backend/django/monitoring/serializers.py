@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import DoctorAssignment, User
+from devices.models import Device
 
 from .models import Session
 
@@ -29,6 +30,13 @@ class SessionSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         patient = attrs["patient"]
         device = attrs["device"]
+
+        # Checked before ownership and assignment so that a disabled device
+        # always answers the same way, whoever is asking.
+        if device.status == Device.Status.DISABLED:
+            raise serializers.ValidationError(
+                {"device": "This device is disabled."}
+            )
 
         if user.role == User.Role.ADMIN:
             return attrs

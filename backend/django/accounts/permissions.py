@@ -1,14 +1,19 @@
 """Reusable permission classes.
 
-Two layers are used together:
+Endpoint access today is enforced by three things, all in this package:
 
-* role checks (``IsAdminRole`` and friends) answer "may this kind of user call
-  this endpoint at all?", and
-* queryset filtering in each view answers "which rows may they see?", so an
-  object they may not touch is a 404 rather than a 403.
+* ``IsDoctorOrAdmin`` as the view-level gate on the device and session writes;
+* ``get_permissions()`` in ``SessionViewSet``, which asks for ``IsAuthenticated``
+  on reads and ``IsDoctorOrAdmin`` on create/stop;
+* queryset filtering in each view, so a row the caller may not see is simply not
+  in the queryset and DRF answers **404** instead of leaking its existence.
 
-The object-level classes below are for the cases where a view already has an
-object in hand (an action such as ``stop`` or ``rotate-token``).
+The role classes below (``IsAdminRole``, ``IsDoctorRole``, ``IsPatientRole``)
+and the object-level ones (``IsAssignedDoctor``, ``IsOwnerOrAdmin``) are
+implemented and unit-tested, but **no view uses them yet**. They are kept
+deliberately for Phase 6 (reports, the doctor view, the admin dashboard), where
+per-object checks stop being expressible as a queryset filter. Each one carries
+that note in its docstring so the next reader does not delete it as dead code.
 """
 
 from rest_framework.permissions import BasePermission
@@ -26,22 +31,32 @@ class _RolePermission(BasePermission):
 
 
 class IsAdminRole(_RolePermission):
+    """Reserved for Phase 6, not yet used by any view."""
+
     role = User.Role.ADMIN
     message = "Admin role required."
 
 
 class IsDoctorRole(_RolePermission):
+    """Reserved for Phase 6, not yet used by any view."""
+
     role = User.Role.DOCTOR
     message = "Doctor role required."
 
 
 class IsPatientRole(_RolePermission):
+    """Reserved for Phase 6, not yet used by any view."""
+
     role = User.Role.PATIENT
     message = "Patient role required."
 
 
 class IsDoctorOrAdmin(BasePermission):
-    """Used for every write a patient must not perform (403)."""
+    """In use: every write a patient must not perform (403).
+
+    Wired to ``DeviceViewSet`` and to the ``create``/``stop`` actions of
+    ``SessionViewSet``.
+    """
 
     message = "Doctor or admin role required."
 
@@ -54,7 +69,9 @@ class IsDoctorOrAdmin(BasePermission):
 
 
 class IsAssignedDoctor(BasePermission):
-    """Object-level: the caller is the doctor assigned to this patient.
+    """Reserved for Phase 6, not yet used by any view.
+
+    Object-level: the caller is the doctor assigned to this patient.
 
     Admins pass; a doctor passes only when a DoctorAssignment links them to the
     patient. ``obj`` may be a PatientProfile or anything with one attached.
@@ -75,7 +92,10 @@ class IsAssignedDoctor(BasePermission):
 
 
 class IsOwnerOrAdmin(BasePermission):
-    """Object-level: the caller owns the object, or is an admin."""
+    """Reserved for Phase 6, not yet used by any view.
+
+    Object-level: the caller owns the object, or is an admin.
+    """
 
     message = "You do not own this object."
 

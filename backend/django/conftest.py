@@ -6,11 +6,33 @@ patient_b to doctor_b only. That makes "can A touch B's things?" expressible
 as a single assertion.
 """
 
-import pytest
-from rest_framework.test import APIClient
+import os
 
-from accounts.models import DoctorAssignment, DoctorProfile, PatientProfile, User
-from devices.models import Device
+import pytest
+
+# config/settings.py deliberately has no fallback for these two secrets, and it
+# reads them at import time - so they must exist *before* anything imports
+# Django settings. The values also live in pytest.ini (env = ...); this block is
+# the belt-and-braces copy so that running `pytest` with a stripped environment
+# still collects. Only setdefault: a real environment always wins.
+os.environ.setdefault("DJANGO_SECRET_KEY", "test-only-not-a-secret")
+os.environ.setdefault(
+    "JWT_SIGNING_KEY", "test-only-not-a-secret-jwt-signing-key"
+)
+# Session creation pushes to the FastAPI registry (monitoring/telemetry.py).
+# Off in tests: the suite must not depend on, or wait for, another service. The
+# push is best effort in production as well - it logs and moves on.
+os.environ.setdefault("TELEMETRY_SYNC_ENABLED", "False")
+
+from rest_framework.test import APIClient  # noqa: E402
+
+from accounts.models import (  # noqa: E402
+    DoctorAssignment,
+    DoctorProfile,
+    PatientProfile,
+    User,
+)
+from devices.models import Device  # noqa: E402
 
 PASSWORD = "test12345"
 
@@ -102,3 +124,14 @@ def device_a(db, doctor_a):
 @pytest.fixture
 def device_b(db, doctor_b):
     return Device.objects.create(name="doctor_b device", owner=doctor_b)
+
+
+@pytest.fixture
+def disabled_device(db, doctor_a):
+    """Owned by doctor_a, but switched off: it may not start sessions and may
+    not be handed a token."""
+    return Device.objects.create(
+        name="doctor_a disabled device",
+        owner=doctor_a,
+        status=Device.Status.DISABLED,
+    )

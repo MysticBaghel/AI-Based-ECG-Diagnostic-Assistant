@@ -50,6 +50,20 @@ class DeviceViewSet(
 
         get_object() runs against the filtered queryset, so another doctor's
         device is a 404 rather than a 403.
+
+        A disabled device is refused with **400** rather than 403: the caller is
+        allowed to rotate (they own the device), it is the device's own state
+        that makes the request unprocessable. 403 would say "you may not", which
+        is false and sends the owner to ask for a permission they already have.
+        The device status is already visible to them in GET /api/devices/, so
+        this leaks nothing.
         """
         device = self.get_object()
+
+        if device.status == Device.Status.DISABLED:
+            return Response(
+                {"detail": "This device is disabled and cannot receive a token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         return Response({"device_token": issue_device_token(device)})

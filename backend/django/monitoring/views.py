@@ -9,6 +9,7 @@ from accounts.permissions import IsDoctorOrAdmin
 
 from .models import Session
 from .serializers import SessionSerializer
+from .telemetry import sync_session
 
 
 class SessionViewSet(
@@ -43,7 +44,10 @@ class SessionViewSet(
         return queryset.filter(patient__user=user)
 
     def perform_create(self, serializer):
-        serializer.save(started_by=self.request.user)
+        session = serializer.save(started_by=self.request.user)
+        # Tell FastAPI this session exists. Best effort: a telemetry outage must
+        # not stop a clinician from starting a session (monitoring/telemetry.py).
+        sync_session(session)
 
     @action(detail=True, methods=["post"])
     def stop(self, request, *args, **kwargs):
@@ -59,4 +63,7 @@ class SessionViewSet(
         session.end_time = timezone.now()
         session.status = Session.Status.COMPLETED
         session.save(update_fields=["end_time", "status"])
+        # Push the status change too, so FastAPI answers 409 rather than 404 for
+        # data that arrives after the session closed.
+        sync_session(session)
         return Response(self.get_serializer(session).data)

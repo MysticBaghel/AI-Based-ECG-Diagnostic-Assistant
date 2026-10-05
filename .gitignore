@@ -4,14 +4,22 @@ __pycache__/
 .venv/
 venv/
 db.sqlite3
+*.sqlite3
 
 # --- Testing ---------------------------------------------------------------
 .pytest_cache/
 pytest-cache-files-*/
+.pytest_tmp/
+tests_tmp/
+# Smoke-test scratch (docs/phase-2-smoke-test.md) and pip's temp dir, which
+# cannot live under %TEMP% in every sandbox.
+.smoke/
+.pip-tmp/
 
 # --- Environment -----------------------------------------------------------
 .env
 .env.local
+.env.test
 
 # --- Node / frontend -------------------------------------------------------
 .npm-cache/

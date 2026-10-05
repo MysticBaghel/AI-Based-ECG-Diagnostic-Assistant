@@ -85,3 +85,23 @@ def test_admin_sees_every_device(client_for, admin_user, device_a, device_b):
     response = client_for(admin_user).get("/api/devices/")
 
     assert len(response.data) == 2
+
+
+def test_disabled_device_cannot_get_a_rotated_token(client_for, doctor_a, disabled_device):
+    """400, not 403: the owner may rotate, the device's state forbids it."""
+    response = client_for(doctor_a).post(
+        f"/api/devices/{disabled_device.id}/rotate-token/"
+    )
+
+    assert response.status_code == 400
+    assert "disabled" in response.data["detail"].lower()
+    assert "device_token" not in response.data
+
+
+def test_disabled_device_is_still_listed_for_its_owner(client_for, doctor_a, disabled_device):
+    """The refusal above is about the token, not about hiding the device."""
+    response = client_for(doctor_a).get("/api/devices/")
+
+    assert response.status_code == 200
+    assert [row["id"] for row in response.data] == [str(disabled_device.id)]
+    assert response.data[0]["status"] == "disabled"

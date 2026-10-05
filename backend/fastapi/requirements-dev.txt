@@ -1,0 +1,10 @@
+# backend/fastapi - test dependencies
+#   pip install -r requirements-dev.txt
+-r requirements.txt
+
+pytest==9.1.1
+pytest-asyncio==1.4.0
+# TestClient (WebSocket tests) and the async ASGI client for the HTTP tests.
+httpx==0.28.1
+# Drives uvicorn's WebSocket client in the live smoke test.
+websockets==17.2
