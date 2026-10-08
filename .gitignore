@@ -2,22 +2,31 @@
 __pycache__/
 *.py[cod]
 .venv/
+**/.venv/
 venv/
 db.sqlite3
+# Local databases. backend/fastapi/fastapi-dev.sqlite3 is a dev DB, not source.
 *.sqlite3
 
 # --- Testing ---------------------------------------------------------------
 .pytest_cache/
 pytest-cache-files-*/
-.pytest_tmp/
+# pytest scratch dirs. The glob is depth-agnostic because the simulator runs
+# pytest from simulator/ (simulator/.pytest_tmp, simulator/.pytest-work).
+**/.pytest_tmp*/
+**/.pytest-work/
 tests_tmp/
-# Smoke-test scratch (docs/phase-2-smoke-test.md) and pip's temp dir, which
-# cannot live under %TEMP% in every sandbox.
+# Smoke-test scratch (docs/phase-2-smoke-test.md, docs/phase-3-smoke-test.md).
+# .smoke/mint.txt holds real device and user tokens: never commit it.
 .smoke/
+# pip's temp dir, which cannot live under %TEMP% in every sandbox.
 .pip-tmp/
 
 # --- Environment -----------------------------------------------------------
+# Secrets and local config. .env.example is deliberately NOT ignored: it is the
+# documented template and holds no real values.
 .env
+**/.env
 .env.local
 .env.test
 
@@ -25,3 +34,15 @@ tests_tmp/
 .npm-cache/
 node_modules/
 dist/
+frontend/dist/
+
+# --- Generated, not source -------------------------------------------------
+# graphify writes its output here (see docs for how it is run).
+graphify-out/
+# Downloaded MIT-BIH records; re-fetched on demand, ~1.9 MB each.
+simulator/.ecg-data/
+# Sandbox ACL scratch from the DSH file sandbox.
+.dsh-acl-recovery/
+
+# graphify config, local tooling
+.graphifyignore

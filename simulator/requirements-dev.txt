@@ -1,0 +1,19 @@
+# simulator - development dependencies.
+#
+#   python -m venv .venv
+#   .venv\Scripts\python -m pip install -r simulator\requirements-dev.txt
+#   cd simulator ; ..\.venv\Scripts\python -m pytest -q
+#
+# The integration test (`tests/test_api_integration.py`) drives the real Phase 2
+# FastAPI app in-process with `fastapi.testclient.TestClient`, so it needs the
+# backend's runtime and test dependencies too - that is what the second `-r`
+# line pulls in. It is the same app object the service runs; nothing is stubbed,
+# so the test proves the simulator's payloads against the real Pydantic schemas,
+# the real routers and the real unique indexes.
+#
+# If you would rather keep the simulator's venv minimal, drop that line: the
+# integration test then skips itself with a clear reason and the other test
+# files still run.
+
+-r requirements.txt
+-r ../backend/fastapi/requirements-dev.txt

@@ -1,0 +1,19 @@
+# simulator - runtime dependencies.
+#
+# Deliberately small. The scalar path and the synthetic ECG need only the
+# standard library, so the simulator still runs when an optional dependency is
+# missing. wfdb is the one that matters: it is what replays the real MIT-BIH
+# records over the network.
+#
+#   python -m venv .venv
+#   .venv\Scripts\python -m pip install -r simulator\requirements.txt
+#   .venv\Scripts\python -m simulator --help
+
+# The transport. One HTTP client for every request, with the retry/backoff in
+# transport.py built on top of it.
+httpx==0.28.1
+
+# MIT-BIH replay through PhysioNet (wfdb.dl_database / wfdb.rdrecord).
+# Without it the simulator falls back to the synthetic PQRST generator - see
+# simulator/ecg/sources.py - so this can be removed for an offline install.
+wfdb==4.3.1
