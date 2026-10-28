@@ -230,6 +230,47 @@ class RevokedDevice(Base):
         return f"<RevokedDevice {self.device_id}>"
 
 
+class SimulationRun(Base):
+    """One run of the built-in simulator against one session.
+
+    The streaming state lives in memory (`app/simulation/manager.py`); this row
+    is the durable trace. It is what lets the dashboard show "this recording was
+    simulated as atrial fibrillation" after a restart, and what the analysis
+    copies into its stored payload so a report can say the data is
+    demonstration data rather than a patient recording.
+    """
+
+    __tablename__ = "simulation_runs"
+    __table_args__ = (
+        Index("ix_simulation_session_started", "session_id", "started_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=_uuid
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("known_sessions.session_id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    #: scenario key and its display label, copied so a renamed scenario cannot
+    #: rewrite history
+    scenario: Mapped[str] = mapped_column(String(40), nullable=False)
+    label: Mapped[str] = mapped_column(String(80), nullable=False)
+    #: running | stopped | completed | failed
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="running")
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    stopped_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    chunks_sent: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    readings_sent: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error: Mapped[str | None] = mapped_column(String(500), nullable=True)
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return f"<SimulationRun {self.session_id} {self.scenario} {self.status}>"
+
+
 __all__ = [
     "AnalysisResult",
     "ECGChunk",
@@ -237,5 +278,6 @@ __all__ = [
     "KnownSession",
     "RevokedDevice",
     "SensorReading",
+    "SimulationRun",
     "engine",
 ]

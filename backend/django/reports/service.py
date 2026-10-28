@@ -77,6 +77,23 @@ def _findings(analysis_payload: dict) -> list[str]:
     findings: list[str] = []
     quality = ((analysis_payload.get("signal") or {}).get("quality") or {})
     measurements = analysis_payload.get("measurements") or {}
+    simulation = analysis_payload.get("simulation") or {}
+
+    # Provenance first: a report must never present replayed or synthetic data
+    # as a patient recording.
+    if simulation:
+        if simulation.get("kind") == "csv":
+            findings.append(
+                "Demonstration data: the ECG in this report was replayed from the "
+                f"uploaded file {simulation.get('label', 'CSV')!r}, not recorded "
+                "from this patient."
+            )
+        else:
+            findings.append(
+                "Demonstration data: the ECG in this report was produced by the "
+                f"built-in simulator ({simulation.get('label', 'scenario')} "
+                "scenario), not recorded from this patient."
+            )
 
     if quality.get("usable") is False:
         findings.append(

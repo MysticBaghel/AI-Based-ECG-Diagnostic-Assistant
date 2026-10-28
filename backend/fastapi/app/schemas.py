@@ -327,6 +327,63 @@ class AnalysisResponse(BaseModel):
     ai: AIResult
     findings: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
+    #: provenance for a recording produced by the built-in simulator; absent
+    #: for a patient recording
+    simulation: dict | None = None
+
+
+class ScenarioInfo(BaseModel):
+    """One choice in the dashboard's simulator picker."""
+
+    key: str
+    label: str
+    description: str
+    heart_rate_bpm: float
+
+
+class SimulationStartRequest(StrictModel):
+    """Start a scenario on an active session.
+
+    ``duration_seconds`` is optional: a short demo run ends on its own, and
+    omitting it streams until the operator stops it (or the recording ends).
+    """
+
+    scenario: str = Field(min_length=1, max_length=40)
+    duration_seconds: float | None = Field(default=None, ge=1.0, le=600.0)
+
+
+class SimulationStatusResponse(BaseModel):
+    session_id: uuid.UUID
+    running: bool
+    #: never = this session has not been simulated
+    status: Literal[
+        "never", "running", "stopped", "completed", "failed", "interrupted"
+    ]
+    scenario: str | None = None
+    label: str | None = None
+    started_at: datetime | None = None
+    stopped_at: datetime | None = None
+    duration_seconds: float | None = None
+    elapsed_seconds: float = 0.0
+    chunks_sent: int = 0
+    readings_sent: int = 0
+    error: str | None = None
+
+
+class ReplayStartedResponse(SimulationStatusResponse):
+    """What the server read out of an uploaded CSV, alongside the run status.
+
+    The parser makes guesses (time unit, which column is which, the sample
+    rate); reporting them here is what stops an operator from wondering why the
+    trace looks wrong.
+    """
+
+    source_rate_hz: float
+    #: the rate the samples are stored and analysed at (the file's own rate
+    #: unless it was outside the API's 100-2000 Hz window)
+    sample_rate_hz: int
+    sample_count: int
+    notes: list[str] = Field(default_factory=list)
 
 
 class InternalECGChunk(BaseModel):
@@ -369,6 +426,7 @@ __all__ = [
     "RevokeDeviceRequest",
     "RevokeDeviceResponse",
     "SENSOR_RULES",
+    "ScenarioInfo",
     "SensorConnectRequest",
     "SensorConnectResponse",
     "SensorDataRequest",
@@ -378,4 +436,7 @@ __all__ = [
     "SessionRegistration",
     "SessionRegistrationResponse",
     "SignalQuality",
+    "ReplayStartedResponse",
+    "SimulationStartRequest",
+    "SimulationStatusResponse",
 ]

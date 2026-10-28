@@ -69,3 +69,26 @@ export type SocketFrame =
     }
   | { event: 'error'; error: { code: string; message: string } }
   | { event: 'pong' }
+
+/** What the server is (or was) streaming into a session. */
+export interface SimulationStatus {
+  session_id: string
+  running: boolean
+  status: 'never' | 'running' | 'stopped' | 'completed' | 'failed' | 'interrupted'
+  scenario: string | null
+  label: string | null
+  started_at: string | null
+  stopped_at: string | null
+  duration_seconds: number | null
+  elapsed_seconds: number
+  chunks_sent: number
+  readings_sent: number
+  error: string | null
+}
+
+/** A CSV replay that has just started, plus what the parser read from it. */
+export interface ReplayStarted extends SimulationStatus {
+  source_rate_hz: number
+  sample_count: number
+  notes: string[]
+}

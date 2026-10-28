@@ -13,6 +13,7 @@ import { PatientForm } from '../components/PatientForm'
 import { PatientPagination } from '../components/PatientPagination'
 import { PatientTable } from '../components/PatientTable'
 import { StartSessionDialog } from '../components/StartSessionDialog'
+import { SimulateCsvDialog } from '@/features/simulator/SimulateCsvDialog'
 
 const PAGE_SIZE = 8
 
@@ -42,12 +43,22 @@ export function PatientsPage() {
   const [page, setPage] = useState(1)
   const [registering, setRegistering] = useState(false)
   const [starting, setStarting] = useState<Patient | null>(null)
+  const [simulating, setSimulating] = useState(false)
 
   const patients = usePatients(query)
   const sessions = useSessions()
   const devices = useDevices()
   const now = useNow(60_000)
   const latest = useMemo(() => latestByPatient(sessions.data ?? []), [sessions.data])
+  const activeDeviceIds = useMemo(
+    () =>
+      new Set(
+        (sessions.data ?? [])
+          .filter((session) => session.status === 'active')
+          .map((session) => session.device),
+      ),
+    [sessions.data],
+  )
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -106,14 +117,25 @@ export function PatientsPage() {
         title="Patients"
         description="Manage patient records and view their ECG history"
         actions={
-          <button
-            type="button"
-            className="button button--primary"
-            onClick={() => setRegistering(true)}
-          >
-            <Icon name="plus" size={16} />
-            Add Patient
-          </button>
+          <div className="button-row">
+            <button
+              type="button"
+              className="button button--ghost"
+              onClick={() => setSimulating(true)}
+              title="Create a demo patient and replay a CSV into a live recording"
+            >
+              <Icon name="activity" size={16} />
+              Simulate
+            </button>
+            <button
+              type="button"
+              className="button button--primary"
+              onClick={() => setRegistering(true)}
+            >
+              <Icon name="plus" size={16} />
+              Add Patient
+            </button>
+          </div>
         }
       />
 
@@ -208,6 +230,18 @@ export function PatientsPage() {
           onClose={() => setStarting(null)}
           onStarted={(session) => {
             setStarting(null)
+            navigate(`/monitor/${session.id}`)
+          }}
+        />
+      )}
+
+      {simulating && (
+        <SimulateCsvDialog
+          devices={devices.data ?? []}
+          activeDeviceIds={activeDeviceIds}
+          onClose={() => setSimulating(false)}
+          onStarted={(session) => {
+            setSimulating(false)
             navigate(`/monitor/${session.id}`)
           }}
         />

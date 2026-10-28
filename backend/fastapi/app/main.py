@@ -29,7 +29,8 @@ from app.core.config import MAX_PAYLOAD_BYTES, settings
 from app.db import create_all, engine
 from app.errors import error_body, install_error_handlers
 from app.inference import get_inference_service
-from app.routes import analysis, internal, sensor
+from app.routes import analysis, internal, sensor, simulation
+from app.simulation.manager import manager as simulation_manager
 from app.ws import router as websocket_router
 
 logging.basicConfig(level=logging.INFO)
@@ -48,6 +49,9 @@ async def lifespan(app: FastAPI):
         settings.heartbeat_threshold_seconds,
     )
     yield
+    # Stop any simulator still streaming before the engine goes away, so a
+    # shutdown does not leave tasks writing to a disposed database.
+    await simulation_manager.shutdown()
     await engine.dispose()
 
 
@@ -79,7 +83,11 @@ async def limit_payload_size(request: Request, call_next):
     Reading the body costs nothing extra: the middleware caches it and the route
     re-reads the same bytes.
     """
-    if request.method in {"POST", "PUT", "PATCH"}:
+    # The CSV replay route accepts a file larger than the JSON limit and
+    # enforces its own cap; everything else is bounded here.
+    if request.method in {"POST", "PUT", "PATCH"} and not request.url.path.endswith(
+        "/replay"
+    ):
         body = await request.body()
         if len(body) > MAX_PAYLOAD_BYTES:
             return JSONResponse(
@@ -98,6 +106,7 @@ install_error_handlers(app)
 app.include_router(sensor.router)
 app.include_router(internal.router)
 app.include_router(analysis.router)
+app.include_router(simulation.router)
 app.include_router(websocket_router)
 
 

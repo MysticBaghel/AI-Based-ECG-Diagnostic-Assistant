@@ -22,6 +22,21 @@ def _findings(result: dict) -> list[str]:
     ai = result["ai"]
     findings: list[str] = []
 
+    simulation = result.get("simulation")
+    if simulation:
+        if simulation.get("kind") == "csv":
+            findings.append(
+                "Demonstration data: this recording was replayed from the "
+                f"uploaded file {simulation.get('label', 'CSV')!r}, not recorded "
+                "from a patient."
+            )
+        else:
+            findings.append(
+                "Demonstration data: this recording was streamed by the built-in "
+                f"simulator ({simulation.get('label', simulation.get('scenario'))} "
+                "scenario), not recorded from a patient."
+            )
+
     if not quality["usable"]:
         findings.append(
             "Signal quality did not meet the threshold, so rhythm measurements "
@@ -57,13 +72,26 @@ def _findings(result: dict) -> list[str]:
     return findings
 
 
-def run_analysis(session_id: str, chunks: list[dict]) -> dict:
-    """Run DSP and inference and return the payload stored in the database."""
+def run_analysis(
+    session_id: str,
+    chunks: list[dict],
+    *,
+    simulation: dict | None = None,
+) -> dict:
+    """Run DSP and inference and return the payload stored in the database.
+
+    ``simulation`` is provenance, not input: the DSP never sees the scenario
+    label. It is copied into the stored payload so the analysis and the report
+    can say the recording is demonstration data, and it is what a later
+    classifier evaluation can compare a prediction against.
+    """
     result = analyse_chunks(
         chunks,
         min_quality=MIN_SIGNAL_QUALITY,
         min_seconds=MIN_ANALYSIS_SECONDS,
     )
+    if simulation is not None:
+        result["simulation"] = simulation
 
     service = get_inference_service()
     inference = service.predict(result)

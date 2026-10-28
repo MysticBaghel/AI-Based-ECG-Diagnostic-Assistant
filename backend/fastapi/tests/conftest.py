@@ -29,7 +29,6 @@ from sqlalchemy.ext.asyncio import (  # noqa: E402
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app import db  # noqa: E402
 from app.core.config import JWT_ALGORITHM, JWT_SIGNING_KEY  # noqa: E402
@@ -96,17 +95,20 @@ def bearer(token: str) -> dict:
 
 
 @pytest.fixture(autouse=True)
-def database(monkeypatch):
-    """One in-memory SQLite database per test, shared by every connection.
+def database(tmp_path, monkeypatch):
+    """One SQLite file per test, so sessions get their own connections.
 
-    `StaticPool` is what keeps `:memory:` alive between the fixture's setup and
-    the request that follows it - otherwise every connection would see a fresh,
-    empty database.
+    This was `:memory:` + `StaticPool` until the in-site simulator. A single
+    shared connection is fine for request-scoped sessions, but a background
+    stream writes while a request reads, and two SQLAlchemy sessions cannot
+    share one DBAPI connection without their transactions interfering. A file
+    gives each session its own connection, which is also what the development
+    server does.
     """
+    db_path = tmp_path / "telemetry.sqlite3"
     engine = create_async_engine(
-        "sqlite+aiosqlite:///:memory:",
+        f"sqlite+aiosqlite:///{db_path.as_posix()}",
         connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
     )
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
 

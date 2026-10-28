@@ -41,7 +41,7 @@ export function RecordingPanel({
           emptyLabel={
             initialLoading
               ? 'Seeding the waveform from stored chunks…'
-              : 'Waiting for the first ECG chunk. Run the simulator with --ecg or connect the ESP32.'
+              : 'Waiting for the first ECG chunk. Use Simulate on the Patients page, run the CLI simulator, or connect the ESP32.'
           }
         />
         <div className="ecg-meta">

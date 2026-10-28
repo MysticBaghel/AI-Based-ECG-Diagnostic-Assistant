@@ -7,27 +7,31 @@ export function SimulatorStepsCard() {
         <li>
           <span className="steps__number">1</span>
           <div>
-            <strong>Register a device</strong>
-            <p>Devices issues a token once; copy it for the simulator.</p>
+            <strong>Open Patients, choose Simulate</strong>
+            <p>The server registers a demo patient and starts a recording for it.</p>
           </div>
         </li>
         <li>
           <span className="steps__number">2</span>
           <div>
-            <strong>Start a recording</strong>
-            <p>Django creates the session and pushes it to FastAPI.</p>
+            <strong>Upload an ECG CSV</strong>
+            <p>One voltage column, or time and voltage. Any rate from 100–2000 Hz; the server keeps it.</p>
           </div>
         </li>
         <li>
           <span className="steps__number">3</span>
           <div>
-            <strong>Run the simulator, then analyse</strong>
+            <strong>Watch the live graph, then analyse</strong>
             <p>
-              <code>python -m simulator --session-id … --device-token … --ecg</code>
+              The file streams in one second at a time. Stop the recording to measure and report.
             </p>
           </div>
         </li>
       </ol>
+      <p className="small muted">
+        The CLI simulator still works for generated scenarios:{' '}
+        <code>python -m simulator --session-id … --device-token … --ecg</code>
+      </p>
     </SectionCard>
   )
 }

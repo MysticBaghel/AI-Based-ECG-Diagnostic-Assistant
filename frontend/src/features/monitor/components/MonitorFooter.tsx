@@ -27,7 +27,7 @@ export function MonitorFooter({
       <span className="monitor-footer__right">
         {active ? (
           <span>
-            Simulator: add <code>--session-id {sessionId}</code> with the device token.
+            Simulate from Patients, or add <code>--session-id {sessionId}</code> to the CLI simulator.
           </span>
         ) : (
           <Link to={analysisHref}>Open analysis & report</Link>

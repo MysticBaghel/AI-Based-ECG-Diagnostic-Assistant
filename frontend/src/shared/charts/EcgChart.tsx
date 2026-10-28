@@ -119,7 +119,12 @@ export function EcgChart({
 
   useEffect(() => {
     plotRef.current?.setData([x, y])
-  }, [x, y])
+    // `width` is a dependency on purpose. The plot is only constructed once the
+    // container has been measured, and the analysis page mounts this chart with
+    // its samples already loaded (it renders a spinner until then). Without
+    // `width` here the plot would be created after the last data change, with
+    // `[[], []]`, and never receive the samples: a blank ECG grid.
+  }, [x, y, width])
 
   return (
     <div className={`chart${paper ? ' chart--paper' : ''}`} style={{ height }}>

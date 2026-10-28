@@ -173,6 +173,8 @@ export function AnalysisPage() {
         maxStart={maxStart}
         loading={index.loading}
         windowLoading={window.loading}
+        windowError={window.error}
+        onRetry={window.refresh}
         onStart={setStart}
       />
 

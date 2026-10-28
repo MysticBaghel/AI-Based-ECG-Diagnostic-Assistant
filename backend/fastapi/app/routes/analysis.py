@@ -24,7 +24,7 @@ from app.analysis import run_analysis
 from app.core.security import UserPrincipal, require_user
 from app.db import get_session
 from app.errors import APIError
-from app.models import AnalysisResult, ECGChunk, KnownSession
+from app.models import AnalysisResult, ECGChunk, KnownSession, SimulationRun
 from app.registry import require_viewer
 from app.schemas import AnalysisResponse
 
@@ -49,6 +49,33 @@ async def _chunks(session: AsyncSession, session_id: uuid.UUID) -> list[dict]:
     ]
 
 
+async def _simulation_context(
+    session: AsyncSession, session_id: uuid.UUID
+) -> dict | None:
+    """Provenance for a recording the built-in simulator produced.
+
+    Read from the latest `simulation_runs` row rather than from the in-memory
+    manager, so the label survives a restart and is available when the analysis
+    runs after the stream has stopped.
+    """
+    run = await session.scalar(
+        select(SimulationRun)
+        .where(SimulationRun.session_id == session_id)
+        .order_by(SimulationRun.started_at.desc())
+        .limit(1)
+    )
+    if run is None:
+        return None
+    return {
+        "kind": "csv" if run.scenario == "csv" else "scenario",
+        "scenario": run.scenario,
+        "label": run.label,
+        "started_at": run.started_at.isoformat() if run.started_at else None,
+        "stopped_at": run.stopped_at.isoformat() if run.stopped_at else None,
+        "chunks_sent": run.chunks_sent,
+    }
+
+
 @router.post("/sessions/{session_id}/analysis", response_model=AnalysisResponse)
 async def create_analysis(
     session_id: uuid.UUID,
@@ -64,7 +91,11 @@ async def create_analysis(
         )
 
     chunks = await _chunks(session, session_id)
-    payload = run_analysis(str(session_id), chunks)
+    payload = run_analysis(
+        str(session_id),
+        chunks,
+        simulation=await _simulation_context(session, session_id),
+    )
 
     version = (
         await session.scalar(
@@ -124,7 +155,11 @@ async def live_analysis(
     """
     await require_viewer(session, session_id, user)
     chunks = await _chunks(session, session_id)
-    payload = run_analysis(str(session_id), chunks)
+    payload = run_analysis(
+        str(session_id),
+        chunks,
+        simulation=await _simulation_context(session, session_id),
+    )
     payload["analysis_version"] = 0
     payload["session_id"] = str(session_id)
     return AnalysisResponse(**payload)
