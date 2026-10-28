@@ -1,0 +1,242 @@
+/* analysis -------------------------------------------------------------- */
+
+.analysis-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.8rem;
+}
+
+@media (max-width: 950px) {
+  .analysis-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.analysis-info-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.analysis-info-card h2 {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #eef2f4;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.analysis-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1.2rem;
+  padding: 0.8rem 0.85rem;
+}
+
+.analysis-info-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.analysis-info-grid span {
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.analysis-info-grid strong {
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.analysis-bottom {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 1200px) {
+  .analysis-bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .analysis-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.analysis-box {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.analysis-box h3 {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #eef2f4;
+  color: var(--text);
+  font-size: 0.73rem;
+  font-weight: 650;
+}
+
+.analysis-box__body {
+  padding: 0.75rem;
+}
+
+.analysis-summary {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.65rem;
+  border: 1px solid #c9efd6;
+  border-radius: 7px;
+  background: #f1fbf4;
+  color: #166534;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.analysis-summary--warn {
+  border-color: #f7e2bb;
+  background: #fff9ee;
+  color: #92540a;
+}
+
+.analysis-summary svg {
+  margin-top: 1px;
+}
+
+.analysis-summary strong {
+  display: block;
+  margin-bottom: 1px;
+}
+
+.mini-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mini-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.71rem;
+  color: var(--muted);
+}
+
+.mini-metric svg {
+  color: var(--accent);
+}
+
+.mini-metric strong {
+  margin-left: auto;
+  color: var(--text);
+  font-size: 0.76rem;
+}
+
+.ai-probability {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ai-probability__row {
+  display: grid;
+  grid-template-columns: 52px 1fr 40px;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.69rem;
+  color: var(--text-dim);
+}
+
+.ai-probability__track {
+  height: 6px;
+  border-radius: 999px;
+  background: #edf2f4;
+  overflow: hidden;
+}
+
+.ai-probability__fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+}
+
+.ai-probability__value {
+  text-align: right;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-unavailable {
+  padding: 0.65rem;
+  border: 1px dashed #e2c99c;
+  border-radius: 7px;
+  background: #fff9ee;
+  color: #8a5a12;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.model-list > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.model-list span {
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.model-list strong {
+  color: var(--text);
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+
+.analysis-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #f5dfb0;
+  border-radius: 7px;
+  background: #fff9ec;
+  color: #8a5a12;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.report-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.report-history__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.45rem;
+  border: 1px solid #eef2f4;
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+

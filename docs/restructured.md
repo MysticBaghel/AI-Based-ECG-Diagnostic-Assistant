@@ -77,7 +77,9 @@ The project had two backends and one React application. Django owned `User` (rol
 | `frontend/src/components/VitalCard.tsx`, `Sparkline.tsx` | REMOVE | Four-vital dashboard no longer part of the ECG workflow |
 | `frontend/src/pages/DashboardPage.tsx`, `PatientsPage.tsx` | MODIFY | Search/register/start workflow and recording history |
 | `frontend/src/pages/PatientProfilePage.tsx`, `MonitorPage.tsx`, `AnalysisPage.tsx`, `SettingsPage.tsx` | ADD | Required screens A–F |
-| `frontend/src/pages/AdminPatientsPage.tsx`, `DevicesPage.tsx`, `LivePage.tsx`, `RecordingPage.tsx`, `SessionsPage.tsx` | REMOVE | Replaced by the focused workflow; devices moved into Settings |
+| `frontend/src/pages/AdminPatientsPage.tsx`, `LivePage.tsx`, `RecordingPage.tsx`, `SessionsPage.tsx` | REMOVE | Replaced by the focused workflow |
+| `frontend/src/pages/ReportsPage.tsx`, `DevicesPage.tsx` | ADD | Dedicated report history and device-management pages |
+| `frontend/src/index.css`, `LoginPage.tsx`, `AppShell.tsx`, monitor/analysis pages | MODIFY | PulseTrace ECG light workspace, navy sidebar, patient table, paper ECG grid, four-card analysis layout |
 | `frontend/src/auth/Guards.tsx` | MODIFY | Authentication guard only; no `RoleGate` |
 | `frontend/src/pages/LoginPage.tsx` | MODIFY | Operator/admin demo accounts and ECG wording |
 | `frontend/src/lib/format.ts`, `ecg.ts`, `index.css` | MODIFY | Patient formatting, waveform helpers, workflow styles |
@@ -172,7 +174,7 @@ The DSP is pure Python so it runs on the same small deployment without NumPy/Sci
 
 ## 6. React frontend
 
-Required routes exist: Dashboard (`/`), Patients (`/patients`), Patient Profile (`/patients/:id`), ECG Monitor (`/monitor/:id`), Analysis & Report (`/sessions/:id`) and Settings (`/settings`). The dashboard combines patient search, registration, recording start, recent recordings, device/service state and analysis/AI status. The monitor shows the rolling waveform, socket state, recording controls, live quality and heart rate from the backend's unpersisted live endpoint, and a simulator command. The analysis page shows the stored waveform, measured parameters, AI result or unavailability, findings, limitations, report generation and download.
+Required routes exist: Dashboard (`/`), Patients (`/patients`), Patient Profile (`/patients/:id`), ECG Monitor (`/monitor` and `/monitor/:id`), Reports (`/reports`), Analysis & Report (`/sessions/:id`), Devices (`/devices`) and Settings (`/settings`). The visual layer now follows the supplied PulseTrace ECG reference: a light clinical workspace, dark navy sidebar, paper-grid ECG waveform, patient table with filters/pagination, and the four-card analysis layout. The dashboard combines patient search, registration, recording start, recent recordings, device/service state and analysis/AI status. The monitor shows the rolling waveform, socket state, recording controls, live quality and heart rate from the backend's unpersisted live endpoint, and a simulator command. The analysis page shows the stored waveform, measured parameters, AI result or unavailability, findings, limitations, report generation and download.
 
 Removed: doctor lists, doctor profiles, doctor-specific dashboards, assignment interfaces, role-gated navigation, admin patient creation, the separate sessions administration screen, four-vital cards and their sparklines. The design system, uPlot chart, auth flow, modal, badges and banners were reused.
 

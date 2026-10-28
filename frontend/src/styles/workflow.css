@@ -1,0 +1,191 @@
+/* --- refactored ECG workflow -------------------------------------------- */
+
+.search--grow {
+  flex: 1;
+  max-width: none;
+}
+
+.search-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.search-result:hover {
+  border-color: var(--accent);
+  background: var(--surface-3);
+}
+
+.search-result__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.search-result__identity small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.search-result__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.search-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.active-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.patient-profile-grid,
+.analysis-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .patient-profile-grid,
+  .analysis-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.patient-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.patient-identity > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.patient-identity strong {
+  font-size: 18px;
+}
+
+.patient-identity span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.avatar--xl {
+  width: 60px;
+  height: 60px;
+  font-size: 20px;
+}
+
+.latest-session {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.latest-session > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.report-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.finding-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.select-inline {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  max-width: 220px;
+}
+
+.duplicate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.duplicate-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.status-dot--warn {
+  background: #f59e0b;
+}
+

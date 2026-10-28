@@ -1,0 +1,123 @@
+/* ---------------------------------------------------------------- banners */
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(148, 163, 184, 0.05);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.banner > svg {
+  margin-top: 0.1rem;
+}
+
+.banner__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.banner__body strong {
+  color: var(--text);
+}
+
+.banner--error {
+  color: #fecdd3;
+  background: rgba(251, 113, 133, 0.07);
+  border-color: rgba(251, 113, 133, 0.26);
+}
+
+.banner--error .banner__body strong {
+  color: #fda4af;
+}
+
+.banner--info {
+  color: #bfdbfe;
+  background: rgba(96, 165, 250, 0.06);
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+.banner--warn {
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.06);
+  border-color: rgba(251, 191, 36, 0.22);
+}
+
+.banner--ok {
+  color: #a7f3d0;
+  background: rgba(52, 211, 153, 0.06);
+  border-color: rgba(52, 211, 153, 0.22);
+}
+
+.banner .button {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2.4rem 1.25rem;
+  color: var(--text-dim);
+}
+
+.empty__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid rgba(45, 212, 191, 0.18);
+  margin-bottom: 0.25rem;
+}
+
+.empty h3 {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.empty p {
+  font-size: 0.82rem;
+  max-width: 58ch;
+  color: var(--muted);
+}
+
+.empty__action {
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------- spinner */
+
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 2.5rem 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.spinner__ring {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(148, 163, 184, 0.22);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+

@@ -1,0 +1,130 @@
+/* ------------------------------------------------------------------ chart */
+
+.chart {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.chart__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.chart .uplot {
+  font-family: var(--font);
+}
+
+.chart .u-select {
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.chart__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+.chart__empty-line {
+  display: block;
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+
+.ecg-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.ecg-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.code-block {
+  margin: 0;
+  padding: 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(4, 8, 14, 0.8);
+  font-size: 0.74rem;
+  line-height: 1.65;
+  color: #9fe9de;
+  overflow-x: auto;
+}
+
+/* -------------------------------------------------------------- recording */
+
+.chunk-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.chunk-nav__range {
+  flex: 1;
+  min-width: 140px;
+  accent-color: var(--accent);
+}
+
+.chunk-nav__label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chunk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.chunk-list__item {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.42rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: rgba(6, 10, 18, 0.4);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  text-align: left;
+}
+
+.chunk-list__item:hover {
+  border-color: var(--border-strong);
+  background: rgba(45, 212, 191, 0.06);
+}
+
+.chunk-list__item span:first-child {
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.chunk-list__item span:last-child {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+

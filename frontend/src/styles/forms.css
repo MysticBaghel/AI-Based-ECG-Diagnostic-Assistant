@@ -1,0 +1,43 @@
+/* ------------------------------------------------------------------ forms */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.field textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: rgba(6, 10, 18, 0.65);
+  color: var(--text);
+  font-size: 0.88rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.field textarea::placeholder {
+  color: #52627a;
+}
+
+.field textarea:focus {
+  outline: none;
+  border-color: rgba(45, 212, 191, 0.55);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+
+.field .field__error {
+  color: #b91c1c;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.field input[aria-invalid='true'],
+.field textarea[aria-invalid='true'] {
+  border-color: #f0a8a8;
+  background: #fffafa;
+}

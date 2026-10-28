@@ -1,0 +1,295 @@
+/* remaining dark-theme surfaces ---------------------------------------- */
+
+.code-block {
+  background: #f7fafb;
+  border-color: var(--border);
+  color: #0f5f5a;
+}
+
+.chunk-list__item {
+  background: #f8fafb;
+  border-color: #eef2f4;
+  color: var(--text-dim);
+}
+
+.chunk-list__item:hover {
+  background: #eef8f6;
+  border-color: #b9d9d6;
+}
+
+.session-card {
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.session-card:hover {
+  border-color: #b9d9d6;
+}
+
+.session-card--active {
+  border-color: #b9d9d6;
+  background: #f7fdfc;
+}
+
+.banner {
+  border-radius: 8px;
+}
+
+.banner--error {
+  background: #fef2f2;
+  border-color: #f7d1d1;
+  color: #b91c1c;
+}
+
+.banner--info {
+  background: #f2faff;
+  border-color: #cdeafb;
+  color: #075985;
+}
+
+.banner--warn {
+  background: #fff9ec;
+  border-color: #f5dfb0;
+  color: #8a5a12;
+}
+
+.banner--ok {
+  background: #f1fbf4;
+  border-color: #c9efd6;
+  color: #166534;
+}
+
+.empty {
+  background: transparent;
+}
+
+.empty__icon {
+  background: #f2f8f8;
+  color: var(--accent);
+}
+
+.spinner__ring {
+  border-color: rgba(15, 118, 110, 0.18);
+  border-top-color: var(--accent);
+}
+
+.modal__backdrop {
+  background: rgba(8, 31, 44, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.modal__panel {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 70px rgba(8, 31, 44, 0.22);
+}
+
+.modal__header {
+  border-bottom: 1px solid #eef2f4;
+}
+
+.modal__header h2 {
+  color: var(--text);
+}
+
+.modal__header p {
+  color: var(--muted);
+}
+
+.modal__footer {
+  border-top: 1px solid #eef2f4;
+  background: #fbfcfd;
+}
+
+.splash {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.splash__mark {
+  color: var(--accent);
+}
+
+.token-box {
+  background: #f7fafb;
+  border-color: var(--border);
+}
+
+.token-box code {
+  color: var(--text);
+}
+
+.duplicate-row {
+  background: #ffffff;
+  border-color: var(--border);
+}
+
+.patient-card__notes {
+  background: #f7fafb;
+}
+
+.quality-bar {
+  background: #edf2f4;
+}
+
+.quality-bar > span {
+  background: linear-gradient(90deg, #f59e0b, var(--accent));
+}
+
+.metric,
+.probability__track,
+.population__track {
+  background: #f7fafb;
+}
+
+.metric {
+  border-color: var(--border);
+}
+
+.metric__label,
+.metric__hint {
+  color: var(--muted);
+}
+
+.metric__value {
+  color: var(--text);
+}
+
+.probability__fill {
+  background: var(--accent);
+}
+
+.probability__value {
+  color: var(--muted);
+}
+
+.report-row {
+  border-bottom-color: #eef2f4;
+}
+
+.report-row:last-child {
+  border-bottom: 0;
+}
+
+.report-row strong {
+  color: var(--text);
+}
+
+/* the previous nurse/doctor avatar gradients are unused, but keep them
+   readable if any old markup is rendered during the transition */
+.avatar--doctor,
+.avatar--patient {
+  background: #0f766e;
+}
+
+.role-chip {
+  color: var(--accent);
+  background: #eaf7f4;
+  border-color: #cdebe6;
+}
+
+.role-chip--admin {
+  color: #6d28d9;
+  background: #f5f0ff;
+  border-color: #e3d8fa;
+}
+
+/* print-friendly safety */
+@media print {
+  .sidebar,
+  .topbar,
+  .disclaimer-strip,
+  .footer,
+  .page-header__actions {
+    display: none !important;
+  }
+
+  .shell__main {
+    width: 100%;
+  }
+
+  .content {
+    padding: 0;
+  }
+}
+
+.button--icon-only {
+  width: 38px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.monitor-footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 0.8rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.monitor-footer > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.monitor-footer__right {
+  margin-left: auto;
+}
+
+.monitor-footer a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.monitor-footer code {
+  font-size: 0.66rem;
+}
+
+@media (max-width: 720px) {
+  .monitor-footer__right {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+
+/* the dashboard patient search is a plain input, not a .field control */
+.search input {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.search input::placeholder {
+  color: #9aabb4;
+}
+
+.search input:focus {
+  border-color: #8fc4bf;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.08);
+}
+
+.row-menu__trigger {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.row-menu__trigger:hover,
+.row-menu__trigger[aria-expanded='true'] {
+  background: var(--surface-2);
+  color: var(--text);
+}

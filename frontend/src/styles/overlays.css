@@ -1,0 +1,115 @@
+/* ------------------------------------------------------------------ modal */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 16, 0.72);
+  backdrop-filter: blur(4px);
+  animation: fade-in 140ms ease;
+}
+
+.modal__panel {
+  position: relative;
+  width: min(520px, 100%);
+  max-height: min(86vh, 780px);
+  overflow-y: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: linear-gradient(170deg, #101a2c, #0a111d);
+  box-shadow: var(--shadow);
+  animation: modal-in 160ms ease;
+}
+
+.modal__panel--wide {
+  width: min(760px, 100%);
+}
+
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal__header h2 {
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.modal__header p {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.modal__header .icon-button {
+  margin-left: auto;
+}
+
+.modal__body {
+  padding: 1.15rem 1.25rem;
+}
+
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background: rgba(6, 10, 18, 0.35);
+}
+
+.token-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(4, 8, 14, 0.8);
+}
+
+.token-box code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  color: #9fe9de;
+  background: none;
+  border: 0;
+}
+
+/* ----------------------------------------------------------------- splash */
+
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-height: 100vh;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.splash__mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  color: var(--accent-ink);
+  background: linear-gradient(145deg, #5eead4, #14b8a6);
+  animation: glow 2.4s ease-in-out infinite;
+}
+

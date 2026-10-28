@@ -1,0 +1,224 @@
+/* --------------------------------------------------------------- responsive */
+
+@media (max-width: 1240px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vitals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .monitor-grid {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .dashboard-grid,
+  .dashboard-grid--narrow,
+  .monitor-grid,
+  .monitor-grid--recording {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .monitor-side {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .login {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .access-row,
+  .assignment-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .access-row__actions {
+    justify-content: flex-start;
+  }
+
+  .login__intro {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .login__features,
+  .login__disclaimer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-102%);
+    transition: transform 200ms ease;
+    box-shadow: var(--shadow);
+    width: min(300px, 86vw);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+
+  .sidebar-scrim--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .topbar__menu {
+    display: inline-grid;
+  }
+
+  .topbar__clock {
+    display: none;
+  }
+
+  .content {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .topbar {
+    padding: 0 1rem;
+  }
+
+  .disclaimer-strip {
+    padding: 0.42rem 1rem;
+  }
+
+  .footer {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .stats,
+  .stats--three,
+  .vitals-grid,
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .monitor-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .toolbar__hint {
+    margin-left: 0;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .segmented {
+    align-self: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Inline width/height on the SVG would otherwise be overridden by the grid. */
+.sparkline {
+  display: block;
+  overflow: visible;
+}
+
+/* ------------------------------------------------------------------- anim */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(45, 212, 191, 0);
+  }
+}
+

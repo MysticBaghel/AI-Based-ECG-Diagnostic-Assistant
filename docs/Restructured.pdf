@@ -16,7 +16,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
 endobj
 6 0 obj
-<< /Title (Restructured - AI-Based ECG Diagnostic Assistant) /Author (AI-Based ECG Diagnostic Assistant) /Creator (AI-Based ECG Diagnostic Assistant) /Producer (AI-Based ECG Diagnostic Assistant) /CreationDate (D:20261028090323Z) >>
+<< /Title (Restructured - AI-Based ECG Diagnostic Assistant) /Author (AI-Based ECG Diagnostic Assistant) /Creator (AI-Based ECG Diagnostic Assistant) /Producer (AI-Based ECG Diagnostic Assistant) /CreationDate (D:20261028093217Z) >>
 endobj
 7 0 obj
 << /Length 7791 >>
@@ -278,7 +278,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 9 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
 endobj
 11 0 obj
-<< /Length 11241 >>
+<< /Length 11812 >>
 stream
 BT /F2 9.5 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 811.89 Tm (AI-Based ECG Diagnostic Assistant) Tj ET
 BT /F2 8 Tf 0.38 0.43 0.52 rg 1 0 0 1 456.28 811.89 Tm (RESTRUCTURED) Tj ET
@@ -296,97 +296,105 @@ BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 747.89 Tm (AnalysisPage.tsx, Settings
 BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 757.39 Tm (ADD) Tj ET
 BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 757.39 Tm (Required screens A-F) Tj ET
 q 0.92 0.94 0.97 RG 0.4 w 44 736.39 m 551.28 736.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 734.39 Tm (frontend/src/pages/AdminPatientsPage.tsx, DevicesPage.tsx,) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 724.89 Tm (LivePage.tsx, RecordingPage.tsx, SessionsPage.tsx) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 734.39 Tm (frontend/src/pages/AdminPatientsPage.tsx, LivePage.tsx,) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 724.89 Tm (RecordingPage.tsx, SessionsPage.tsx) Tj ET
 BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 734.39 Tm (REMOVE) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 734.39 Tm (Replaced by the focused workflow; devices moved into Settings) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 734.39 Tm (Replaced by the focused workflow) Tj ET
 q 0.92 0.94 0.97 RG 0.4 w 44 713.39 m 551.28 713.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 711.39 Tm (frontend/src/auth/Guards.tsx) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 711.39 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 711.39 Tm (Authentication guard only; no RoleGate) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 711.39 Tm (frontend/src/pages/ReportsPage.tsx, DevicesPage.tsx) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 711.39 Tm (ADD) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 711.39 Tm (Dedicated report history and device-management pages) Tj ET
 q 0.92 0.94 0.97 RG 0.4 w 44 699.89 m 551.28 699.89 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 697.89 Tm (frontend/src/pages/LoginPage.tsx) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 697.89 Tm (frontend/src/index.css, LoginPage.tsx, AppShell.tsx,) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 688.39 Tm (monitor/analysis pages) Tj ET
 BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 697.89 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 697.89 Tm (Operator/admin demo accounts and ECG wording) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 686.39 m 551.28 686.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 684.39 Tm (frontend/src/lib/format.ts, ecg.ts, index.css) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 684.39 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 684.39 Tm (Patient formatting, waveform helpers, workflow styles) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 672.89 m 551.28 672.89 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 670.89 Tm (simulator/) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 670.89 Tm (KEEP) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 670.89 Tm (Ingestion contract and signal generation unchanged) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 659.39 m 551.28 659.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 657.39 Tm (simulator/tests/) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 657.39 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 657.39 Tm (Remove doctor_ids from the registry fixture) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 645.89 m 551.28 645.89 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 643.89 Tm (docs/api-contract.md) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 643.89 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 643.89 Tm (New roles, removed doctor cache, analysis endpoints) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 632.39 m 551.28 632.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 630.39 Tm (docs/phase-4-notes.md) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 630.39 Tm (MODIFY) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 630.39 Tm (Marked historical; points to this document) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 618.89 m 551.28 618.89 l S Q
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 606.89 Tm (2.4 Migration risks and mitigations) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 590.89 Tm (The risky part was changing foreign keys while keeping every session and device attached to the right person.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 578.29 Tm (The strategy was:) Tj ET
-q 0.05 0.55 0.52 rg 48.5 564.69 m 48.5 565.52 47.83 566.19 47 566.19 c 46.17 566.19 45.5 565.52 45.5 564.69 c 45.5 563.86 46.17 563.19 47 563.19 c 47.83 563.19 48.5 563.86 48.5 564.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 561.69 Tm (Create patients.Patient first.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 550.09 m 48.5 550.92 47.83 551.59 47 551.59 c 46.17 551.59 45.5 550.92 45.5 550.09 c 45.5 549.26 46.17 548.59 47 548.59 c 47.83 548.59 48.5 549.26 48.5 550.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 547.09 Tm (Copy every PatientProfile into a Patient with the same primary key, a new permanent patient ID, the legacy) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 534.49 Tm (user link and the original creation time.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 522.89 m 48.5 523.72 47.83 524.39 47 524.39 c 46.17 524.39 45.5 523.72 45.5 522.89 c 45.5 522.06 46.17 521.39 47 521.39 c 47.83 521.39 48.5 522.06 48.5 522.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 519.89 Tm (Change roles in a separate migration \(doctor/patient -> operator, admin stays admin\).) Tj ET
-q 0.05 0.55 0.52 rg 48.5 508.29 m 48.5 509.12 47.83 509.79 47 509.79 c 46.17 509.79 45.5 509.12 45.5 508.29 c 45.5 507.46 46.17 506.79 47 506.79 c 47.83 506.79 48.5 507.46 48.5 508.29 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 505.29 Tm (Repoint Device.assigned_patient and Session.patient to patients.Patient while the old tables still exist.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 493.69 m 48.5 494.52 47.83 495.19 47 495.19 c 46.17 495.19 45.5 494.52 45.5 493.69 c 45.5 492.86 46.17 492.19 47 492.19 c 47.83 492.19 48.5 492.86 48.5 493.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 490.69 Tm (Only then delete DoctorAssignment, DoctorProfile and PatientProfile.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 476.09 Tm (The local database was backed up before the migration. After migration, all five legacy patient profiles were) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 463.49 Tm (present in the registry, six sessions still pointed at the same patient keys, and the one dedicated device) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 450.89 Tm (still pointed at its patient. No sessions, devices or patients were deleted.) Tj ET
-q 0.05 0.55 0.52 rg 44 415.29 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 417.29 Tm (3. Target architecture) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 404.29 Tm (Service) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 82.69 404.29 Tm (Owns) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 340.63 404.29 Tm (Never owns) Tj ET
-q 0.82 0.85 0.89 RG 0.7 w 44 399.29 m 551.28 399.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 389.29 Tm (Django) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 389.29 Tm (Operators/admins, JWT, permanent patients, devices, sessions,) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 379.79 Tm (analysis snapshots, report metadata and PDF bytes) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 389.29 Tm (ECG sample storage, DSP inference) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 368.29 m 551.28 368.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 366.29 Tm (FastAPI) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 366.29 Tm (Scalar telemetry, ECG chunks, session registry, DSP, optional) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 356.79 Tm (inference, analysis versions) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 366.29 Tm (Patient identity, operator accounts, PDF metadata) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 345.29 m 551.28 345.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 343.29 Tm (React) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 343.29 Tm (Workflow, search, live chart, analysis presentation, report download) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 343.29 Tm (Any clinical computation or fabricated prediction) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 697.89 Tm (PulseTrace ECG light workspace, navy sidebar, patient table,) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 688.39 Tm (paper ECG grid, four-card analysis layout) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 676.89 m 551.28 676.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 674.89 Tm (frontend/src/auth/Guards.tsx) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 674.89 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 674.89 Tm (Authentication guard only; no RoleGate) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 663.39 m 551.28 663.39 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 661.39 Tm (frontend/src/pages/LoginPage.tsx) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 661.39 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 661.39 Tm (Operator/admin demo accounts and ECG wording) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 649.89 m 551.28 649.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 647.89 Tm (frontend/src/lib/format.ts, ecg.ts, index.css) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 647.89 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 647.89 Tm (Patient formatting, waveform helpers, workflow styles) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 636.39 m 551.28 636.39 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 634.39 Tm (simulator/) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 634.39 Tm (KEEP) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 634.39 Tm (Ingestion contract and signal generation unchanged) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 622.89 m 551.28 622.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 620.89 Tm (simulator/tests/) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 620.89 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 620.89 Tm (Remove doctor_ids from the registry fixture) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 609.39 m 551.28 609.39 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 607.39 Tm (docs/api-contract.md) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 607.39 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 607.39 Tm (New roles, removed doctor cache, analysis endpoints) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 595.89 m 551.28 595.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 593.89 Tm (docs/phase-4-notes.md) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 278.13 593.89 Tm (MODIFY) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 317.15 593.89 Tm (Marked historical; points to this document) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 582.39 m 551.28 582.39 l S Q
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 570.39 Tm (2.4 Migration risks and mitigations) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 554.39 Tm (The risky part was changing foreign keys while keeping every session and device attached to the right person.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 541.79 Tm (The strategy was:) Tj ET
+q 0.05 0.55 0.52 rg 48.5 528.19 m 48.5 529.02 47.83 529.69 47 529.69 c 46.17 529.69 45.5 529.02 45.5 528.19 c 45.5 527.36 46.17 526.69 47 526.69 c 47.83 526.69 48.5 527.36 48.5 528.19 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 525.19 Tm (Create patients.Patient first.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 513.59 m 48.5 514.42 47.83 515.09 47 515.09 c 46.17 515.09 45.5 514.42 45.5 513.59 c 45.5 512.76 46.17 512.09 47 512.09 c 47.83 512.09 48.5 512.76 48.5 513.59 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 510.59 Tm (Copy every PatientProfile into a Patient with the same primary key, a new permanent patient ID, the legacy) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 497.99 Tm (user link and the original creation time.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 486.39 m 48.5 487.22 47.83 487.89 47 487.89 c 46.17 487.89 45.5 487.22 45.5 486.39 c 45.5 485.56 46.17 484.89 47 484.89 c 47.83 484.89 48.5 485.56 48.5 486.39 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 483.39 Tm (Change roles in a separate migration \(doctor/patient -> operator, admin stays admin\).) Tj ET
+q 0.05 0.55 0.52 rg 48.5 471.79 m 48.5 472.62 47.83 473.29 47 473.29 c 46.17 473.29 45.5 472.62 45.5 471.79 c 45.5 470.96 46.17 470.29 47 470.29 c 47.83 470.29 48.5 470.96 48.5 471.79 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 468.79 Tm (Repoint Device.assigned_patient and Session.patient to patients.Patient while the old tables still exist.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 457.19 m 48.5 458.02 47.83 458.69 47 458.69 c 46.17 458.69 45.5 458.02 45.5 457.19 c 45.5 456.36 46.17 455.69 47 455.69 c 47.83 455.69 48.5 456.36 48.5 457.19 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 454.19 Tm (Only then delete DoctorAssignment, DoctorProfile and PatientProfile.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 439.59 Tm (The local database was backed up before the migration. After migration, all five legacy patient profiles were) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 426.99 Tm (present in the registry, six sessions still pointed at the same patient keys, and the one dedicated device) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 414.39 Tm (still pointed at its patient. No sessions, devices or patients were deleted.) Tj ET
+q 0.05 0.55 0.52 rg 44 378.79 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 380.79 Tm (3. Target architecture) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 367.79 Tm (Service) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 82.69 367.79 Tm (Owns) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 340.63 367.79 Tm (Never owns) Tj ET
+q 0.82 0.85 0.89 RG 0.7 w 44 362.79 m 551.28 362.79 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 352.79 Tm (Django) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 352.79 Tm (Operators/admins, JWT, permanent patients, devices, sessions,) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 343.29 Tm (analysis snapshots, report metadata and PDF bytes) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 352.79 Tm (ECG sample storage, DSP inference) Tj ET
 q 0.92 0.94 0.97 RG 0.4 w 44 331.79 m 551.28 331.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 329.79 Tm (Simulator) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 329.79 Tm (ESP32-compatible ingestion traffic) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 329.79 Tm (Patient identity or diagnosis) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 318.29 m 551.28 318.29 l S Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 308.29 Tm (The two services share identifiers, not a database. No FastAPI foreign key points at a Django table. Django) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 295.69 Tm (mints a short-lived admin token for internal work; the browser uses operator tokens.) Tj ET
-q 0.05 0.55 0.52 rg 44 260.09 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 262.09 Tm (4. Django backend) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 247.09 Tm (4.1 Permanent patient registry) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 231.09 Tm (patients.Patient has an internal integer key and a public, permanent patient_id such as PT-E28319D9. It stores) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 218.49 Tm (full name, phone, normalised phone, email, date of birth or age, sex, notes, timestamps and a nullable link to) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 205.89 Tm (a legacy login account. The phone number is not a key and is not unique: the same number can legitimately) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 193.29 Tm (belong to two people. A duplicate phone during registration returns 409 duplicate_patient with the matches;) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 180.69 Tm (the operator can open the existing profile or explicitly confirm creation. Search covers name, phone and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 168.09 Tm (patient ID. Patients do not have login accounts.) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 149.49 Tm (4.2 Authentication and roles) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 133.49 Tm (Authentication is unchanged: SimpleJWT access/refresh tokens with user_id and role. Roles are now operator and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 120.89 Tm (admin. Doctor accounts that existed before the refactor keep working as operators; legacy *patient* logins are) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 108.29 Tm (disabled rather than promoted, because promoting a patient account would expose the whole registry. Django) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 95.69 Tm (Admin remains for technical administration but is not the operator interface. Every API view requires) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 83.09 Tm (authentication; there is no doctor/patient object-level scoping to maintain.) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 329.79 Tm (FastAPI) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 329.79 Tm (Scalar telemetry, ECG chunks, session registry, DSP, optional) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 320.29 Tm (inference, analysis versions) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 329.79 Tm (Patient identity, operator accounts, PDF metadata) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 308.79 m 551.28 308.79 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 306.79 Tm (React) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 306.79 Tm (Workflow, search, live chart, analysis presentation, report download) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 306.79 Tm (Any clinical computation or fabricated prediction) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 295.29 m 551.28 295.29 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 293.29 Tm (Simulator) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 82.69 293.29 Tm (ESP32-compatible ingestion traffic) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 340.63 293.29 Tm (Patient identity or diagnosis) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 281.79 m 551.28 281.79 l S Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 271.79 Tm (The two services share identifiers, not a database. No FastAPI foreign key points at a Django table. Django) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 259.19 Tm (mints a short-lived admin token for internal work; the browser uses operator tokens.) Tj ET
+q 0.05 0.55 0.52 rg 44 223.59 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 225.59 Tm (4. Django backend) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 210.59 Tm (4.1 Permanent patient registry) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 194.59 Tm (patients.Patient has an internal integer key and a public, permanent patient_id such as PT-E28319D9. It stores) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 181.99 Tm (full name, phone, normalised phone, email, date of birth or age, sex, notes, timestamps and a nullable link to) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 169.39 Tm (a legacy login account. The phone number is not a key and is not unique: the same number can legitimately) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 156.79 Tm (belong to two people. A duplicate phone during registration returns 409 duplicate_patient with the matches;) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 144.19 Tm (the operator can open the existing profile or explicitly confirm creation. Search covers name, phone and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 131.59 Tm (patient ID. Patients do not have login accounts.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 112.99 Tm (4.2 Authentication and roles) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 96.99 Tm (Authentication is unchanged: SimpleJWT access/refresh tokens with user_id and role. Roles are now operator and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 84.39 Tm (admin. Doctor accounts that existed before the refactor keep working as operators; legacy *patient* logins are) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 71.79 Tm (disabled rather than promoted, because promoting a patient account would expose the whole registry. Django) Tj ET
 q 0.82 0.85 0.89 RG 0.6 w 44 46 m 551.28 46 l S Q
 BT /F1 7 Tf 0.44 0.48 0.55 rg 1 0 0 1 44 34 Tm (AI-Based ECG Diagnostic Assistant - Restructured - page 3 of 6) Tj ET
 endstream
@@ -395,88 +403,87 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 11 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
 endobj
 13 0 obj
-<< /Length 9443 >>
+<< /Length 9220 >>
 stream
 BT /F2 9.5 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 811.89 Tm (AI-Based ECG Diagnostic Assistant) Tj ET
 BT /F2 8 Tf 0.38 0.43 0.52 rg 1 0 0 1 456.28 811.89 Tm (RESTRUCTURED) Tj ET
 q 0.82 0.85 0.89 RG 0.7 w 44 803.89 m 551.28 803.89 l S Q
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 783.89 Tm (4.3 Devices) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 767.89 Tm (Device UUIDs, owner and one-time tokens are preserved. A device may be dedicated to one patient or shared) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 755.29 Tm (\(assigned_patient = NULL\). Registration, token rotation, dedication and enable/disable are explicit) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 742.69 Tm (operations. Heartbeat/last-seen remain FastAPI's truth.) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 724.09 Tm (4.4 Sessions and analysis persistence) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 708.09 Tm (Session retains its UUID, patient, device, operator, start/end time and status, and adds sample rate, notes) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 695.49 Tm (and timestamps. The database still enforces one active session per device with a partial unique index.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 682.89 Tm (SessionAnalysis stores the FastAPI result exactly, plus status, model version, timestamp and error. A failed) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 670.29 Tm (compute call is stored as failed; it is never replaced with a made-up result. Session actions: create,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 657.69 Tm (list/filter, stop, analyse, read analysis, generate/read report, list report versions.) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 639.09 Tm (4.5 Reports) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 623.09 Tm (reports.Report stores a report ID, session, patient, version, exact analysis snapshot, PDF bytes, size,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 610.49 Tm (SHA-256 checksum, author and timestamp. Generation is idempotent without regenerate=true; regeneration creates) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 597.89 Tm (a new version. Downloads go through /api/reports/<id>/download/ with authentication, application/pdf, an) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 585.29 Tm (attachment filename and no-store. PDFs are never exposed from a public media path.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 568.69 Tm (The PDF writer is dependency-free \(PDF 1.4, Helvetica/Courier, vector waveform\). It contains patient and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 556.09 Tm (session identity, recording times, device, sampling frequency, quality, measurements, waveform, AI result or) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 543.49 Tm (explicit unavailability, findings, limitations and the prominent screening-aid statement. Long recordings are) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 530.89 Tm (decimated for drawing; the stored snapshot is bounded separately.) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 512.29 Tm (4.6 Migrations applied) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 496.29 Tm (Migration) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 269.46 496.29 Tm (Effect) Tj ET
-q 0.82 0.85 0.89 RG 0.7 w 44 491.29 m 551.28 491.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 481.29 Tm (patients.0001_initial) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 481.29 Tm (Create the registry) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 469.79 m 551.28 469.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 467.79 Tm (patients.0002_migrate_legacy_patients) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 467.79 Tm (Copy profiles with preserved IDs and permanent patient IDs) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 456.29 m 551.28 456.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 454.29 Tm (accounts.0004_remove_profiles_and_simplify_roles) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 454.29 Tm (Map doctor/patient -> operator; role choices) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 442.79 m 551.28 442.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 440.79 Tm (devices.0003_assigned_patient_registry) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 440.79 Tm (Device FK -> registry) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 429.29 m 551.28 429.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 427.29 Tm (monitoring.0002_patient_registry_analysis) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 427.29 Tm (Session FK -> registry; analysis table; new fields) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 415.79 m 551.28 415.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 413.79 Tm (accounts.0005_remove_doctor_and_patient_profiles) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 413.79 Tm (Drop doctor/patient profile tables after FK swap) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 402.29 m 551.28 402.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 400.29 Tm (accounts.0006_disable_legacy_patient_logins) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 400.29 Tm (Disable pre-refactor patient logins; doctor accounts remain operators) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 388.79 m 551.28 388.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 386.79 Tm (reports.0001_initial) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 386.79 Tm (Report table and version constraint) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 375.29 m 551.28 375.29 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 373.29 Tm (fastapi 0002_analysis) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 373.29 Tm (Analysis table; drop doctor_ids) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 361.79 m 551.28 361.79 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 359.79 Tm (fastapi 0003_timestamp_defaults) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 359.79 Tm (Repair SQLite/PostgreSQL timestamp defaults) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 348.29 m 551.28 348.29 l S Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 338.29 Tm (Commands used: python manage.py migrate, python -m alembic upgrade head.) Tj ET
-q 0.05 0.55 0.52 rg 44 302.69 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 304.69 Tm (5. FastAPI, DSP and AI) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 289.69 Tm (5.1 Ingestion contract) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 273.69 Tm (POST /sensor/connect, POST /sensor/data, POST /sensor/ecg, the WebSocket /ws/sensor, chunk reads and the) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 261.09 Tm (simulator payloads are unchanged except that user roles are operator/admin. Device tokens, payload limits,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 248.49 Tm (idempotency constraints, duplicate handling, revocation and heartbeat semantics are intact. known_sessions no) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 235.89 Tm (longer carries doctor_ids.) Tj ET
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 217.29 Tm (5.2 Signal processing) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 201.29 Tm (The DSP is pure Python so it runs on the same small deployment without NumPy/SciPy:) Tj ET
-q 0.05 0.55 0.52 rg 48.5 187.69 m 48.5 188.52 47.83 189.19 47 189.19 c 46.17 189.19 45.5 188.52 45.5 187.69 c 45.5 186.86 46.17 186.19 47 186.19 c 47.83 186.19 48.5 186.86 48.5 187.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 184.69 Tm (Validate sample rate, chunk consistency, duration, finite values, flatline and clipping.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 173.09 m 48.5 173.92 47.83 174.59 47 174.59 c 46.17 174.59 45.5 173.92 45.5 173.09 c 45.5 172.26 46.17 171.59 47 171.59 c 47.83 171.59 48.5 172.26 48.5 173.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 170.09 Tm (Apply a 0.5 Hz high-pass \(baseline wander\), 50/60 Hz notch and 40 Hz low-pass, forward-backward for zero) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 157.49 Tm (phase.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 145.89 m 48.5 146.72 47.83 147.39 47 147.39 c 46.17 147.39 45.5 146.72 45.5 145.89 c 45.5 145.06 46.17 144.39 47 144.39 c 47.83 144.39 48.5 145.06 48.5 145.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 142.89 Tm (Detect R-peaks on a 5-15 Hz band-passed derivative-square envelope with a 250 ms refractory window; refine) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 130.29 Tm (each peak to the largest deflection within ±80 ms.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 118.69 m 48.5 119.52 47.83 120.19 47 120.19 c 46.17 120.19 45.5 119.52 45.5 118.69 c 45.5 117.86 46.17 117.19 47 117.19 c 47.83 117.19 48.5 117.86 48.5 118.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 115.69 Tm (Compute heart rate from the median RR interval, RR intervals, mean, standard deviation, RMSSD, pNN50 and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 103.09 Tm (beat count.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 91.49 m 48.5 92.32 47.83 92.99 47 92.99 c 46.17 92.99 45.5 92.32 45.5 91.49 c 45.5 90.66 46.17 89.99 47 89.99 c 47.83 89.99 48.5 90.66 48.5 91.49 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 88.49 Tm (Score quality 0-100 from missing samples, flatline, clipping, chunk gaps, beat count and RR outlier ratio.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 75.89 Tm (Below the configured threshold, all measurements are withheld and the analysis is unusable with reasons.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 785.89 Tm (Admin remains for technical administration but is not the operator interface. Every API view requires) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 773.29 Tm (authentication; there is no doctor/patient object-level scoping to maintain.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 754.69 Tm (4.3 Devices) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 738.69 Tm (Device UUIDs, owner and one-time tokens are preserved. A device may be dedicated to one patient or shared) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 726.09 Tm (\(assigned_patient = NULL\). Registration, token rotation, dedication and enable/disable are explicit) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 713.49 Tm (operations. Heartbeat/last-seen remain FastAPI's truth.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 694.89 Tm (4.4 Sessions and analysis persistence) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 678.89 Tm (Session retains its UUID, patient, device, operator, start/end time and status, and adds sample rate, notes) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 666.29 Tm (and timestamps. The database still enforces one active session per device with a partial unique index.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 653.69 Tm (SessionAnalysis stores the FastAPI result exactly, plus status, model version, timestamp and error. A failed) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 641.09 Tm (compute call is stored as failed; it is never replaced with a made-up result. Session actions: create,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 628.49 Tm (list/filter, stop, analyse, read analysis, generate/read report, list report versions.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 609.89 Tm (4.5 Reports) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 593.89 Tm (reports.Report stores a report ID, session, patient, version, exact analysis snapshot, PDF bytes, size,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 581.29 Tm (SHA-256 checksum, author and timestamp. Generation is idempotent without regenerate=true; regeneration creates) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 568.69 Tm (a new version. Downloads go through /api/reports/<id>/download/ with authentication, application/pdf, an) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 556.09 Tm (attachment filename and no-store. PDFs are never exposed from a public media path.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 539.49 Tm (The PDF writer is dependency-free \(PDF 1.4, Helvetica/Courier, vector waveform\). It contains patient and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 526.89 Tm (session identity, recording times, device, sampling frequency, quality, measurements, waveform, AI result or) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 514.29 Tm (explicit unavailability, findings, limitations and the prominent screening-aid statement. Long recordings are) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 501.69 Tm (decimated for drawing; the stored snapshot is bounded separately.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 483.09 Tm (4.6 Migrations applied) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 467.09 Tm (Migration) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 269.46 467.09 Tm (Effect) Tj ET
+q 0.82 0.85 0.89 RG 0.7 w 44 462.09 m 551.28 462.09 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 452.09 Tm (patients.0001_initial) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 452.09 Tm (Create the registry) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 440.59 m 551.28 440.59 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 438.59 Tm (patients.0002_migrate_legacy_patients) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 438.59 Tm (Copy profiles with preserved IDs and permanent patient IDs) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 427.09 m 551.28 427.09 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 425.09 Tm (accounts.0004_remove_profiles_and_simplify_roles) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 425.09 Tm (Map doctor/patient -> operator; role choices) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 413.59 m 551.28 413.59 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 411.59 Tm (devices.0003_assigned_patient_registry) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 411.59 Tm (Device FK -> registry) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 400.09 m 551.28 400.09 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 398.09 Tm (monitoring.0002_patient_registry_analysis) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 398.09 Tm (Session FK -> registry; analysis table; new fields) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 386.59 m 551.28 386.59 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 384.59 Tm (accounts.0005_remove_doctor_and_patient_profiles) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 384.59 Tm (Drop doctor/patient profile tables after FK swap) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 373.09 m 551.28 373.09 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 371.09 Tm (accounts.0006_disable_legacy_patient_logins) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 371.09 Tm (Disable pre-refactor patient logins; doctor accounts remain operators) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 359.59 m 551.28 359.59 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 357.59 Tm (reports.0001_initial) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 357.59 Tm (Report table and version constraint) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 346.09 m 551.28 346.09 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 344.09 Tm (fastapi 0002_analysis) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 344.09 Tm (Analysis table; drop doctor_ids) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 332.59 m 551.28 332.59 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 330.59 Tm (fastapi 0003_timestamp_defaults) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 269.46 330.59 Tm (Repair SQLite/PostgreSQL timestamp defaults) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 319.09 m 551.28 319.09 l S Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 309.09 Tm (Commands used: python manage.py migrate, python -m alembic upgrade head.) Tj ET
+q 0.05 0.55 0.52 rg 44 273.49 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 275.49 Tm (5. FastAPI, DSP and AI) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 260.49 Tm (5.1 Ingestion contract) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 244.49 Tm (POST /sensor/connect, POST /sensor/data, POST /sensor/ecg, the WebSocket /ws/sensor, chunk reads and the) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 231.89 Tm (simulator payloads are unchanged except that user roles are operator/admin. Device tokens, payload limits,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 219.29 Tm (idempotency constraints, duplicate handling, revocation and heartbeat semantics are intact. known_sessions no) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 206.69 Tm (longer carries doctor_ids.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 188.09 Tm (5.2 Signal processing) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 172.09 Tm (The DSP is pure Python so it runs on the same small deployment without NumPy/SciPy:) Tj ET
+q 0.05 0.55 0.52 rg 48.5 158.49 m 48.5 159.32 47.83 159.99 47 159.99 c 46.17 159.99 45.5 159.32 45.5 158.49 c 45.5 157.66 46.17 156.99 47 156.99 c 47.83 156.99 48.5 157.66 48.5 158.49 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 155.49 Tm (Validate sample rate, chunk consistency, duration, finite values, flatline and clipping.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 143.89 m 48.5 144.72 47.83 145.39 47 145.39 c 46.17 145.39 45.5 144.72 45.5 143.89 c 45.5 143.06 46.17 142.39 47 142.39 c 47.83 142.39 48.5 143.06 48.5 143.89 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 140.89 Tm (Apply a 0.5 Hz high-pass \(baseline wander\), 50/60 Hz notch and 40 Hz low-pass, forward-backward for zero) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 128.29 Tm (phase.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 116.69 m 48.5 117.52 47.83 118.19 47 118.19 c 46.17 118.19 45.5 117.52 45.5 116.69 c 45.5 115.86 46.17 115.19 47 115.19 c 47.83 115.19 48.5 115.86 48.5 116.69 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 113.69 Tm (Detect R-peaks on a 5-15 Hz band-passed derivative-square envelope with a 250 ms refractory window; refine) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 101.09 Tm (each peak to the largest deflection within ±80 ms.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 89.49 m 48.5 90.32 47.83 90.99 47 90.99 c 46.17 90.99 45.5 90.32 45.5 89.49 c 45.5 88.66 46.17 87.99 47 87.99 c 47.83 87.99 48.5 88.66 48.5 89.49 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 86.49 Tm (Compute heart rate from the median RR interval, RR intervals, mean, standard deviation, RMSSD, pNN50 and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 73.89 Tm (beat count.) Tj ET
 q 0.82 0.85 0.89 RG 0.6 w 44 46 m 551.28 46 l S Q
 BT /F1 7 Tf 0.44 0.48 0.55 rg 1 0 0 1 44 34 Tm (AI-Based ECG Diagnostic Assistant - Restructured - page 4 of 6) Tj ET
 endstream
@@ -485,82 +492,80 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 13 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
 endobj
 15 0 obj
-<< /Length 9524 >>
+<< /Length 9558 >>
 stream
 BT /F2 9.5 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 811.89 Tm (AI-Based ECG Diagnostic Assistant) Tj ET
 BT /F2 8 Tf 0.38 0.43 0.52 rg 1 0 0 1 456.28 811.89 Tm (RESTRUCTURED) Tj ET
 q 0.82 0.85 0.89 RG 0.7 w 44 803.89 m 551.28 803.89 l S Q
-BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 783.89 Tm (5.3 Inference interface) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 767.89 Tm (ECG_MODEL_PATH optionally points to a validated JSON linear classifier \(classes, feature_names,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 755.29 Tm (mean/scale/coefficients/intercept\). The service produces softmax probabilities only when that model exists and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 742.69 Tm (the signal is usable. No model is bundled. With no model, ai.available=false, predicted_class=null,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 730.09 Tm (probabilities=null, and a reason is returned. The API, UI and PDF all state that AI is unavailable. No) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 717.49 Tm (synthetic ECG run is presented as proof of diagnostic accuracy.) Tj ET
-q 0.05 0.55 0.52 rg 44 681.89 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 683.89 Tm (6. React frontend) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 670.89 Tm (Required routes exist: Dashboard \(/\), Patients \(/patients\), Patient Profile \(/patients/:id\), ECG Monitor) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 658.29 Tm (\(/monitor/:id\), Analysis & Report \(/sessions/:id\) and Settings \(/settings\). The dashboard combines patient) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 645.69 Tm (search, registration, recording start, recent recordings, device/service state and analysis/AI status. The) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 633.09 Tm (monitor shows the rolling waveform, socket state, recording controls, live quality and heart rate from the) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 620.49 Tm (backend's unpersisted live endpoint, and a simulator command. The analysis page shows the stored waveform,) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 607.89 Tm (measured parameters, AI result or unavailability, findings, limitations, report generation and download.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 591.29 Tm (Removed: doctor lists, doctor profiles, doctor-specific dashboards, assignment interfaces, role-gated) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 578.69 Tm (navigation, admin patient creation, the separate sessions administration screen, four-vital cards and their) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 566.09 Tm (sparklines. The design system, uPlot chart, auth flow, modal, badges and banners were reused.) Tj ET
-q 0.05 0.55 0.52 rg 44 530.49 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 532.49 Tm (7. End-to-end verification) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 519.49 Tm (Environment: Django on 8000, FastAPI on 8001, SQLite databases, simulator synthetic ECG at 200 Hz.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 505.89 m 48.5 506.72 47.83 507.39 47 507.39 c 46.17 507.39 45.5 506.72 45.5 505.89 c 45.5 505.06 46.17 504.39 47 504.39 c 47.83 504.39 48.5 505.06 48.5 505.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 502.89 Tm (Operator login succeeded; /api/auth/me/ returned role operator.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 491.29 m 48.5 492.12 47.83 492.79 47 492.79 c 46.17 492.79 45.5 492.12 45.5 491.29 c 45.5 490.46 46.17 489.79 47 489.79 c 47.83 489.79 48.5 490.46 48.5 491.29 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 488.29 Tm (seed_demo created operator/admin, three patients and a simulator device.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 476.69 m 48.5 477.52 47.83 478.19 47 478.19 c 46.17 478.19 45.5 477.52 45.5 476.69 c 45.5 475.86 46.17 475.19 47 475.19 c 47.83 475.19 48.5 475.86 48.5 476.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 473.69 Tm (A fresh session was minted and registered with FastAPI.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 462.09 m 48.5 462.92 47.83 463.59 47 463.59 c 46.17 463.59 45.5 462.92 45.5 462.09 c 45.5 461.26 46.17 460.59 47 460.59 c 47.83 460.59 48.5 461.26 48.5 462.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 459.09 Tm (Simulator ran 10 s with --ecg: 12 chunks, 2,400 samples, 36 scalar readings, 0 duplicates, 0 failures, 51) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 446.49 Tm (HTTP 200 responses.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 434.89 m 48.5 435.72 47.83 436.39 47 436.39 c 46.17 436.39 45.5 435.72 45.5 434.89 c 45.5 434.06 46.17 433.39 47 433.39 c 47.83 433.39 48.5 434.06 48.5 434.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 431.89 Tm (Session stop returned completed; analysis returned completed, 15 beats, 72.9 bpm, 823.6 ms mean RR, quality) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 419.29 Tm (100/100.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 407.69 m 48.5 408.52 47.83 409.19 47 409.19 c 46.17 409.19 45.5 408.52 45.5 407.69 c 45.5 406.86 46.17 406.19 47 406.19 c 47.83 406.19 48.5 406.86 48.5 407.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 404.69 Tm (AI result was explicitly unavailable \(no model configured\), with no class or probability.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 393.09 m 48.5 393.92 47.83 394.59 47 394.59 c 46.17 394.59 45.5 393.92 45.5 393.09 c 45.5 392.26 46.17 391.59 47 391.59 c 47.83 391.59 48.5 392.26 48.5 393.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 390.09 Tm (Report generation stored version 1, then version 2 after regeneration; download returned application/pdf.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 378.49 m 48.5 379.32 47.83 379.99 47 379.99 c 46.17 379.99 45.5 379.32 45.5 378.49 c 45.5 377.66 46.17 376.99 47 376.99 c 47.83 376.99 48.5 377.66 48.5 378.49 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 375.49 Tm (pdfinfo reported PDF 1.4, A4, 2 pages; pdftotext found the patient/session details, measurements, waveform) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 362.89 Tm (label, AI-unavailable statement, limitations and the screening-aid banner.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 351.29 m 48.5 352.12 47.83 352.79 47 352.79 c 46.17 352.79 45.5 352.12 45.5 351.29 c 45.5 350.46 46.17 349.79 47 349.79 c 47.83 349.79 48.5 350.46 48.5 351.29 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 348.29 Tm (Patient history returned both sessions and both report versions under the same permanent patient ID.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 336.69 m 48.5 337.52 47.83 338.19 47 338.19 c 46.17 338.19 45.5 337.52 45.5 336.69 c 45.5 335.86 46.17 335.19 47 335.19 c 47.83 335.19 48.5 335.86 48.5 336.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 333.69 Tm (Duplicate phone registration returned HTTP 409 with the existing patient.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 322.09 m 48.5 322.92 47.83 323.59 47 323.59 c 46.17 323.59 45.5 322.92 45.5 322.09 c 45.5 321.26 46.17 320.59 47 320.59 c 47.83 320.59 48.5 321.26 48.5 322.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 319.09 Tm (Unauthenticated patient/session/device/report requests return 401 \(tested\).) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 304.49 Tm (Test suites after the refactor:) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 287.89 Tm (Suite) Tj ET
-BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 131.8 287.89 Tm (Result) Tj ET
-q 0.82 0.85 0.89 RG 0.7 w 44 282.89 m 551.28 282.89 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 272.89 Tm (Django) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 272.89 Tm (39 passed) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 261.39 m 551.28 261.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 259.39 Tm (FastAPI) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 259.39 Tm (105 passed) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 247.89 m 551.28 247.89 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 245.89 Tm (Simulator) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 245.89 Tm (96 passed) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 234.39 m 551.28 234.39 l S Q
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 232.39 Tm (Frontend) Tj ET
-BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 232.39 Tm (tsc -b --noEmit, ESLint and vite build pass) Tj ET
-q 0.92 0.94 0.97 RG 0.4 w 44 220.89 m 551.28 220.89 l S Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 210.89 Tm (The original FastAPI suite had one pre-existing failure caused by .env leaking into a subprocess; that test is) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 198.29 Tm (now hermetic and passes.) Tj ET
-q 0.05 0.55 0.52 rg 44 162.69 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 164.69 Tm (8. API changes) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 151.69 Tm (Removed: GET /api/doctors/, PUT /api/patients/<id>/doctors/, doctor assignment fields, patient-account) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 139.09 Tm (creation semantics and role-gated session/device rules. Patient creation is now registry creation with an) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 126.49 Tm (optional confirm_duplicate.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 109.89 Tm (Changed: user token roles {operator, admin}; legacy patient/doctor tokens are rejected and require a new) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 97.29 Tm (login; known_sessions.doctor_ids removed; all authenticated operators share the clinic's) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 84.69 Tm (patient/device/session scope.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 788.89 m 48.5 789.72 47.83 790.39 47 790.39 c 46.17 790.39 45.5 789.72 45.5 788.89 c 45.5 788.06 46.17 787.39 47 787.39 c 47.83 787.39 48.5 788.06 48.5 788.89 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 785.89 Tm (Score quality 0-100 from missing samples, flatline, clipping, chunk gaps, beat count and RR outlier ratio.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 773.29 Tm (Below the configured threshold, all measurements are withheld and the analysis is unusable with reasons.) Tj ET
+BT /F2 10.6 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 756.69 Tm (5.3 Inference interface) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 740.69 Tm (ECG_MODEL_PATH optionally points to a validated JSON linear classifier \(classes, feature_names,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 728.09 Tm (mean/scale/coefficients/intercept\). The service produces softmax probabilities only when that model exists and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 715.49 Tm (the signal is usable. No model is bundled. With no model, ai.available=false, predicted_class=null,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 702.89 Tm (probabilities=null, and a reason is returned. The API, UI and PDF all state that AI is unavailable. No) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 690.29 Tm (synthetic ECG run is presented as proof of diagnostic accuracy.) Tj ET
+q 0.05 0.55 0.52 rg 44 654.69 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 656.69 Tm (6. React frontend) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 643.69 Tm (Required routes exist: Dashboard \(/\), Patients \(/patients\), Patient Profile \(/patients/:id\), ECG Monitor) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 631.09 Tm (\(/monitor and /monitor/:id\), Reports \(/reports\), Analysis & Report \(/sessions/:id\), Devices \(/devices\) and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 618.49 Tm (Settings \(/settings\). The visual layer now follows the supplied PulseTrace ECG reference: a light clinical) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 605.89 Tm (workspace, dark navy sidebar, paper-grid ECG waveform, patient table with filters/pagination, and the) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 593.29 Tm (four-card analysis layout. The dashboard combines patient search, registration, recording start, recent) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 580.69 Tm (recordings, device/service state and analysis/AI status. The monitor shows the rolling waveform, socket state,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 568.09 Tm (recording controls, live quality and heart rate from the backend's unpersisted live endpoint, and a simulator) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 555.49 Tm (command. The analysis page shows the stored waveform, measured parameters, AI result or unavailability,) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 542.89 Tm (findings, limitations, report generation and download.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 526.29 Tm (Removed: doctor lists, doctor profiles, doctor-specific dashboards, assignment interfaces, role-gated) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 513.69 Tm (navigation, admin patient creation, the separate sessions administration screen, four-vital cards and their) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 501.09 Tm (sparklines. The design system, uPlot chart, auth flow, modal, badges and banners were reused.) Tj ET
+q 0.05 0.55 0.52 rg 44 465.49 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 467.49 Tm (7. End-to-end verification) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 454.49 Tm (Environment: Django on 8000, FastAPI on 8001, SQLite databases, simulator synthetic ECG at 200 Hz.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 440.89 m 48.5 441.72 47.83 442.39 47 442.39 c 46.17 442.39 45.5 441.72 45.5 440.89 c 45.5 440.06 46.17 439.39 47 439.39 c 47.83 439.39 48.5 440.06 48.5 440.89 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 437.89 Tm (Operator login succeeded; /api/auth/me/ returned role operator.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 426.29 m 48.5 427.12 47.83 427.79 47 427.79 c 46.17 427.79 45.5 427.12 45.5 426.29 c 45.5 425.46 46.17 424.79 47 424.79 c 47.83 424.79 48.5 425.46 48.5 426.29 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 423.29 Tm (seed_demo created operator/admin, three patients and a simulator device.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 411.69 m 48.5 412.52 47.83 413.19 47 413.19 c 46.17 413.19 45.5 412.52 45.5 411.69 c 45.5 410.86 46.17 410.19 47 410.19 c 47.83 410.19 48.5 410.86 48.5 411.69 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 408.69 Tm (A fresh session was minted and registered with FastAPI.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 397.09 m 48.5 397.92 47.83 398.59 47 398.59 c 46.17 398.59 45.5 397.92 45.5 397.09 c 45.5 396.26 46.17 395.59 47 395.59 c 47.83 395.59 48.5 396.26 48.5 397.09 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 394.09 Tm (Simulator ran 10 s with --ecg: 12 chunks, 2,400 samples, 36 scalar readings, 0 duplicates, 0 failures, 51) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 381.49 Tm (HTTP 200 responses.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 369.89 m 48.5 370.72 47.83 371.39 47 371.39 c 46.17 371.39 45.5 370.72 45.5 369.89 c 45.5 369.06 46.17 368.39 47 368.39 c 47.83 368.39 48.5 369.06 48.5 369.89 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 366.89 Tm (Session stop returned completed; analysis returned completed, 15 beats, 72.9 bpm, 823.6 ms mean RR, quality) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 354.29 Tm (100/100.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 342.69 m 48.5 343.52 47.83 344.19 47 344.19 c 46.17 344.19 45.5 343.52 45.5 342.69 c 45.5 341.86 46.17 341.19 47 341.19 c 47.83 341.19 48.5 341.86 48.5 342.69 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 339.69 Tm (AI result was explicitly unavailable \(no model configured\), with no class or probability.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 328.09 m 48.5 328.92 47.83 329.59 47 329.59 c 46.17 329.59 45.5 328.92 45.5 328.09 c 45.5 327.26 46.17 326.59 47 326.59 c 47.83 326.59 48.5 327.26 48.5 328.09 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 325.09 Tm (Report generation stored version 1, then version 2 after regeneration; download returned application/pdf.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 313.49 m 48.5 314.32 47.83 314.99 47 314.99 c 46.17 314.99 45.5 314.32 45.5 313.49 c 45.5 312.66 46.17 311.99 47 311.99 c 47.83 311.99 48.5 312.66 48.5 313.49 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 310.49 Tm (pdfinfo reported PDF 1.4, A4, 2 pages; pdftotext found the patient/session details, measurements, waveform) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 297.89 Tm (label, AI-unavailable statement, limitations and the screening-aid banner.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 286.29 m 48.5 287.12 47.83 287.79 47 287.79 c 46.17 287.79 45.5 287.12 45.5 286.29 c 45.5 285.46 46.17 284.79 47 284.79 c 47.83 284.79 48.5 285.46 48.5 286.29 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 283.29 Tm (Patient history returned both sessions and both report versions under the same permanent patient ID.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 271.69 m 48.5 272.52 47.83 273.19 47 273.19 c 46.17 273.19 45.5 272.52 45.5 271.69 c 45.5 270.86 46.17 270.19 47 270.19 c 47.83 270.19 48.5 270.86 48.5 271.69 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 268.69 Tm (Duplicate phone registration returned HTTP 409 with the existing patient.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 257.09 m 48.5 257.92 47.83 258.59 47 258.59 c 46.17 258.59 45.5 257.92 45.5 257.09 c 45.5 256.26 46.17 255.59 47 255.59 c 47.83 255.59 48.5 256.26 48.5 257.09 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 254.09 Tm (Unauthenticated patient/session/device/report requests return 401 \(tested\).) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 239.49 Tm (Test suites after the refactor:) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 44 222.89 Tm (Suite) Tj ET
+BT /F2 7.6 Tf 0.38 0.43 0.52 rg 1 0 0 1 131.8 222.89 Tm (Result) Tj ET
+q 0.82 0.85 0.89 RG 0.7 w 44 217.89 m 551.28 217.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 207.89 Tm (Django) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 207.89 Tm (39 passed) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 196.39 m 551.28 196.39 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 194.39 Tm (FastAPI) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 194.39 Tm (105 passed) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 182.89 m 551.28 182.89 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 180.89 Tm (Simulator) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 180.89 Tm (96 passed) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 169.39 m 551.28 169.39 l S Q
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 167.39 Tm (Frontend) Tj ET
+BT /F1 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 131.8 167.39 Tm (tsc -b --noEmit, ESLint and vite build pass) Tj ET
+q 0.92 0.94 0.97 RG 0.4 w 44 155.89 m 551.28 155.89 l S Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 145.89 Tm (The original FastAPI suite had one pre-existing failure caused by .env leaking into a subprocess; that test is) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 133.29 Tm (now hermetic and passes.) Tj ET
 q 0.82 0.85 0.89 RG 0.6 w 44 46 m 551.28 46 l S Q
 BT /F1 7 Tf 0.44 0.48 0.55 rg 1 0 0 1 44 34 Tm (AI-Based ECG Diagnostic Assistant - Restructured - page 5 of 6) Tj ET
 endstream
@@ -569,65 +574,73 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 15 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> >>
 endobj
 17 0 obj
-<< /Length 7159 >>
+<< /Length 8103 >>
 stream
 BT /F2 9.5 Tf 0.05 0.55 0.52 rg 1 0 0 1 44 811.89 Tm (AI-Based ECG Diagnostic Assistant) Tj ET
 BT /F2 8 Tf 0.38 0.43 0.52 rg 1 0 0 1 456.28 811.89 Tm (RESTRUCTURED) Tj ET
 q 0.82 0.85 0.89 RG 0.7 w 44 803.89 m 551.28 803.89 l S Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 785.89 Tm (Added: GET/POST /api/sessions/<id>/analysis, GET /api/sessions/<id>/reports, POST/GET) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 773.29 Tm (/api/sessions/<id>/report, GET /api/reports/<id>/download, GET /api/patients/duplicates/, GET) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 760.69 Tm (/api/patients/<id>/sessions, FastAPI POST/GET /sessions/<id>/analysis, GET /sessions/<id>/analysis/live, GET) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 748.09 Tm (/internal/sessions/<id>/ecg.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 731.49 Tm (Unchanged: every simulator and ESP32 ingestion endpoint and payload, device tokens, the WebSocket frame shape) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 718.89 Tm (for readings and ECG chunk announcements, duplicate/idempotency behavior.) Tj ET
-q 0.05 0.55 0.52 rg 44 683.29 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 685.29 Tm (9. Manual test steps) Tj ET
-q 0.96 0.97 0.99 rg 0.82 0.85 0.89 RG 0.7 w 44 536.29 507.28 138 re B Q
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 662.29 Tm (cd backend/django) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 651.79 Tm (python manage.py migrate) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 641.29 Tm (python manage.py seed_demo) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 630.79 Tm (python manage.py runserver 127.0.0.1:8000) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 620.29 Tm () Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 609.79 Tm (cd backend/fastapi) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 599.29 Tm (python -m alembic upgrade head) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 588.79 Tm (python -m uvicorn app.main:app --host 127.0.0.1 --port 8001) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 578.29 Tm () Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 567.79 Tm (cd frontend) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 557.29 Tm (npm install) Tj ET
-BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 546.79 Tm (npm run dev) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 526.29 Tm (Sign in as operator / demo12345, open Patients, register or select a patient, start a recording, run the) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 513.69 Tm (simulator with the device token and session id, watch the monitor, stop, review analysis and download the PDF.) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 501.09 Tm (Repeat with the same patient to confirm history reuse. Use a flat or short signal to confirm measurements are) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 488.49 Tm (withheld with reasons.) Tj ET
-q 0.05 0.55 0.52 rg 44 452.89 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 454.89 Tm (10. Remaining limitations) Tj ET
-q 0.05 0.55 0.52 rg 48.5 444.89 m 48.5 445.72 47.83 446.39 47 446.39 c 46.17 446.39 45.5 445.72 45.5 444.89 c 45.5 444.06 46.17 443.39 47 443.39 c 47.83 443.39 48.5 444.06 48.5 444.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 441.89 Tm (No validated AI model is bundled; AI is unavailable by design until one is configured and independently) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 429.29 Tm (validated.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 417.69 m 48.5 418.52 47.83 419.19 47 419.19 c 46.17 419.19 45.5 418.52 45.5 417.69 c 45.5 416.86 46.17 416.19 47 416.19 c 47.83 416.19 48.5 416.86 48.5 417.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 414.69 Tm (All authenticated operators can see all patients. A future multi-clinic deployment needs an explicit) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 402.09 Tm (organisation/tenant scope.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 390.49 m 48.5 391.32 47.83 391.99 47 391.99 c 46.17 391.99 45.5 391.32 45.5 390.49 c 45.5 389.66 46.17 388.99 47 388.99 c 47.83 388.99 48.5 389.66 48.5 390.49 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 387.49 Tm (Analysis is synchronous in the request; a long recording would benefit from a queue/worker.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 375.89 m 48.5 376.72 47.83 377.39 47 377.39 c 46.17 377.39 45.5 376.72 45.5 375.89 c 45.5 375.06 46.17 374.39 47 374.39 c 47.83 374.39 48.5 375.06 48.5 375.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 372.89 Tm (WebSocket fan-out is in-process; multiple FastAPI replicas need Redis pub/sub.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 361.29 m 48.5 362.12 47.83 362.79 47 362.79 c 46.17 362.79 45.5 362.12 45.5 361.29 c 45.5 360.46 46.17 359.79 47 359.79 c 47.83 359.79 48.5 360.46 48.5 361.29 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 358.29 Tm (Chunk and reading listings are unpaginated.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 346.69 m 48.5 347.52 47.83 348.19 47 348.19 c 46.17 348.19 45.5 347.52 45.5 346.69 c 45.5 345.86 46.17 345.19 47 345.19 c 47.83 345.19 48.5 345.86 48.5 346.69 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 343.69 Tm (The PDF is vector and readable but intentionally simple; it is not a regulatory-format clinical report.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 332.09 m 48.5 332.92 47.83 333.59 47 333.59 c 46.17 333.59 45.5 332.92 45.5 332.09 c 45.5 331.26 46.17 330.59 47 330.59 c 47.83 330.59 48.5 331.26 48.5 332.09 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 329.09 Tm (A token is stored in local storage and the WebSocket query string, as before; one-time socket tickets and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 316.49 Tm (httpOnly cookies remain hardening work.) Tj ET
-q 0.05 0.55 0.52 rg 48.5 304.89 m 48.5 305.72 47.83 306.39 47 306.39 c 46.17 306.39 45.5 305.72 45.5 304.89 c 45.5 304.06 46.17 303.39 47 303.39 c 47.83 303.39 48.5 304.06 48.5 304.89 c f Q
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 301.89 Tm (Some obsolete CSS selectors from the removed admin screens remain in index.css; they are not referenced by) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 289.29 Tm (any route or component.) Tj ET
-q 0.05 0.55 0.52 rg 44 255.69 3 13 re f Q
-BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 257.69 Tm (11. Conclusion) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 244.69 Tm (The application is now an ECG screening workflow rather than a hospital dashboard. The patient record is) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 232.09 Tm (permanent and independent of login, historical recordings and reports are reachable on later visits, the) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 219.49 Tm (simulator still works with the original contract, DSP output is measured rather than invented, AI absence is) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 206.89 Tm (explicit, and the PDF is generated from the stored result. The remaining work is model validation and) Tj ET
-BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 194.29 Tm (operational hardening, not a missing workflow.) Tj ET
+q 0.05 0.55 0.52 rg 44 766.89 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 768.89 Tm (8. API changes) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 755.89 Tm (Removed: GET /api/doctors/, PUT /api/patients/<id>/doctors/, doctor assignment fields, patient-account) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 743.29 Tm (creation semantics and role-gated session/device rules. Patient creation is now registry creation with an) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 730.69 Tm (optional confirm_duplicate.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 714.09 Tm (Changed: user token roles {operator, admin}; legacy patient/doctor tokens are rejected and require a new) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 701.49 Tm (login; known_sessions.doctor_ids removed; all authenticated operators share the clinic's) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 688.89 Tm (patient/device/session scope.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 672.29 Tm (Added: GET/POST /api/sessions/<id>/analysis, GET /api/sessions/<id>/reports, POST/GET) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 659.69 Tm (/api/sessions/<id>/report, GET /api/reports/<id>/download, GET /api/patients/duplicates/, GET) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 647.09 Tm (/api/patients/<id>/sessions, FastAPI POST/GET /sessions/<id>/analysis, GET /sessions/<id>/analysis/live, GET) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 634.49 Tm (/internal/sessions/<id>/ecg.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 617.89 Tm (Unchanged: every simulator and ESP32 ingestion endpoint and payload, device tokens, the WebSocket frame shape) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 605.29 Tm (for readings and ECG chunk announcements, duplicate/idempotency behavior.) Tj ET
+q 0.05 0.55 0.52 rg 44 569.69 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 571.69 Tm (9. Manual test steps) Tj ET
+q 0.96 0.97 0.99 rg 0.82 0.85 0.89 RG 0.7 w 44 422.69 507.28 138 re B Q
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 548.69 Tm (cd backend/django) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 538.19 Tm (python manage.py migrate) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 527.69 Tm (python manage.py seed_demo) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 517.19 Tm (python manage.py runserver 127.0.0.1:8000) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 506.69 Tm () Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 496.19 Tm (cd backend/fastapi) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 485.69 Tm (python -m alembic upgrade head) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 475.19 Tm (python -m uvicorn app.main:app --host 127.0.0.1 --port 8001) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 464.69 Tm () Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 454.19 Tm (cd frontend) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 443.69 Tm (npm install) Tj ET
+BT /F3 7.4 Tf 0.09 0.12 0.18 rg 1 0 0 1 52 433.19 Tm (npm run dev) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 412.69 Tm (Sign in as operator / demo12345, open Patients, register or select a patient, start a recording, run the) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 400.09 Tm (simulator with the device token and session id, watch the monitor, stop, review analysis and download the PDF.) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 387.49 Tm (Repeat with the same patient to confirm history reuse. Use a flat or short signal to confirm measurements are) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 374.89 Tm (withheld with reasons.) Tj ET
+q 0.05 0.55 0.52 rg 44 339.29 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 341.29 Tm (10. Remaining limitations) Tj ET
+q 0.05 0.55 0.52 rg 48.5 331.29 m 48.5 332.12 47.83 332.79 47 332.79 c 46.17 332.79 45.5 332.12 45.5 331.29 c 45.5 330.46 46.17 329.79 47 329.79 c 47.83 329.79 48.5 330.46 48.5 331.29 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 328.29 Tm (No validated AI model is bundled; AI is unavailable by design until one is configured and independently) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 315.69 Tm (validated.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 304.09 m 48.5 304.92 47.83 305.59 47 305.59 c 46.17 305.59 45.5 304.92 45.5 304.09 c 45.5 303.26 46.17 302.59 47 302.59 c 47.83 302.59 48.5 303.26 48.5 304.09 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 301.09 Tm (All authenticated operators can see all patients. A future multi-clinic deployment needs an explicit) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 288.49 Tm (organisation/tenant scope.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 276.89 m 48.5 277.72 47.83 278.39 47 278.39 c 46.17 278.39 45.5 277.72 45.5 276.89 c 45.5 276.06 46.17 275.39 47 275.39 c 47.83 275.39 48.5 276.06 48.5 276.89 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 273.89 Tm (Analysis is synchronous in the request; a long recording would benefit from a queue/worker.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 262.29 m 48.5 263.12 47.83 263.79 47 263.79 c 46.17 263.79 45.5 263.12 45.5 262.29 c 45.5 261.46 46.17 260.79 47 260.79 c 47.83 260.79 48.5 261.46 48.5 262.29 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 259.29 Tm (WebSocket fan-out is in-process; multiple FastAPI replicas need Redis pub/sub.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 247.69 m 48.5 248.52 47.83 249.19 47 249.19 c 46.17 249.19 45.5 248.52 45.5 247.69 c 45.5 246.86 46.17 246.19 47 246.19 c 47.83 246.19 48.5 246.86 48.5 247.69 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 244.69 Tm (Chunk and reading listings are unpaginated.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 233.09 m 48.5 233.92 47.83 234.59 47 234.59 c 46.17 234.59 45.5 233.92 45.5 233.09 c 45.5 232.26 46.17 231.59 47 231.59 c 47.83 231.59 48.5 232.26 48.5 233.09 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 230.09 Tm (The PDF is vector and readable but intentionally simple; it is not a regulatory-format clinical report.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 218.49 m 48.5 219.32 47.83 219.99 47 219.99 c 46.17 219.99 45.5 219.32 45.5 218.49 c 45.5 217.66 46.17 216.99 47 216.99 c 47.83 216.99 48.5 217.66 48.5 218.49 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 215.49 Tm (A token is stored in local storage and the WebSocket query string, as before; one-time socket tickets and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 202.89 Tm (httpOnly cookies remain hardening work.) Tj ET
+q 0.05 0.55 0.52 rg 48.5 191.29 m 48.5 192.12 47.83 192.79 47 192.79 c 46.17 192.79 45.5 192.12 45.5 191.29 c 45.5 190.46 46.17 189.79 47 189.79 c 47.83 189.79 48.5 190.46 48.5 191.29 c f Q
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 188.29 Tm (Some obsolete CSS selectors from the removed admin screens remain in index.css; they are not referenced by) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 55 175.69 Tm (any route or component.) Tj ET
+q 0.05 0.55 0.52 rg 44 142.09 3 13 re f Q
+BT /F2 13.5 Tf 0.09 0.12 0.18 rg 1 0 0 1 54 144.09 Tm (11. Conclusion) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 131.09 Tm (The application is now an ECG screening workflow rather than a hospital dashboard. The patient record is) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 118.49 Tm (permanent and independent of login, historical recordings and reports are reachable on later visits, the) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 105.89 Tm (simulator still works with the original contract, DSP output is measured rather than invented, AI absence is) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 93.29 Tm (explicit, and the PDF is generated from the stored result. The remaining work is model validation and) Tj ET
+BT /F1 9.2 Tf 0.09 0.12 0.18 rg 1 0 0 1 44 80.69 Tm (operational hardening, not a missing workflow.) Tj ET
 q 0.82 0.85 0.89 RG 0.6 w 44 46 m 551.28 46 l S Q
 BT /F1 7 Tf 0.44 0.48 0.55 rg 1 0 0 1 44 34 Tm (AI-Based ECG Diagnostic Assistant - Restructured - page 6 of 6) Tj ET
 endstream
@@ -649,15 +662,15 @@ xref
 0000008693 00000 n 
 0000024827 00000 n 
 0000024980 00000 n 
-0000036275 00000 n 
-0000036429 00000 n 
-0000045925 00000 n 
-0000046079 00000 n 
-0000055656 00000 n 
-0000055810 00000 n 
-0000063022 00000 n 
+0000036846 00000 n 
+0000037000 00000 n 
+0000046273 00000 n 
+0000046427 00000 n 
+0000056038 00000 n 
+0000056192 00000 n 
+0000064348 00000 n 
 trailer
 << /Size 19 /Root 1 0 R /Info 6 0 R >>
 startxref
-63176
+64502
 %%EOF
