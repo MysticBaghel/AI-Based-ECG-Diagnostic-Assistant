@@ -1,10 +1,28 @@
 import { Link } from 'react-router-dom'
 
-import type { Session } from '../api/types'
+import type { AnalysisState, Session } from '../api/types'
 import { useNow } from '../hooks/useNow'
 import { elapsedSeconds, formatDateTime, formatDuration } from '../lib/format'
 import { Icon } from './Icon'
-import { SessionBadge } from './ui'
+import { Badge, SessionBadge, type Tone } from './ui'
+
+const ANALYSIS_META: Record<AnalysisState, { tone: Tone; label: string }> = {
+  not_run: { tone: 'neutral', label: 'not run' },
+  pending: { tone: 'info', label: 'pending' },
+  completed: { tone: 'ok', label: 'analysis ready' },
+  unusable: { tone: 'warn', label: 'signal unusable' },
+  failed: { tone: 'bad', label: 'analysis failed' },
+  unavailable: { tone: 'warn', label: 'unavailable' },
+}
+
+export function AnalysisBadge({ status }: { status: AnalysisState }) {
+  const meta = ANALYSIS_META[status] ?? ANALYSIS_META.not_run
+  return (
+    <Badge tone={meta.tone} dot={false}>
+      {meta.label}
+    </Badge>
+  )
+}
 
 export function SessionTable({ sessions }: { sessions: Session[] }) {
   const now = useNow(1000)
@@ -15,10 +33,11 @@ export function SessionTable({ sessions }: { sessions: Session[] }) {
         <thead>
           <tr>
             <th>Patient</th>
-            <th>Device</th>
             <th>Started</th>
             <th>Duration</th>
-            <th>Status</th>
+            <th>Recording</th>
+            <th>Analysis</th>
+            <th>Report</th>
             <th aria-label="Open" />
           </tr>
         </thead>
@@ -26,15 +45,15 @@ export function SessionTable({ sessions }: { sessions: Session[] }) {
           {sessions.map((session) => {
             const active = session.status === 'active'
             const duration = elapsedSeconds(session.start_time, session.end_time)
-            // `now` is referenced so the duration re-renders every second.
             void now
             return (
               <tr key={session.id}>
                 <td>
                   <div className="table__primary">{session.patient_name}</div>
-                  <div className="table__secondary mono">{session.id.slice(0, 8)}</div>
+                  <div className="table__secondary mono">
+                    {session.patient_code} · {session.device_name}
+                  </div>
                 </td>
-                <td>{session.device_name}</td>
                 <td>{formatDateTime(session.start_time)}</td>
                 <td>
                   {formatDuration(duration)}
@@ -43,12 +62,24 @@ export function SessionTable({ sessions }: { sessions: Session[] }) {
                 <td>
                   <SessionBadge status={session.status} />
                 </td>
+                <td>
+                  <AnalysisBadge status={session.analysis_status} />
+                </td>
+                <td>
+                  {session.report_count > 0 ? (
+                    <Badge tone="ok" dot={false}>
+                      {session.report_count} PDF
+                    </Badge>
+                  ) : (
+                    <span className="muted small">—</span>
+                  )}
+                </td>
                 <td className="table__action">
                   <Link
-                    to={active ? `/live/${session.id}` : `/sessions/${session.id}`}
+                    to={active ? `/monitor/${session.id}` : `/sessions/${session.id}`}
                     className="button button--ghost button--sm"
                   >
-                    {active ? 'Watch live' : 'Recording'}
+                    {active ? 'Open monitor' : 'Open analysis'}
                     <Icon name="chevron-right" size={14} />
                   </Link>
                 </td>
@@ -62,37 +93,37 @@ export function SessionTable({ sessions }: { sessions: Session[] }) {
 }
 
 export function SessionCards({ sessions }: { sessions: Session[] }) {
-  const now = useNow(1000)
-
   return (
     <div className="session-cards">
       {sessions.map((session) => {
         const active = session.status === 'active'
-        const duration = elapsedSeconds(session.start_time, session.end_time)
-        void now
         return (
           <Link
             key={session.id}
-            to={active ? `/live/${session.id}` : `/sessions/${session.id}`}
+            to={active ? `/monitor/${session.id}` : `/sessions/${session.id}`}
             className={`session-card${active ? ' session-card--active' : ''}`}
           >
             <div className="session-card__top">
-              <span className="avatar avatar--sm">{session.patient_name.slice(0, 2)}</span>
+              <span className="avatar avatar--sm">
+                {session.patient_name.slice(0, 2).toUpperCase()}
+              </span>
               <span>
                 <strong>{session.patient_name}</strong>
-                <small>{session.device_name}</small>
+                <small>
+                  {session.patient_code} · {session.device_name}
+                </small>
               </span>
               <SessionBadge status={session.status} />
             </div>
             <div className="session-card__meta">
               <span>
                 <Icon name="clock" size={14} />
-                {formatDuration(duration)}
+                {formatDateTime(session.start_time)}
               </span>
-              <span>{formatDateTime(session.start_time)}</span>
+              <span>{session.analysis_status.replace('_', ' ')}</span>
             </div>
             <span className="session-card__cta">
-              {active ? 'Watch live' : 'Open recording'}
+              {active ? 'Open live monitor' : 'Open analysis & report'}
               <Icon name="chevron-right" size={15} />
             </span>
           </Link>

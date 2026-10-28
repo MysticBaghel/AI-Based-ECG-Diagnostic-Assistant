@@ -1,20 +1,15 @@
 """Smoke-test helper: mint a NEW session plus the tokens the smoke test needs.
 
-This is the Phase 3 sibling of `mint.py`. The difference is one line: Phase 2's
-`mint.py` reuses the device's existing active session, which is right for a
-repeatable "does ingestion work" check. Phase 3 counts rows per session, so it
-needs a session that nothing else has ever written to - otherwise a re-send
-looks like a duplicate because of an *earlier run* rather than because of the
-retry being tested.
-
-It prints the same `KEY=VALUE` lines as `mint.py`:
+It prints the same `KEY=VALUE` lines the Phase 3 script always did:
 
 * DEVICE_TOKEN - a real device JWT signed by Django (tokens are per device)
 * SESSION_ID   - the brand new, active session
 * USER_TOKEN   - an admin access token, for `/internal/sessions` and reads
-* PATIENT_ID, DEVICE_ID
+* PATIENT_ID   - the internal patient key stored on the session
+* PATIENT_CODE - the permanent patient ID printed on reports
+* DEVICE_ID
 
-Run it exactly like the other one:
+Run it:
 
     python backend/django/scripts/mint_new_run.py [output-file]
     $env:MINT_OUT=".smoke/mint.txt" ; python backend/django/scripts/mint_new_run.py
@@ -36,14 +31,13 @@ device = world["device"]
 # run's counts simply do not include them.
 closed = close_active_sessions(device)
 
-# A new session every time, so the row counts in the smoke test belong to this
-# run and nothing else.
-session = new_session(device, world["patient_profile"], world["doctor"])
+session = new_session(device, world["patient"], world["operator"])
 
 print("DEVICE_TOKEN=" + device_token(device))
 print("SESSION_ID=" + str(session.id))
 print("USER_TOKEN=" + admin_token(world["admin"]))
 print("PATIENT_ID=" + str(world["patient"].id))
+print("PATIENT_CODE=" + world["patient"].patient_id)
 print("DEVICE_ID=" + str(device.id))
 print("SESSION_CREATED_NEW=1")
 if closed:

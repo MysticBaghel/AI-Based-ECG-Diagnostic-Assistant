@@ -1,302 +1,343 @@
-import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
+import { api, telemetry } from '../api/client'
+import type { Patient, Session } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { Icon } from '../components/Icon'
-import { SessionCards, SessionTable } from '../components/SessionList'
+import { PatientForm } from '../components/PatientForm'
+import { SessionTable } from '../components/SessionList'
+import { StartSessionDialog } from '../components/StartSessionDialog'
 import {
   Badge,
   EmptyState,
   ErrorBanner,
+  Notice,
   PageHeader,
   SectionCard,
   Spinner,
   StatCard,
 } from '../components/ui'
 import { useDeviceStatus, useDevices, usePatients, useSessions } from '../hooks/useData'
+import { useResource } from '../hooks/useResource'
+import { formatRelative, initials } from '../lib/format'
 
-function ProviderDashboard() {
-  const patients = usePatients()
-  const devices = useDevices()
-  const sessions = useSessions()
-  const status = useDeviceStatus()
-
-  const allSessions = sessions.data ?? []
-  const active = allSessions.filter((session) => session.status === 'active')
-  const online = (status.data?.devices ?? []).filter((device) => device.online).length
-  const loading = patients.loading && devices.loading && sessions.loading
+function PatientSearch({
+  onSelect,
+  onRegister,
+}: {
+  onSelect: (patient: Patient) => void
+  onRegister: () => void
+}) {
+  const [query, setQuery] = useState('')
+  const patients = usePatients(query, query.trim().length > 0)
+  const results = (patients.data ?? []).slice(0, 6)
 
   return (
-    <>
-      <PageHeader
-        eyebrow="Phase 4 · screening dashboard"
-        title="Monitoring overview"
-        description="Start a session, watch the live waveform, then find the recording in history. Every number here is telemetry, not a diagnosis."
-        actions={
-          <Link to="/patients" className="button button--primary">
-            <Icon name="plus" size={16} />
-            Start a session
-          </Link>
-        }
-      />
+    <div className="search-panel">
+      <div className="toolbar">
+        <label className="search search--grow">
+          <Icon name="search" size={16} />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Find a patient by name, phone number or patient ID…"
+            aria-label="Search patients for a new recording"
+          />
+        </label>
+        <button type="button" className="button button--ghost" onClick={onRegister}>
+          <Icon name="plus" size={15} />
+          New patient
+        </button>
+      </div>
 
-      {(patients.error || devices.error || sessions.error) && (
-        <ErrorBanner
-          message={patients.error ?? devices.error ?? sessions.error ?? ''}
-          onRetry={() => {
-            patients.refresh()
-            devices.refresh()
-            sessions.refresh()
-          }}
-        />
-      )}
-
-      {loading ? (
-        <Spinner label="Loading the monitoring overview…" />
-      ) : (
-        <>
-          <div className="stats">
-            <StatCard
-              icon="sessions"
-              label="Active sessions"
-              value={active.length}
-              hint={`${allSessions.length} total`}
-              tone={active.length > 0 ? 'ok' : 'neutral'}
-            />
-            <StatCard
-              icon="users"
-              label="Patients in view"
-              value={patients.data?.length ?? 0}
-              hint="role-scoped"
-            />
-            <StatCard
-              icon="devices"
-              label="Devices"
-              value={devices.data?.length ?? 0}
-              hint="registered in Django"
-            />
-            <StatCard
-              icon="wifi"
-              label="Devices online"
-              value={online}
-              hint={`heartbeat ≤ ${status.data?.threshold_seconds ?? 120}s`}
-              tone={online > 0 ? 'ok' : 'warn'}
-            />
-          </div>
-
-          <div className="dashboard-grid">
-            <SectionCard
-              title="Live now"
-              subtitle="Sessions currently accepting telemetry"
-              actions={
-                <Link to="/live" className="button button--ghost button--sm">
-                  All live views
+      {query.trim() && (
+        <div className="search-results">
+          {patients.loading ? (
+            <Spinner label="Searching…" />
+          ) : patients.error ? (
+            <ErrorBanner message={patients.error} onRetry={patients.refresh} />
+          ) : results.length === 0 ? (
+            <div className="search-empty">
+              <span>No patient matches “{query}”.</span>
+              <button type="button" className="button button--primary button--sm" onClick={onRegister}>
+                Register this patient
+              </button>
+            </div>
+          ) : (
+            results.map((patient) => (
+              <button
+                type="button"
+                key={patient.id}
+                className="search-result"
+                onClick={() => onSelect(patient)}
+              >
+                <span className="avatar avatar--sm">{initials(patient.full_name)}</span>
+                <span className="search-result__identity">
+                  <strong>{patient.full_name}</strong>
+                  <small>
+                    {patient.patient_id} · {patient.phone || 'no phone'} ·{' '}
+                    {patient.session_count} session{patient.session_count === 1 ? '' : 's'}
+                  </small>
+                </span>
+                <span className="search-result__cta">
+                  Start recording
                   <Icon name="chevron-right" size={14} />
-                </Link>
-              }
-              flush
-            >
-              {active.length === 0 ? (
-                <EmptyState
-                  icon="pulse"
-                  title="No active session"
-                  description={
-                    <>
-                      Start a session for a patient, then run the simulator to send
-                      synthetic ECG and vitals. A session must be active before the device
-                      may upload.
-                    </>
-                  }
-                  action={
-                    <Link to="/patients" className="button button--primary">
-                      Choose a patient
-                    </Link>
-                  }
-                />
-              ) : (
-                <SessionTable sessions={active} />
-              )}
-            </SectionCard>
-
-            <SectionCard title="How the demo flows" subtitle="Three steps, no hardware">
-              <ol className="steps">
-                <li>
-                  <span className="steps__number">1</span>
-                  <div>
-                    <strong>Start a session</strong>
-                    <p>Django creates it and pushes it to FastAPI's session registry.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="steps__number">2</span>
-                  <div>
-                    <strong>Run the simulator</strong>
-                    <p>
-                      <code>python -m simulator --duration 60 --ecg</code> posts four
-                      vitals and 200 Hz ECG chunks with a device token.
-                    </p>
-                  </div>
-                </li>
-                <li>
-                  <span className="steps__number">3</span>
-                  <div>
-                    <strong>Watch, then revisit</strong>
-                    <p>
-                      The live monitor follows <code>/ws/sensor</code>; history reads the
-                      stored chunks back over REST.
-                    </p>
-                  </div>
-                </li>
-              </ol>
-            </SectionCard>
-          </div>
-
-          <SectionCard
-            title="Recent sessions"
-            subtitle="Newest first, scoped to the patients you may see"
-            actions={
-              <Link to="/sessions" className="button button--ghost button--sm">
-                Session history
-                <Icon name="chevron-right" size={14} />
-              </Link>
-            }
-            flush
-          >
-            {allSessions.length === 0 ? (
-              <EmptyState
-                icon="sessions"
-                title="No sessions yet"
-                description="Once you start a monitoring session it appears here, with a link to its recording."
-              />
-            ) : (
-              <SessionTable sessions={allSessions.slice(0, 6)} />
-            )}
-          </SectionCard>
-        </>
+                </span>
+              </button>
+            ))
+          )}
+        </div>
       )}
-    </>
+    </div>
   )
 }
 
-function PatientDashboard() {
+export function DashboardPage() {
+  const navigate = useNavigate()
   const { user } = useAuth()
-  const patients = usePatients()
   const sessions = useSessions()
+  const devices = useDevices()
   const status = useDeviceStatus()
+  const service = useResource('dashboard-services', async () => {
+    const [django, fastapi] = await Promise.allSettled([api.health(), telemetry.health()])
+    return {
+      django: django.status === 'fulfilled',
+      fastapi: fastapi.status === 'fulfilled',
+      analysis: fastapi.status === 'fulfilled' ? fastapi.value.analysis : undefined,
+    }
+  }, { pollMs: 30_000 })
 
-  const allSessions = sessions.data ?? []
+  const [selected, setSelected] = useState<Patient | null>(null)
+  const [registering, setRegistering] = useState(false)
+
+  const allSessions = useMemo(() => sessions.data ?? [], [sessions.data])
   const active = allSessions.filter((session) => session.status === 'active')
+  const analysed = allSessions.filter(
+    (session) => session.analysis_status === 'completed',
+  ).length
+  const reports = allSessions.reduce((sum, session) => sum + session.report_count, 0)
   const online = (status.data?.devices ?? []).filter((device) => device.online).length
-  const profile = patients.data?.find((patient) => patient.user === user?.id)
+
+  const ai = service.data?.analysis
+  const recent = useMemo(() => allSessions.slice(0, 6), [allSessions])
+  const loading = sessions.loading && devices.loading
+
+  function openPatient(patient: Patient) {
+    setSelected(patient)
+  }
+
+  function started(session: Session) {
+    setSelected(null)
+    navigate(`/monitor/${session.id}`)
+  }
 
   return (
     <>
       <PageHeader
-        eyebrow="Phase 4 · screening dashboard"
-        title={`Hello, ${user?.username ?? 'there'}`}
-        description="Your monitoring sessions, live vitals and past recordings. This is a screening aid, not a medical diagnosis."
+        eyebrow={`Signed in as ${user?.username ?? 'operator'}`}
+        title="ECG dashboard"
+        description="Find or register a patient, start a recording, and keep every waveform, analysis and report attached to that patient's permanent ID."
+        actions={
+          <button type="button" className="button button--primary" onClick={() => setRegistering(true)}>
+            <Icon name="plus" size={16} />
+            Register patient
+          </button>
+        }
       />
 
-      {(patients.error || sessions.error) && (
+      {(sessions.error || devices.error || status.error) && (
         <ErrorBanner
-          message={patients.error ?? sessions.error ?? ''}
+          message={sessions.error ?? devices.error ?? status.error ?? ''}
           onRetry={() => {
-            patients.refresh()
             sessions.refresh()
+            devices.refresh()
+            status.refresh()
           }}
         />
       )}
 
       <div className="stats">
         <StatCard
-          icon="sessions"
-          label="Your active sessions"
+          icon="pulse"
+          label="Active recordings"
           value={active.length}
-          hint={`${allSessions.length} total`}
+          hint={`${allSessions.length} in history`}
           tone={active.length > 0 ? 'ok' : 'neutral'}
         />
         <StatCard
-          icon="devices"
+          icon="sessions"
+          label="Analysed recordings"
+          value={analysed}
+          hint="DSP completed"
+          tone={analysed > 0 ? 'ok' : 'neutral'}
+        />
+        <StatCard icon="shield" label="Reports generated" value={reports} hint="stored PDFs" />
+        <StatCard
+          icon="wifi"
           label="Devices online"
           value={online}
-          hint="on your sessions"
+          hint={`of ${devices.data?.length ?? 0} registered`}
           tone={online > 0 ? 'ok' : 'warn'}
-        />
-        <StatCard
-          icon="shield"
-          label="Access"
-          value="Read-only"
-          hint="patients cannot start or stop sessions"
         />
       </div>
 
       <div className="dashboard-grid">
         <SectionCard
-          title="Live now"
-          subtitle="A session your care team started"
-          flush
+          title="Start a new recording"
+          subtitle="Select an existing patient or register a new one"
         >
-          {active.length === 0 ? (
-            <EmptyState
-              icon="pulse"
-              title="Nothing is streaming right now"
-              description="When your care team starts a session and the device connects, it will appear here."
-            />
-          ) : (
-            <SessionCards sessions={active} />
+          <PatientSearch onSelect={openPatient} onRegister={() => setRegistering(true)} />
+          {active.length > 0 && (
+            <div className="active-strip">
+              <Badge tone="ok" pulse>
+                {active.length} recording{active.length === 1 ? '' : 's'} active
+              </Badge>
+              <Link to={`/monitor/${active[0].id}`} className="button button--ghost button--sm">
+                Open {active[0].patient_name}
+                <Icon name="chevron-right" size={14} />
+              </Link>
+            </div>
           )}
         </SectionCard>
 
-        <SectionCard title="Your profile" subtitle="Identity from Django">
-          {profile ? (
-            <div className="kv-list">
-              <div>
-                <span>Name</span>
-                <strong>{profile.username}</strong>
-              </div>
-              <div>
-                <span>Email</span>
-                <strong>{profile.email || '—'}</strong>
-              </div>
-              <div>
-                <span>Date of birth</span>
-                <strong>{profile.date_of_birth ?? '—'}</strong>
-              </div>
-              <div>
-                <span>Notes</span>
-                <strong>{profile.notes || '—'}</strong>
-              </div>
+        <SectionCard title="System status" subtitle="Backends and analysis capability">
+          <div className="kv-list">
+            <div>
+              <span>Django API</span>
+              <strong>{service.data?.django ? 'up' : 'down'}</strong>
             </div>
-          ) : (
-            <Spinner label="Loading profile…" />
+            <div>
+              <span>FastAPI telemetry</span>
+              <strong>{service.data?.fastapi ? 'up' : 'down'}</strong>
+            </div>
+            <div>
+              <span>Signal processing</span>
+              <strong>{ai ? 'deterministic DSP available' : 'waiting for FastAPI'}</strong>
+            </div>
+            <div>
+              <span>AI classifier</span>
+              <strong>{ai?.inference_available ? 'validated model loaded' : 'not configured'}</strong>
+            </div>
+          </div>
+          {ai && !ai.inference_available && (
+            <Notice tone="warn" icon="alert">
+              <strong>AI analysis is unavailable.</strong> {ai.inference_reason} DSP
+              measurements are still produced and reports say this explicitly.
+            </Notice>
+          )}
+          {devices.data?.length === 0 && (
+            <Notice tone="info" icon="devices">
+              No device is registered yet. Register one in Settings before starting a
+              recording.
+            </Notice>
           )}
         </SectionCard>
       </div>
 
       <SectionCard
-        title="Your session history"
-        subtitle="Open a completed session to view its waveform"
+        title="Recordings"
+        subtitle="Newest first. Active sessions open the live monitor; completed ones open analysis and reports."
         actions={
-          <Badge tone="info" dot={false}>
-            {allSessions.length} sessions
-          </Badge>
+          <button
+            type="button"
+            className="button button--ghost button--sm"
+            onClick={() => sessions.refresh()}
+            disabled={sessions.refreshing}
+          >
+            <Icon name="refresh" size={14} />
+            {sessions.refreshing ? 'Refreshing…' : 'Refresh'}
+          </button>
         }
         flush
       >
-        {allSessions.length === 0 ? (
+        {loading ? (
+          <Spinner label="Loading recordings…" />
+        ) : allSessions.length === 0 ? (
           <EmptyState
-            icon="sessions"
-            title="No sessions yet"
-            description="Your care team starts sessions on your behalf."
+            icon="pulse"
+            title="No ECG recordings yet"
+            description="Find a patient above, start a recording, then run the simulator or connect the ESP32. The waveform and report will appear here."
           />
         ) : (
-          <SessionTable sessions={allSessions.slice(0, 8)} />
+          <SessionTable sessions={recent} />
         )}
       </SectionCard>
+
+      <div className="dashboard-grid dashboard-grid--narrow">
+        <SectionCard title="Device heartbeat" subtitle="Last connection reported by FastAPI">
+          {status.data?.devices.length ? (
+            <div className="kv-list">
+              {status.data.devices.slice(0, 5).map((device) => {
+                const registered = devices.data?.find((item) => item.id === device.device_id)
+                return (
+                  <div key={device.device_id}>
+                    <span>{registered?.name ?? device.device_id.slice(0, 8)}</span>
+                    <strong>
+                      {device.revoked
+                        ? 'revoked'
+                        : device.online
+                          ? 'online'
+                          : `offline · ${formatRelative(device.last_seen)}`}
+                    </strong>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <p className="muted small">
+              No heartbeat yet. A device appears after its first <code>/sensor/connect</code>.
+            </p>
+          )}
+        </SectionCard>
+
+        <SectionCard title="Simulator workflow" subtitle="No physical hardware required">
+          <ol className="steps">
+            <li>
+              <span className="steps__number">1</span>
+              <div>
+                <strong>Register a device</strong>
+                <p>Settings issues a device token once; copy it for the simulator.</p>
+              </div>
+            </li>
+            <li>
+              <span className="steps__number">2</span>
+              <div>
+                <strong>Start a recording</strong>
+                <p>Django creates the session and pushes it to FastAPI.</p>
+              </div>
+            </li>
+            <li>
+              <span className="steps__number">3</span>
+              <div>
+                <strong>Run the simulator, then analyse</strong>
+                <p>
+                  <code>python -m simulator --session-id … --device-token … --ecg</code>
+                </p>
+              </div>
+            </li>
+          </ol>
+        </SectionCard>
+      </div>
+
+      {selected && (
+        <StartSessionDialog
+          patient={selected}
+          devices={devices.data ?? []}
+          onClose={() => setSelected(null)}
+          onStarted={started}
+        />
+      )}
+
+      {registering && (
+        <PatientForm
+          onClose={() => setRegistering(false)}
+          onSaved={(patient) => {
+            setRegistering(false)
+            setSelected(patient)
+          }}
+        />
+      )}
     </>
   )
-}
-
-export function DashboardPage() {
-  const { user } = useAuth()
-  return user?.role === 'patient' ? <PatientDashboard /> : <ProviderDashboard />
 }

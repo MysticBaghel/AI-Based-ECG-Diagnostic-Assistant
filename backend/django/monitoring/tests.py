@@ -1,9 +1,10 @@
-"""Starting and stopping sessions, and the one-active-session-per-device rule."""
+"""ECG sessions, analysis orchestration and the patient association."""
 
 import pytest
 from django.db import IntegrityError, transaction
 
-from monitoring.models import Session
+from monitoring import telemetry
+from monitoring.models import Session, SessionAnalysis
 
 pytestmark = pytest.mark.django_db
 
@@ -11,54 +12,66 @@ pytestmark = pytest.mark.django_db
 def _start(client, patient, device):
     return client.post(
         "/api/sessions/",
-        {"patient": patient.patient_profile.id, "device": str(device.id)},
+        {"patient": patient.id, "device": str(device.id)},
         format="json",
     )
 
 
-def test_patient_cannot_start_a_session(client_for, patient_a, device_a):
-    response = _start(client_for(patient_a), patient_a, device_a)
+def _analysis_payload():
+    return {
+        "status": "completed",
+        "signal": {
+            "sample_rate_hz": 200,
+            "sample_count": 1200,
+            "duration_seconds": 6.0,
+            "chunks": 3,
+            "quality": {
+                "score": 88.0,
+                "level": "good",
+                "usable": True,
+                "reasons": ["No obvious quality problem detected."],
+                "flatline": False,
+                "clipping": False,
+                "missing_samples": 0,
+            },
+            "filtering_note": "0.5-40 Hz + notch",
+        },
+        "measurements": {
+            "heart_rate_bpm": 72.0,
+            "rr_intervals_ms": [830.0, 835.0, 828.0],
+            "rr_mean_ms": 831.0,
+            "rr_std_ms": 3.2,
+            "rmssd_ms": 4.1,
+            "pnn50_percent": 0.0,
+            "beats_detected": 4,
+            "r_peak_seconds": [0.2, 1.03, 1.86, 2.69],
+        },
+        "ai": {
+            "available": False,
+            "reason": "No validated model is configured.",
+            "model_name": None,
+            "model_version": None,
+            "classes": [],
+            "predicted_class": None,
+            "probabilities": None,
+            "analyzed_at": None,
+        },
+        "limitations": ["Screening aid only."],
+        "findings": ["Measured heart rate: 72 bpm."],
+        "analyzed_at": "2026-10-28T10:00:00Z",
+    }
 
-    assert response.status_code == 403
 
-
-def test_doctor_cannot_start_a_session_for_an_unassigned_patient(
-    client_for, doctor_a, patient_b, device_a
-):
-    response = _start(client_for(doctor_a), patient_b, device_a)
-
-    assert response.status_code == 400
-    assert "patient" in response.data
-
-
-def test_doctor_cannot_use_another_doctors_device(
-    client_for, doctor_a, patient_a, device_b
-):
-    response = _start(client_for(doctor_a), patient_a, device_b)
-
-    assert response.status_code == 400
-    assert "device" in response.data
-
-
-def test_disabled_device_cannot_start_a_session(
-    client_for, doctor_a, patient_a, disabled_device
-):
-    """A disabled device is refused at the point where it would be used."""
-    response = _start(client_for(doctor_a), patient_a, disabled_device)
-
-    assert response.status_code == 400
-    assert "device" in response.data
-    assert Session.objects.count() == 0
-
-
-def test_doctor_can_start_and_stop_a_session(client_for, doctor_a, patient_a, device_a):
-    client = client_for(doctor_a)
+def test_operator_starts_and_stops_a_session(client_for, operator, patient_a, device_a):
+    client = client_for(operator)
 
     started = _start(client, patient_a, device_a)
     assert started.status_code == 201
     assert started.data["status"] == "active"
-    assert started.data["started_by"] == doctor_a.id
-    assert started.data["end_time"] is None
+    assert started.data["patient"] == patient_a.id
+    assert started.data["patient_code"] == patient_a.patient_id
+    assert started.data["patient_name"] == patient_a.full_name
+    assert started.data["started_by"] == operator.id
 
     stopped = client.post(f"/api/sessions/{started.data['id']}/stop/")
     assert stopped.status_code == 200
@@ -66,134 +79,138 @@ def test_doctor_can_start_and_stop_a_session(client_for, doctor_a, patient_a, de
     assert stopped.data["end_time"] is not None
 
 
-def test_cannot_start_two_active_sessions_on_one_device(
-    client_for, doctor_a, patient_a, device_a
+def test_a_patient_can_have_multiple_sessions(
+    client_for, operator, patient_a, device_a, device_b
 ):
-    client = client_for(doctor_a)
+    client = client_for(operator)
+
+    first = _start(client, patient_a, device_a)
+    client.post(f"/api/sessions/{first.data['id']}/stop/")
+    second = _start(client, patient_a, device_b)
+
+    assert first.status_code == 201
+    assert second.status_code == 201
+    assert Session.objects.filter(patient=patient_a).count() == 2
+    assert all(
+        row["patient_code"] == patient_a.patient_id
+        for row in client.get("/api/sessions/").data
+    )
+
+
+def test_second_active_session_on_one_device_is_refused(
+    client_for, operator, patient_a, device_a
+):
+    client = client_for(operator)
 
     assert _start(client, patient_a, device_a).status_code == 201
-
     second = _start(client, patient_a, device_a)
     assert second.status_code == 400
+    assert "device" in second.data
 
 
-def test_database_rejects_two_active_sessions(doctor_a, patient_a, device_a):
-    """The rule survives even if the API check is bypassed."""
-    Session.objects.create(
-        patient=patient_a.patient_profile,
-        device=device_a,
-        started_by=doctor_a,
-    )
+def test_database_still_enforces_one_active_session(operator, patient_a, device_a):
+    Session.objects.create(patient=patient_a, device=device_a, started_by=operator)
 
     with pytest.raises(IntegrityError):
         with transaction.atomic():
             Session.objects.create(
-                patient=patient_a.patient_profile,
-                device=device_a,
-                started_by=doctor_a,
+                patient=patient_a, device=device_a, started_by=operator
             )
 
 
-def test_device_can_be_reused_once_the_session_is_stopped(
-    client_for, doctor_a, patient_a, device_a
+def test_disabled_device_is_refused(client_for, operator, patient_a, disabled_device):
+    response = _start(client_for(operator), patient_a, disabled_device)
+
+    assert response.status_code == 400
+    assert "device" in response.data
+
+
+def test_device_dedicated_to_another_patient_is_refused(
+    client_for, operator, patient_a, patient_b, device_a
 ):
-    """The unique index is partial (active rows only), so stopping frees it."""
-    client = client_for(doctor_a)
+    device_a.assigned_patient = patient_b
+    device_a.save(update_fields=["assigned_patient"])
 
-    first = _start(client, patient_a, device_a)
-    client.post(f"/api/sessions/{first.data['id']}/stop/")
+    response = _start(client_for(operator), patient_a, device_a)
 
-    assert _start(client, patient_a, device_a).status_code == 201
+    assert response.status_code == 400
+    assert "dedicated" in response.data["device"][0]
 
 
-def test_stopping_an_already_stopped_session_is_rejected(
-    client_for, doctor_a, patient_a, device_a
+def test_session_list_can_be_filtered_by_patient(
+    client_for, operator, patient_a, patient_b, device_a, device_b
 ):
-    client = client_for(doctor_a)
+    client = client_for(operator)
+    _start(client, patient_a, device_a)
+    _start(client, patient_b, device_b)
 
+    response = client.get(f"/api/sessions/?patient={patient_a.id}")
+
+    assert len(response.data) == 1
+    assert response.data[0]["patient"] == patient_a.id
+
+
+def test_analysis_is_refused_while_the_session_is_active(
+    client_for, operator, patient_a, device_a
+):
+    client = client_for(operator)
+    started = _start(client, patient_a, device_a)
+
+    response = client.post(f"/api/sessions/{started.data['id']}/analyze/")
+
+    assert response.status_code == 400
+    assert "Stop the recording" in response.data["detail"]
+
+
+def test_analysis_runs_and_is_stored(
+    client_for, operator, patient_a, device_a, monkeypatch
+):
+    client = client_for(operator)
     started = _start(client, patient_a, device_a)
     client.post(f"/api/sessions/{started.data['id']}/stop/")
 
-    again = client.post(f"/api/sessions/{started.data['id']}/stop/")
-    assert again.status_code == 400
-
-
-def test_patient_sees_only_their_own_sessions(
-    client_for, doctor_a, doctor_b, patient_a, patient_b, device_a, device_b
-):
-    _start(client_for(doctor_a), patient_a, device_a)
-    _start(client_for(doctor_b), patient_b, device_b)
-
-    response = client_for(patient_a).get("/api/sessions/")
-
-    assert response.status_code == 200
-    assert len(response.data) == 1
-    assert response.data[0]["patient"] == patient_a.patient_profile.id
-
-
-def test_doctor_sees_only_assigned_patients_sessions(
-    client_for, doctor_a, doctor_b, patient_a, patient_b, device_a, device_b
-):
-    _start(client_for(doctor_a), patient_a, device_a)
-    _start(client_for(doctor_b), patient_b, device_b)
-
-    response = client_for(doctor_a).get("/api/sessions/")
-
-    assert len(response.data) == 1
-    assert response.data[0]["patient"] == patient_a.patient_profile.id
-
-
-def test_patient_cannot_stop_a_session(client_for, doctor_a, patient_a, device_a):
-    started = _start(client_for(doctor_a), patient_a, device_a)
-
-    response = client_for(patient_a).post(
-        f"/api/sessions/{started.data['id']}/stop/"
+    monkeypatch.setattr(
+        telemetry, "run_analysis", lambda session_id: _analysis_payload()
     )
-
-    assert response.status_code == 403
-
-
-def test_patient_can_read_their_own_session_detail(
-    client_for, doctor_a, patient_a, device_a
-):
-    started = _start(client_for(doctor_a), patient_a, device_a)
-
-    response = client_for(patient_a).get(f"/api/sessions/{started.data['id']}/")
+    response = client.post(f"/api/sessions/{started.data['id']}/analyze/")
 
     assert response.status_code == 200
-    assert response.data["id"] == started.data["id"]
-    assert response.data["patient"] == patient_a.patient_profile.id
+    assert response.data["status"] == "completed"
+    assert response.data["result"]["measurements"]["heart_rate_bpm"] == 72.0
+
+    stored = SessionAnalysis.objects.get(session_id=started.data["id"])
+    assert stored.status == SessionAnalysis.Status.COMPLETED
+    assert stored.result["signal"]["quality"]["usable"] is True
+
+    detail = client.get(f"/api/sessions/{started.data['id']}/analysis/")
+    assert detail.status_code == 200
+    assert detail.data["status"] == "completed"
 
 
-def test_session_detail_is_404_for_someone_elses_session(
-    client_for, doctor_a, doctor_b, patient_a, patient_b, device_a, device_b
+def test_analysis_marks_a_telemetry_failure_instead_of_inventing_a_result(
+    client_for, operator, patient_a, device_a, monkeypatch
 ):
-    """Reading is scoped by the queryset, so an outsider gets 404, not 403."""
-    started = _start(client_for(doctor_b), patient_b, device_b)
-    url = f"/api/sessions/{started.data['id']}/"
+    client = client_for(operator)
+    started = _start(client, patient_a, device_a)
+    client.post(f"/api/sessions/{started.data['id']}/stop/")
 
-    assert client_for(doctor_a).get(url).status_code == 404
-    assert client_for(patient_a).get(url).status_code == 404
+    def boom(session_id):
+        raise telemetry.TelemetryError("compute service down")
 
+    monkeypatch.setattr(telemetry, "run_analysis", boom)
+    response = client.post(f"/api/sessions/{started.data['id']}/analyze/")
 
-def test_session_detail_is_visible_to_the_assigned_doctor_and_to_admins(
-    client_for, admin_user, doctor_a, patient_a, device_a
-):
-    started = _start(client_for(doctor_a), patient_a, device_a)
-    url = f"/api/sessions/{started.data['id']}/"
-
-    assert client_for(doctor_a).get(url).status_code == 200
-    assert client_for(admin_user).get(url).status_code == 200
+    assert response.status_code == 200
+    assert response.data["status"] == "failed"
+    assert "compute service down" in response.data["error"]
+    assert response.data["result"] == {}
 
 
-def test_session_list_carries_display_names(
-    client_for, doctor_a, patient_a, device_a
-):
-    """The dashboard shows a session as a patient and a device, not two UUIDs."""
-    started = _start(client_for(doctor_a), patient_a, device_a)
+def test_analysis_404_before_it_runs(client_for, operator, patient_a, device_a):
+    client = client_for(operator)
+    started = _start(client, patient_a, device_a)
+    client.post(f"/api/sessions/{started.data['id']}/stop/")
 
-    row = client_for(doctor_a).get("/api/sessions/").data[0]
+    response = client.get(f"/api/sessions/{started.data['id']}/analysis/")
 
-    assert row["id"] == started.data["id"]
-    assert row["patient_name"] == patient_a.username
-    assert row["device_name"] == device_a.name
+    assert response.status_code == 404

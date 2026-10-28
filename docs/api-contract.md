@@ -28,7 +28,7 @@ Contents:
 
 | Service | Role | Owns |
 | --- | --- | --- |
-| Django (`backend/django`) | identity + business data | users, roles, patients, doctors, devices, sessions, `JWT_SIGNING_KEY` |
+| Django (`backend/django`) | identity + business data | operators/admins, patient registry, devices, sessions, analysis snapshots, reports, `JWT_SIGNING_KEY` |
 | FastAPI (`backend/fastapi`) | telemetry + compute | sensor readings, ECG chunks, device connections, session registry, revocation list |
 
 FastAPI **never calls Django** on a request path. It holds the same
@@ -59,7 +59,7 @@ Two token audiences, two dependencies, and each rejects the other.
 | --- | --- | --- | --- |
 | `Authorization: Bearer <token>` | Django **device** token | `require_device` | `POST /sensor/connect`, `POST /sensor/data`, `POST /sensor/ecg` |
 | `Authorization: Bearer <token>` | Django **user access** token | `require_user` | `GET /sensor/status`, `GET /sessions/<id>/readings`, `GET /sessions/<id>/ecg/<chunk_index>`, `POST /internal/sessions` (admin only) |
-| `?token=<token>` (query string) | either, depending on the socket's role | `require_viewer_token` | `WS /ws/sensor` |
+| `?token=<token>` (query string) | either, depending on the socket's audience | `decode_viewer_token` | `WS /ws/sensor` |
 
 Verification is local and identical for both:
 
@@ -75,7 +75,7 @@ Claim requirements:
 | Token | Required claims | Rejected when |
 | --- | --- | --- |
 | Device | `type == "device"`, `device_id` (UUID), `owner_id` (int) | any missing/wrong, or `type == "access"` |
-| User access | `token_type == "access"`, `user_id` (int), `role` in `{patient, doctor, admin}` | any missing/wrong, or `token_type == "refresh"`, or a device token |
+| User access | `token_type == "access"`, `user_id` (int), `role` in `{operator, admin}` | any missing/wrong, or `token_type == "refresh"`, or a device token |
 
 A user token on a device endpoint returns **401**, and a device token on a user
 endpoint returns **401**; the messages differ (`Device token required` vs
@@ -109,16 +109,17 @@ PostgreSQL, one schema: **`telemetry`**. (`TELEMETRY_SCHEMA=""` switches to no
 schema so the test suite can run on SQLite; production always uses `telemetry`.)
 
 No foreign keys point at Django tables. `session_id` and `device_id` are plain
-`UUID` columns and `owner_id`/`patient_id`/`doctor_ids` are plain integers,
+`UUID` columns and `owner_id`/`patient_id` are plain integers,
 because the two services share an identifier space, not a database.
 
 | Table | Columns | Notes |
 | --- | --- | --- |
-| `known_sessions` | `session_id` UUID **PK**, `patient_id` int, `device_id` UUID, `doctor_ids` int[], `status` text, `registered_at`, `updated_at` | mirror of Django sessions, written by section 10 |
+| `known_sessions` | `session_id` UUID **PK**, `patient_id` int, `device_id` UUID, `status` text, `registered_at`, `updated_at` | mirror of Django sessions, written by section 10. `patient_id` is the internal key of the permanent patient record |
 | `device_connections` | `device_id` UUID **PK**, `owner_id` int, `last_seen` timestamptz, `firmware_version` text, `ip_address` text, `created_at` | one row per device, updated by `POST /sensor/connect` |
 | `sensor_readings` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `device_id` UUID, `sensor_type` text, `value` double, `unit` text, `recorded_at` timestamptz, `received_at` timestamptz | scalar readings; **unique** `(session_id, sensor_type, recorded_at)` |
 | `ecg_chunks` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `device_id` UUID, `start_time` timestamptz, `sample_rate_hz` int, `samples` JSON, `sample_count` int, `chunk_index` int, `received_at` | **one row per chunk**; **unique** `(session_id, chunk_index)` |
 | `revoked_devices` | `device_id` UUID **PK**, `reason` text, `revoked_at` timestamptz | section 11 |
+| `analysis_results` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `version` int, `status` text, `model_version` text, `analysis` JSON, `analyzed_at` timestamptz | versioned DSP + optional inference output; **unique** `(session_id, version)` |
 
 `device_id` on `sensor_readings`/`ecg_chunks` is copied from the verified token,
 never from the body: a device cannot write data attributed to another device.
@@ -162,9 +163,9 @@ Response `200`:
 
 ### `GET /sensor/status` — user token
 
-Heartbeat. One row per device the caller may see: a patient sees the devices on
-their own sessions, a doctor the devices on sessions of their assigned patients,
-an admin all of them.
+Heartbeat. The doctor/patient assignment model was removed, so every
+authenticated operator sees the device pool. All devices that have connected are
+included, whether or not they are on a session yet.
 
 Query parameters: `device_id` (optional UUID — narrows to one device).
 
@@ -261,8 +262,8 @@ Response `200`:
 ```
 
 An empty session returns `{"session_id": "…", "count": 0, "chunks": []}`. The
-viewer permission check is the same as the single-chunk read: patient on the
-session, assigned doctor, or admin.
+viewer permission check is the same as the single-chunk read: any authenticated
+operator or admin.
 
 ### `GET /sessions/<session_id>/ecg/<chunk_index>` — user token
 
@@ -276,7 +277,7 @@ Request:
 
 ```json
 {"session_id": "9b2e…", "patient_id": 4, "device_id": "3f1c…",
- "doctor_ids": [2], "status": "active"}
+ "status": "active"}
 ```
 
 Response `200`: `{"session_id": "9b2e…", "status": "active", "known": true}`.
@@ -286,14 +287,62 @@ Response `200`: `{"session_id": "9b2e…", "status": "active", "known": true}`.
 Adds the device to the revocation list (section 11). Response `200`:
 `{"device_id": "3f1c…", "revoked": true}`.
 
+## 5.1 Analysis endpoints
+
+These are additions to the original telemetry contract. They do not change any
+device or simulator payload.
+
+### `POST /sessions/<session_id>/analysis` — user token
+
+Runs DSP and, if a validated model is configured, inference. Refused with `409`
+while the session is `active`; stop the recording first. Each call stores a new
+versioned row in `analysis_results`.
+
+The response includes:
+
+```json
+{"session_id": "9b2e…", "analysis_version": 1, "status": "completed",
+ "signal": {"sample_rate_hz": 200, "sample_count": 2400,
+            "quality": {"score": 100.0, "level": "good", "usable": true,
+                        "reasons": ["No obvious quality problem detected."]}},
+ "measurements": {"heart_rate_bpm": 72.9, "rr_intervals_ms": [840.0],
+                  "rr_mean_ms": 823.6, "beats_detected": 15},
+ "ai": {"available": false,
+        "reason": "No validated ECG classification model is configured…",
+        "predicted_class": null, "probabilities": null},
+ "findings": ["…"], "limitations": ["…"]}
+```
+
+`status` is `completed` or `unusable`. Measurements are withheld when quality is
+insufficient. `ai.available` is `false` unless a model actually produced a
+prediction; `predicted_class` and `probabilities` are then `null`, never
+fabricated.
+
+### `GET /sessions/<session_id>/analysis` — user token
+
+Returns the latest stored analysis, `404` if none has run.
+
+### `GET /sessions/<session_id>/analysis/live` — user token
+
+Computes the same DSP measurements from the stored chunks **without persisting a
+version**. This is what the live monitor polls; it never creates a duplicate
+report.
+
+### `GET /internal/sessions/<session_id>/ecg` — admin token
+
+Returns every stored chunk and its samples in one response. Used only by
+Django's PDF report service; the browser still fetches chunks one at a time.
+
+---
+
 ## 6. WebSocket `/ws/sensor`
 
 ```
 ws://127.0.0.1:8001/ws/sensor?session_id=<uuid>&token=<jwt>
 ```
 
-The token may be a **user access token** (patient on the session, assigned
-doctor, or admin) or a **device token whose `device_id` is the session's
+The token may be a **user access token** (operator or admin) or a **device
+token whose `device_id` is the session's
 device** — so the simulator can watch what it is uploading.
 
 Handshake:
@@ -450,14 +499,15 @@ Cost and limits:
   only and small at demo scale, but a very long recording makes it grow linearly.
 * No retention policy: `sensor_readings` and `ecg_chunks` grow forever.
 * No per-token rate limiting; a runaway device can fill the tables.
-* The viewer access check uses the registry snapshot, so a doctor who is
-  assigned to a patient *after* the session started can see it only after the
-  next registry push.
-* `known_sessions.doctor_ids` reflects assignment at push time; reassignment
-  mid-session needs another push.
+* Viewer access is no longer computed from a per-session doctor list. Every
+  authenticated operator may read any session; the patient id is kept for
+  association and audit.
 * WebSocket fan-out is in-process only: two FastAPI replicas would each deliver
   live frames only to their own viewers. Redis pub/sub is the Phase 7 fix.
 * The token in the WebSocket query string is logged (section 3).
 * No `DELETE` for revocations.
-* No ECG waveform reconstruction, filtering or ML inference here — that is
-  Phase 5.
+* DSP runs synchronously inside the request. A very long recording can make the
+  analysis request slow; a queue/worker is the production shape.
+* No classification model is bundled. When `ECG_MODEL_PATH` is empty, the
+  analysis response explicitly says AI is unavailable and contains no class or
+  probability.

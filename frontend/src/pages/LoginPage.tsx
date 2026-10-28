@@ -6,9 +6,8 @@ import { useAuth } from '../auth/useAuth'
 import { Icon } from '../components/Icon'
 
 const DEMO_ACCOUNTS = [
-  { username: 'doctor1', role: 'Doctor', detail: 'assigned patients + devices' },
-  { username: 'patient1', role: 'Patient', detail: 'own sessions, read-only' },
-  { username: 'admin', role: 'Admin', detail: 'everything' },
+  { username: 'operator', role: 'Operator', detail: 'register patients & record ECG' },
+  { username: 'admin', role: 'Administrator', detail: 'operator access + Django Admin' },
 ]
 
 export function LoginPage() {
@@ -60,48 +59,48 @@ export function LoginPage() {
             <Icon name="pulse" size={24} />
           </span>
           <span className="brand__text">
-            <strong>ECG Monitor</strong>
-            <small>Diagnostic assistant</small>
+            <strong>ECG Assistant</strong>
+            <small>AI-based diagnostic assistant</small>
           </span>
         </div>
 
         <div className="login__pitch">
-          <p className="eyebrow">AI-Based ECG Diagnostic Assistant</p>
+          <p className="eyebrow">Single-lead ECG workflow</p>
           <h1>
-            One patient.
+            Register a patient.
             <br />
-            One device.
+            Record the signal.
             <br />
-            <span>Every signal in view.</span>
+            <span>Review it later.</span>
           </h1>
           <p>
-            A browser dashboard for the monitoring stack: Django owns identity and
-            sessions, FastAPI streams the telemetry, and this page shows live ECG and
-            vitals as they arrive.
+            A focused screening tool for clinic operators: a permanent patient registry,
+            live ESP32 + AD8232 or simulator recordings, deterministic signal processing,
+            optional AI classification, and a downloadable PDF report.
           </p>
         </div>
 
         <ul className="login__features">
           <li>
+            <Icon name="users" size={18} />
+            One permanent patient ID, searchable by name, phone or ID
+          </li>
+          <li>
             <Icon name="pulse" size={18} />
-            Live ECG waveform and four scalar vitals over one WebSocket
+            Live ECG waveform over a WebSocket, with signal quality and heart rate
           </li>
           <li>
             <Icon name="sessions" size={18} />
-            Start a session, watch it, then revisit the recording
-          </li>
-          <li>
-            <Icon name="shield" size={18} />
-            Role-aware: patients see their own data, doctors their assigned patients
+            Every recording and report stays attached to the patient's history
           </li>
         </ul>
 
         <div className="login__disclaimer">
           <Icon name="alert" size={18} />
           <p>
-            <strong>Screening aid, not a medical diagnosis.</strong> Nothing shown in this
-            application is a clinical finding. The simulator sends synthetic or replayed
-            research data.
+            <strong>Screening aid, not a medical diagnosis.</strong> AI classification is
+            unavailable unless a validated model is configured. Simulator data is synthetic
+            or replayed research data and does not prove diagnostic accuracy.
           </p>
         </div>
       </section>
@@ -109,8 +108,8 @@ export function LoginPage() {
       <section className="login__panel">
         <div className="login__card">
           <header>
-            <h2>Sign in</h2>
-            <p>Use a demo account to explore the Phase 4 dashboard.</p>
+            <h2>Operator sign in</h2>
+            <p>Sign in to the clinic's ECG workspace.</p>
           </header>
 
           <form onSubmit={onSubmit} className="form">
@@ -120,7 +119,7 @@ export function LoginPage() {
                 autoComplete="username"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                placeholder="doctor1"
+                placeholder="operator"
                 required
                 autoFocus
               />

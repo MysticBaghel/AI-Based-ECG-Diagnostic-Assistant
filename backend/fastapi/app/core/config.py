@@ -12,6 +12,7 @@ only module that reads the environment. Two rules matter:
   on SQLite, which has no schemas.
 """
 
+import os
 from pathlib import Path
 from typing import Literal
 
@@ -23,6 +24,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 BASE_DIR = Path(__file__).resolve().parents[2]
 # Repository root, where the shared .env file lives
 ROOT_DIR = BASE_DIR.parent.parent
+
+# A test run must be hermetic: a developer's .env must not make a "missing
+# key" probe succeed. FASTAPI_ENV is set before this module is imported.
+_IS_TEST = os.getenv("FASTAPI_ENV", "").strip().lower() == "test"
+#: In tests the environment is the only source.
+_ENV_FILE = None if _IS_TEST else ROOT_DIR / ".env"
 
 # Two layers of .env:
 #
@@ -37,8 +44,9 @@ ROOT_DIR = BASE_DIR.parent.parent
 # variable that is already in the real environment - so an operator's export
 # always wins and these stay development defaults. This runs before the settings
 # object reads the environment.
-load_dotenv(ROOT_DIR / ".env", override=False)
-load_dotenv(BASE_DIR / ".env", override=True)
+if not _IS_TEST:
+    load_dotenv(ROOT_DIR / ".env", override=False)
+    load_dotenv(BASE_DIR / ".env", override=True)
 
 
 class Settings(BaseSettings):
@@ -49,7 +57,7 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=ROOT_DIR / ".env",
+        env_file=_ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -77,6 +85,17 @@ class Settings(BaseSettings):
 
     # --- CORS -------------------------------------------------------------
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+    # --- Analysis ---------------------------------------------------------
+    #: Optional path to a validated JSON classifier (see app/inference.py).
+    #: Empty means "no model is deployed": analysis still reports deterministic
+    #: DSP measurements, and the AI section explicitly says unavailable.
+    ecg_model_path: str | None = None
+    #: Minimum signal-quality score (0-100) before rhythm measurements are
+    #: reported. Below it the analysis is stored as "unusable".
+    min_signal_quality: float = 35.0
+    #: A recording shorter than this cannot support a heart-rate estimate.
+    min_analysis_seconds: float = 2.5
 
     @computed_field
     @property
@@ -115,3 +134,6 @@ MAX_FUTURE_SECONDS = settings.max_future_seconds
 MAX_ECG_SAMPLES_PER_CHUNK = settings.max_ecg_samples_per_chunk
 MIN_ECG_SAMPLE_RATE_HZ = settings.min_ecg_sample_rate_hz
 MAX_ECG_SAMPLE_RATE_HZ = settings.max_ecg_sample_rate_hz
+ECG_MODEL_PATH = settings.ecg_model_path
+MIN_SIGNAL_QUALITY = settings.min_signal_quality
+MIN_ANALYSIS_SECONDS = settings.min_analysis_seconds

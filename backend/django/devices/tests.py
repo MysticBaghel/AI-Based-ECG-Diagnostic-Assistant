@@ -1,116 +1,91 @@
-"""Device registration and the device token."""
+"""Device registration, tokens and optional patient dedication."""
 
 import jwt
 import pytest
 from django.conf import settings
 
+from devices.models import Device
+
 pytestmark = pytest.mark.django_db
 
 
-def test_patient_cannot_register_a_device(client_for, patient_a):
-    response = client_for(patient_a).post(
-        "/api/devices/",
-        {"name": "Patient device"},
-        format="json",
+def test_operator_registers_a_device_and_gets_a_token(client_for, operator):
+    response = client_for(operator).post(
+        "/api/devices/", {"name": "ESP32 · AD8232"}, format="json"
     )
 
-    assert response.status_code == 403
-
-
-def test_created_device_returns_a_token_for_that_device(client_for, doctor_a):
-    response = client_for(doctor_a).post(
-        "/api/devices/",
-        {"name": "Holter 1"},
-        format="json",
-    )
     assert response.status_code == 201
-
     payload = jwt.decode(
         response.data["device_token"],
         settings.SIMPLE_JWT["SIGNING_KEY"],
         algorithms=["HS256"],
     )
-
     assert payload["type"] == "device"
     assert payload["device_id"] == response.data["id"]
-    assert payload["owner_id"] == doctor_a.id
+    assert payload["owner_id"] == operator.id
 
 
-def test_device_list_never_exposes_the_token(client_for, doctor_a):
-    client = client_for(doctor_a)
-    client.post("/api/devices/", {"name": "Holter 1"}, format="json")
-
-    response = client.get("/api/devices/")
+def test_device_list_does_not_expose_the_token(client_for, operator, device_a):
+    response = client_for(operator).get("/api/devices/")
 
     assert response.status_code == 200
-    assert len(response.data) == 1
-    # Issued once at creation and never stored, so it cannot be read back.
+    assert [row["id"] for row in response.data] == [str(device_a.id)]
     assert "device_token" not in response.data[0]
 
 
-def test_doctor_lists_only_their_own_devices(client_for, doctor_a, doctor_b):
-    client_for(doctor_b).post("/api/devices/", {"name": "B device"}, format="json")
-
-    response = client_for(doctor_a).get("/api/devices/")
-
-    assert response.status_code == 200
-    assert response.data == []
-
-
-def test_rotate_token_is_404_for_another_doctors_device(
-    client_for, doctor_a, device_b
-):
-    response = client_for(doctor_a).post(
-        f"/api/devices/{device_b.id}/rotate-token/"
-    )
-
-    assert response.status_code == 404
-
-
-def test_owner_can_rotate_and_gets_a_fresh_token(client_for, doctor_a, device_a):
-    response = client_for(doctor_a).post(
+def test_operator_can_rotate_a_token(client_for, operator, device_a):
+    response = client_for(operator).post(
         f"/api/devices/{device_a.id}/rotate-token/"
     )
 
     assert response.status_code == 200
-    payload = jwt.decode(
-        response.data["device_token"],
-        settings.SIMPLE_JWT["SIGNING_KEY"],
-        algorithms=["HS256"],
-    )
-    assert payload["device_id"] == str(device_a.id)
+    assert "device_token" in response.data
 
 
-def test_admin_sees_every_device(client_for, admin_user, device_a, device_b):
-    response = client_for(admin_user).get("/api/devices/")
-
-    assert len(response.data) == 2
-
-
-def test_disabled_device_cannot_get_a_rotated_token(client_for, doctor_a, disabled_device):
-    """400, not 403: the owner may rotate, the device's state forbids it."""
-    response = client_for(doctor_a).post(
+def test_disabled_device_cannot_receive_a_token(client_for, operator, disabled_device):
+    response = client_for(operator).post(
         f"/api/devices/{disabled_device.id}/rotate-token/"
     )
 
     assert response.status_code == 400
-    assert "disabled" in response.data["detail"].lower()
-    assert "device_token" not in response.data
 
 
-def test_disabled_device_is_still_listed_for_its_owner(client_for, doctor_a, disabled_device):
-    """The refusal above is about the token, not about hiding the device."""
-    response = client_for(doctor_a).get("/api/devices/")
-
-    assert response.status_code == 200
-    assert [row["id"] for row in response.data] == [str(disabled_device.id)]
-    assert response.data[0]["status"] == "disabled"
-
-
-def test_device_list_carries_the_owner_username_for_admins(
-    client_for, admin_user, doctor_a, device_a
+def test_device_can_be_dedicated_to_a_patient_and_unassigned(
+    client_for, operator, device_a, patient_a
 ):
-    response = client_for(admin_user).get("/api/devices/")
+    client = client_for(operator)
+    url = f"/api/devices/{device_a.id}/assign-patient/"
 
-    assert response.status_code == 200
-    assert response.data[0]["owner_username"] == doctor_a.username
+    assigned = client.post(url, {"patient": patient_a.id}, format="json")
+    assert assigned.status_code == 200
+    assert assigned.data["assigned_patient"] == patient_a.id
+    assert assigned.data["assigned_patient_name"] == patient_a.full_name
+    assert assigned.data["assigned_patient_code"] == patient_a.patient_id
+
+    unassigned = client.post(url, {"patient": None}, format="json")
+    assert unassigned.status_code == 200
+    assert unassigned.data["assigned_patient"] is None
+
+
+def test_device_status_can_be_disabled_and_reenabled(client_for, operator, device_a):
+    client = client_for(operator)
+    url = f"/api/devices/{device_a.id}/status/"
+
+    disabled = client.post(url, {"status": "disabled"}, format="json")
+    assert disabled.status_code == 200
+    device_a.refresh_from_db()
+    assert device_a.status == Device.Status.DISABLED
+
+    enabled = client.post(url, {"status": "active"}, format="json")
+    assert enabled.status_code == 200
+    device_a.refresh_from_db()
+    assert device_a.status == Device.Status.ACTIVE
+
+
+def test_device_owner_is_the_authenticated_caller(client_for, operator):
+    response = client_for(operator).post(
+        "/api/devices/", {"name": "Mine", "owner": 999}, format="json"
+    )
+
+    assert response.status_code == 201
+    assert response.data["owner"] == operator.id

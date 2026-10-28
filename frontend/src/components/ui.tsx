@@ -117,7 +117,7 @@ export function PageHeader({
   description,
   actions,
 }: {
-  eyebrow?: string
+  eyebrow?: ReactNode
   title: string
   description?: ReactNode
   actions?: ReactNode

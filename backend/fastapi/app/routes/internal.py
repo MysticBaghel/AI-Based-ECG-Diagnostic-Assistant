@@ -13,12 +13,15 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import UserPrincipal, require_admin
 from app.db import get_session
-from app.models import KnownSession, RevokedDevice
+from app.models import ECGChunk, KnownSession, RevokedDevice
 from app.schemas import (
+    InternalECGChunk,
+    InternalECGResponse,
     RevokeDeviceRequest,
     RevokeDeviceResponse,
     SessionRegistration,
@@ -48,15 +51,14 @@ async def register_session(
             session_id=payload.session_id,
             patient_id=payload.patient_id,
             device_id=payload.device_id,
-            doctor_ids=list(payload.doctor_ids),
             status=payload.status,
+            registered_at=now,
             updated_at=now,
         )
         session.add(known)
     else:
         known.patient_id = payload.patient_id
         known.device_id = payload.device_id
-        known.doctor_ids = list(payload.doctor_ids)
         known.status = payload.status
         known.updated_at = now
 
@@ -90,3 +92,51 @@ async def revoke_device(
     await session.commit()
 
     return RevokeDeviceResponse(device_id=device_id, revoked=True)
+
+
+@router.get(
+    "/sessions/{session_id}/ecg",
+    response_model=InternalECGResponse,
+)
+async def session_ecg(
+    session_id: uuid.UUID,
+    admin: UserPrincipal = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> InternalECGResponse:
+    """Every stored sample for a session, for server-side PDF rendering.
+
+    The public viewer deliberately fetches one chunk at a time. Django's report
+    service needs the whole recording (to draw one waveform), so this internal
+    endpoint returns it in one response. It is admin-token only and is not part
+    of the device/simulator contract.
+    """
+    from app.errors import APIError
+
+    known = await session.get(KnownSession, session_id)
+    if known is None:
+        raise APIError(status_code=404, detail="Unknown session.", code="unknown_session")
+
+    chunks = list(
+        await session.scalars(
+            select(ECGChunk)
+            .where(ECGChunk.session_id == session_id)
+            .order_by(ECGChunk.chunk_index)
+        )
+    )
+    rates = {chunk.sample_rate_hz for chunk in chunks}
+    sample_rate = rates.pop() if len(rates) == 1 else None
+
+    return InternalECGResponse(
+        session_id=session_id,
+        sample_rate_hz=sample_rate,
+        sample_count=sum(chunk.sample_count for chunk in chunks),
+        chunks=[
+            InternalECGChunk(
+                chunk_index=chunk.chunk_index,
+                start_time=chunk.start_time,
+                sample_rate_hz=chunk.sample_rate_hz,
+                samples=chunk.samples,
+            )
+            for chunk in chunks
+        ],
+    )

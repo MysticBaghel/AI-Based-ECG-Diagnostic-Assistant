@@ -67,8 +67,8 @@ export function elapsedSeconds(start: string, end: string | null): number {
   return Math.max(0, (to - from) / 1000)
 }
 
-export function formatNumber(value: number, digits = 1): string {
-  if (!Number.isFinite(value)) return '—'
+export function formatNumber(value: number | null | undefined, digits = 1): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—'
   return value.toFixed(digits)
 }
 

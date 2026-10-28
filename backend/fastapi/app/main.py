@@ -28,7 +28,8 @@ from starlette.responses import JSONResponse
 from app.core.config import MAX_PAYLOAD_BYTES, settings
 from app.db import create_all, engine
 from app.errors import error_body, install_error_handlers
-from app.routes import internal, sensor
+from app.inference import get_inference_service
+from app.routes import analysis, internal, sensor
 from app.ws import router as websocket_router
 
 logging.basicConfig(level=logging.INFO)
@@ -96,6 +97,7 @@ install_error_handlers(app)
 
 app.include_router(sensor.router)
 app.include_router(internal.router)
+app.include_router(analysis.router)
 app.include_router(websocket_router)
 
 
@@ -117,4 +119,15 @@ def root():
 @app.get("/health", tags=["meta"])
 def health():
     """Liveness probe used by the frontend and by docker compose."""
-    return {"status": "ok", "service": "fastapi"}
+    inference = get_inference_service().status
+    return {
+        "status": "ok",
+        "service": "fastapi",
+        "analysis": {
+            "dsp": "available",
+            "inference_available": inference.available,
+            "model_name": inference.model_name,
+            "model_version": inference.model_version,
+            "inference_reason": inference.reason,
+        },
+    }

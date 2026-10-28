@@ -3,8 +3,8 @@
 Rules this file exists to enforce:
 
 * No foreign key points at a Django table. `session_id` and `device_id` are plain
-  UUID columns, `owner_id`/`patient_id`/`doctor_ids` plain integers, because the
-  two services share identifiers, not a database.
+  UUID columns, `owner_id`/`patient_id` plain integers, because the two services
+  share identifiers, not a database.
 * `sensor_readings` and `ecg_chunks` both carry `device_id` copied from the
   **verified token**, never from the request body: a device cannot write data
   attributed to another device.
@@ -12,6 +12,8 @@ Rules this file exists to enforce:
   `(session_id, sensor_type, recorded_at)` for scalar readings and one on
   `(session_id, chunk_index)` for ECG chunks. A retry that races the original
   loses at the index and is then answered from the winner's row.
+* Analysis results are stored here because this service owns the ECG samples and
+  the DSP/inference run. Django keeps the business copy for the report.
 """
 
 import uuid
@@ -48,7 +50,8 @@ class KnownSession(Base):
 
     FastAPI cannot ask Django on the ingest path (a Django outage must not stop
     devices), so it keeps its own copy and refuses data for sessions that are
-    not in it. See `docs/api-contract.md` section 10 for the tradeoff.
+    not in it. There is no doctor assignment any more: the patient id is kept
+    for association and audit, not for role-based viewer scoping.
     """
 
     __tablename__ = "known_sessions"
@@ -58,10 +61,6 @@ class KnownSession(Base):
     )
     patient_id: Mapped[int] = mapped_column(Integer, nullable=False)
     device_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
-    # An int[] on PostgreSQL, a JSON list on SQLite.
-    doctor_ids: Mapped[list] = mapped_column(
-        JSON().with_variant(JSONB(), "postgresql"), nullable=False, default=list
-    )
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
     registered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -75,6 +74,7 @@ class KnownSession(Base):
 
     readings: Mapped[list["SensorReading"]] = relationship(back_populates="session")
     chunks: Mapped[list["ECGChunk"]] = relationship(back_populates="session")
+    analyses: Mapped[list["AnalysisResult"]] = relationship(back_populates="session")
 
     def __repr__(self) -> str:  # pragma: no cover - debugging aid
         return f"<KnownSession {self.session_id} {self.status}>"
@@ -105,7 +105,6 @@ class SensorReading(Base):
 
     __tablename__ = "sensor_readings"
     __table_args__ = (
-        # Idempotency: a retry of the same reading is already here.
         UniqueConstraint(
             "session_id",
             "sensor_type",
@@ -143,7 +142,6 @@ class ECGChunk(Base):
 
     __tablename__ = "ecg_chunks"
     __table_args__ = (
-        # Idempotency and the device's at-least-once delivery key.
         UniqueConstraint("session_id", "chunk_index", name="uq_ecg_session_chunk"),
         Index("ix_ecg_session_start", "session_id", "start_time"),
     )
@@ -172,6 +170,44 @@ class ECGChunk(Base):
         return f"<ECGChunk {self.session_id}#{self.chunk_index} n={self.sample_count}>"
 
 
+class AnalysisResult(Base):
+    """One DSP + inference run for one session, versioned.
+
+    The payload is the same JSON Django stores, so a report generated from it
+    reflects exactly what was computed - including an explicit "AI unavailable"
+    outcome rather than a fabricated prediction.
+    """
+
+    __tablename__ = "analysis_results"
+    __table_args__ = (
+        UniqueConstraint("session_id", "version", name="uq_analysis_session_version"),
+        Index("ix_analysis_session_analyzed", "session_id", "analyzed_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=_uuid
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("known_sessions.session_id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    model_version: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    analysis: Mapped[dict] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=False
+    )
+    analyzed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    session: Mapped[KnownSession] = relationship(back_populates="analyses")
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return f"<AnalysisResult {self.session_id} v{self.version} {self.status}>"
+
+
 class RevokedDevice(Base):
     """FastAPI-owned deny list.
 
@@ -195,6 +231,7 @@ class RevokedDevice(Base):
 
 
 __all__ = [
+    "AnalysisResult",
     "ECGChunk",
     "DeviceConnection",
     "KnownSession",

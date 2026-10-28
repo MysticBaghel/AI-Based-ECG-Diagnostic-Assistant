@@ -243,14 +243,18 @@ class ECGChunkListResponse(BaseModel):
 
 
 class SessionRegistration(BaseModel):
-    """What Django pushes. `extra="ignore"` so Django may send more later."""
+    """What Django pushes. `extra="ignore"` so Django may send more later.
+
+    ``doctor_ids`` was removed with the hospital workflow. A legacy Django that
+    still sends it is accepted and ignored, so a rolling deploy does not break
+    session registration.
+    """
 
     model_config = ConfigDict(extra="ignore")
 
     session_id: uuid.UUID
     patient_id: int
     device_id: uuid.UUID
-    doctor_ids: list[int] = Field(default_factory=list)
     status: Literal["active", "completed", "aborted"] = "active"
 
 
@@ -269,12 +273,97 @@ class RevokeDeviceResponse(BaseModel):
     revoked: bool
 
 
+# --- analysis -------------------------------------------------------------
+
+
+class SignalQuality(BaseModel):
+    score: float | None = None
+    level: str = "unknown"
+    usable: bool = False
+    reasons: list[str] = Field(default_factory=list)
+    flatline: bool = False
+    clipping: bool = False
+    missing_samples: int = 0
+
+
+class AnalysisSignal(BaseModel):
+    sample_rate_hz: int | None = None
+    sample_count: int = 0
+    duration_seconds: float = 0.0
+    chunks: int = 0
+    quality: SignalQuality = Field(default_factory=SignalQuality)
+    filtering_note: str = ""
+
+
+class AnalysisMeasurements(BaseModel):
+    heart_rate_bpm: float | None = None
+    rr_intervals_ms: list[float] = Field(default_factory=list)
+    rr_mean_ms: float | None = None
+    rr_std_ms: float | None = None
+    rmssd_ms: float | None = None
+    pnn50_percent: float | None = None
+    beats_detected: int = 0
+    r_peak_seconds: list[float] = Field(default_factory=list)
+
+
+class AIResult(BaseModel):
+    available: bool = False
+    reason: str = ""
+    model_name: str | None = None
+    model_version: str | None = None
+    classes: list[str] = Field(default_factory=list)
+    predicted_class: str | None = None
+    probabilities: dict[str, float] | None = None
+    analyzed_at: datetime | None = None
+
+
+class AnalysisResponse(BaseModel):
+    session_id: uuid.UUID
+    analysis_version: int
+    status: Literal["completed", "unusable", "failed"]
+    analyzed_at: datetime
+    signal: AnalysisSignal
+    measurements: AnalysisMeasurements
+    ai: AIResult
+    findings: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
+
+
+class InternalECGChunk(BaseModel):
+    chunk_index: int
+    start_time: datetime
+    sample_rate_hz: int
+    samples: list[float]
+
+
+class InternalECGResponse(BaseModel):
+    session_id: uuid.UUID
+    sample_rate_hz: int | None
+    sample_count: int
+    chunks: list[InternalECGChunk]
+
+
+class AnalysisStatusResponse(BaseModel):
+    available: bool
+    dsp: str = "deterministic"
+    model_name: str | None = None
+    model_version: str | None = None
+    reason: str = ""
+
+
 __all__ = [
+    "AIResult",
+    "AnalysisMeasurements",
+    "AnalysisResponse",
+    "AnalysisSignal",
+    "AnalysisStatusResponse",
     "ECGChunkRequest",
     "ECGChunkListResponse",
     "ECGChunkResponse",
     "ECGChunkSummary",
     "ECGChunkView",
+    "InternalECGChunk",
+    "InternalECGResponse",
     "MAX_PAYLOAD_BYTES",
     "ReadingsResponse",
     "RevokeDeviceRequest",
@@ -288,4 +377,5 @@ __all__ = [
     "SensorType",
     "SessionRegistration",
     "SessionRegistrationResponse",
+    "SignalQuality",
 ]

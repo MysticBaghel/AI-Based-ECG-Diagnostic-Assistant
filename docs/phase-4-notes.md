@@ -1,3 +1,9 @@
+> **Historical note.** This document describes the Phase 4 dashboard before the
+> scope correction to an AI-Based ECG Diagnostic Assistant. The doctor/patient
+> assignment workflow, doctor dashboards and role-gated navigation described
+> here were removed. See `docs/Restructured.pdf` for the current architecture,
+> file-by-file audit and verification record.
+
 # Phase 4 notes — the React dashboard
 
 Phase 4 answers one question: **can a person run and understand a monitoring
@@ -7,9 +13,11 @@ Django supplies identity and the session lifecycle, FastAPI supplies the live
 stream and the stored waveform, and the browser has to make those two services
 feel like one application.
 
-Scope: `frontend/` plus two small read endpoints added to the APIs it consumes.
-The ingestion contract did not change; the simulator and a future ESP32 still
-send exactly the payloads documented in `docs/api-contract.md`.
+Scope: `frontend/` plus the API endpoints it consumes, including the admin
+patient/assignment workflow. The ingestion contract did not change; the
+simulator and a future ESP32 still send exactly the payloads documented in
+`docs/api-contract.md`. The administration workflow has its own detailed note in
+[admin-patient-workflow.md](admin-patient-workflow.md).
 
 The system is a **screening aid, not a medical diagnosis**. The disclaimer is
 not a footer decoration: it is in the login pitch, in a strip that stays visible
@@ -21,7 +29,7 @@ telemetry, not a finding.
 
 ## 1. What is on screen
 
-The dashboard is a single-page application with seven screens and one
+The dashboard is a single-page application with eight screens and one
 not-found wall.
 
 | Route | Who sees it | What it is for |
@@ -30,6 +38,7 @@ not-found wall.
 | `/` | all roles | Overview: active sessions, patient/device counts, heartbeat count, how the demo flows |
 | `/patients` | all roles | Patient list (patient: own profile); doctors/admins can start a session |
 | `/devices` | doctor, admin | Register a device, see heartbeats, copy the device id, rotate a token |
+| `/admin/patients` | admin | Create patient accounts, assign doctors, dedicate devices to patients |
 | `/sessions` | all roles | Session history with search, status filter and links to live/recording |
 | `/sessions/:sessionId` | whoever may see the session | Stored waveform viewer, vital summary, session lifecycle |
 | `/live` | all roles | Active-session picker |
@@ -90,17 +99,20 @@ frontend/
       SessionsPage.tsx
       LivePage.tsx
       RecordingPage.tsx
+      AdminPatientsPage.tsx     admin-only creation and assignment workflow
       NotFoundPage.tsx
 ```
 
-The two API additions this phase depends on are in:
+The API additions this phase depends on are in:
 
 | Path | Change |
 | --- | --- |
 | `backend/fastapi/app/routes/sensor.py` | `GET /sessions/<id>/ecg` returns the chunk index (metadata only) |
 | `backend/fastapi/app/schemas.py` | `ECGChunkSummary`, `ECGChunkListResponse` |
-| `backend/django/monitoring/serializers.py` | `patient_name`, `device_name` on a session |
-| `backend/django/devices/serializers.py` | `owner_username` on a device, for the admin list |
+| `backend/django/monitoring/serializers.py` | `patient_name`, `device_name` on a session; device–patient assignment check |
+| `backend/django/devices/serializers.py` | `owner_username`, `assigned_patient`, `assigned_patient_name`, assignment serializer |
+| `backend/django/accounts/serializers.py` | patient creation, doctor assignment and doctor-list serializers |
+| `backend/django/accounts/views.py` | admin-only patient creation, care-team assignment and doctor list |
 
 No new database table is needed for the dashboard. The chunk index reads
 `ecg_chunks`; the session labels come from foreign keys that were already
@@ -185,6 +197,7 @@ The shell is a fixed sidebar plus a scrolling main column. The sidebar contains:
 * a **Monitor** group: Dashboard, Live monitor, Sessions;
 * a **Manage** group: Patients (or "My profile" for a patient), and Devices for
   doctors/admins;
+* an **Administration** group, only for admins: Patients & access;
 * the health of both services (Django and FastAPI are probed every 30 s);
 * the signed-in user, role and sign-out.
 
@@ -350,6 +363,25 @@ The session panel shows patient, device, start, end and status. An active
 session links to the live monitor and offers the same stop control; a completed
 one links back to history. The page is reachable for active sessions too, which
 is useful when the live socket cannot be used.
+
+### 4.9 Administration — patients and access
+
+`/admin/patients` is admin-only, both in the navigation and in a `RoleGate`
+around the route. It is deliberately **not** part of the doctor-facing Patients
+page: monitoring and account administration are different jobs.
+
+The page creates a patient login and its `PatientProfile` in one request,
+replaces the patient's doctor assignments with a picker, and dedicates
+registered devices to patients. The API is the authority: `POST /api/patients/`,
+`PUT /api/patients/<id>/doctors/`, `GET /api/doctors/` and
+`POST /api/devices/<id>/assign-patient/` all require `IsAdminRole`. The screen
+is a convenience over those calls.
+
+Registering a device and dedicating it to a patient remain separate operations.
+`Device.assigned_patient` is nullable; `NULL` means the device is shared within
+the owner's permitted patients, and a non-null value is enforced when a session
+starts, for doctors **and** admins. The full workflow, API examples and security
+notes are in [admin-patient-workflow.md](admin-patient-workflow.md).
 
 ## 5. State, polling and error handling
 
@@ -520,6 +552,9 @@ without them:
 * **Patients cannot list devices.** The Django device endpoint is
   doctor/admin-only, so a patient's session shows the device name (from the
   session label) but the patient has no device inventory page.
+* **Account administration is a separate admin screen.** Creating patients and
+  changing care teams is not a doctor action; the doctor's Patients page stays a
+  monitoring view. See [admin-patient-workflow.md](admin-patient-workflow.md).
 * **The token is in local storage and the socket's query string.** Both are
   documented costs. The access token is short-lived; a one-time socket ticket and
   httpOnly cookies are hardening, not Phase 4.

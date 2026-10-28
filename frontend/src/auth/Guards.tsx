@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
-import type { Role } from '../api/types'
 import { Icon } from '../components/Icon'
 import { useAuth } from './useAuth'
 
@@ -28,10 +27,9 @@ export function RequireAuth() {
   return <Outlet />
 }
 
-/** Page-level role gate. Hiding a nav link is not authorisation; this is. */
-export function RoleGate({ allow, children }: { allow: Role[]; children: ReactNode }) {
-  const { user } = useAuth()
-  if (!user) return null
-  if (!allow.includes(user.role)) return <Navigate to="/" replace />
+/** Kept as a named component for pages that need an inline condition. */
+export function AuthenticatedOnly({ children }: { children: ReactNode }) {
+  const { status } = useAuth()
+  if (status !== 'authenticated') return <Navigate to="/login" replace />
   return <>{children}</>
 }

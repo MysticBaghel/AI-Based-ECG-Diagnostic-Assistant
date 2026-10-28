@@ -51,7 +51,7 @@ SESSION_ID = uuid.UUID("33333333-3333-4333-8333-333333333333")
 
 def issue_user_token(
     user_id: int = DOCTOR_ID,
-    role: str = "doctor",
+    role: str = "operator",
     *,
     token_type: str = "access",
     expires_in: int = 3600,
@@ -149,7 +149,7 @@ def session_factory():
 
 @pytest.fixture
 def known_session(database):
-    """A registered session for DEVICE_ID, patient PATIENT_ID, doctor DOCTOR_ID."""
+    """A registered session for DEVICE_ID and patient PATIENT_ID."""
     import asyncio
 
     async def _create() -> None:
@@ -159,7 +159,6 @@ def known_session(database):
                     session_id=SESSION_ID,
                     patient_id=PATIENT_ID,
                     device_id=DEVICE_ID,
-                    doctor_ids=[DOCTOR_ID],
                     status="active",
                 )
             )

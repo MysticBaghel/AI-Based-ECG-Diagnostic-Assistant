@@ -219,8 +219,8 @@ def test_revocation_requires_an_admin_token(scoped_client, known_session):
     assert response.status_code == 403
 
 
-@pytest.mark.parametrize("role", ["patient", "doctor", "admin"])
-def test_user_tokens_of_every_role_are_accepted_on_a_user_endpoint(
+@pytest.mark.parametrize("role", ["operator", "admin"])
+def test_user_tokens_of_every_operator_role_are_accepted_on_a_user_endpoint(
     scoped_client, known_session, role
 ):
     response = scoped_client.get(

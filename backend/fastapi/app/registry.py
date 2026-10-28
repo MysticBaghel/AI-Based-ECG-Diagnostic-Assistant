@@ -72,17 +72,12 @@ async def require_active_session_for_device(
 def user_may_view(known: KnownSession, user: UserPrincipal) -> bool:
     """Who may read or subscribe to a session.
 
-    * admin: every session.
-    * doctor: sessions of patients they were assigned to when Django pushed it.
-    * patient: their own sessions.
+    All authenticated operators may view any session. The doctor/patient
+    assignment model was removed, so access is no longer computed from a
+    per-session doctor list; the Django API and this service share the same
+    authenticated operator population.
     """
-    if user.role == "admin":
-        return True
-    if user.role == "doctor":
-        return user.user_id in (known.doctor_ids or [])
-    if user.role == "patient":
-        return user.user_id == known.patient_id
-    return False
+    return user.role in {"operator", "admin"}
 
 
 def may_view(

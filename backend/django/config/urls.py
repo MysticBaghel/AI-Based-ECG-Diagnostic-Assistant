@@ -13,6 +13,8 @@ urlpatterns = [
     path("api/health/", health, name="health"),
     # Each app owns its own routes; they are all mounted under /api/.
     path("api/", include("accounts.urls")),
+    path("api/", include("patients.urls")),
     path("api/", include("devices.urls")),
     path("api/", include("monitoring.urls")),
+    path("api/", include("reports.urls")),
 ]

@@ -180,15 +180,15 @@ def test_a_missing_token_is_closed_with_4401(scoped_client, known_session):
     )
 
 
-def test_an_unauthorised_viewer_is_closed_with_4403(scoped_client, known_session):
+def test_a_legacy_role_viewer_is_closed_with_4401(scoped_client, known_session):
     stranger = issue_user_token(99, "patient")
 
     _expect_rejected(
         scoped_client,
         known_session,
         stranger,
-        close_code=4403,
-        error_code="forbidden",
+        close_code=4401,
+        error_code="unauthorized",
     )
 
 

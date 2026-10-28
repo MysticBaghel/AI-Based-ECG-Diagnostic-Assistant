@@ -2,29 +2,35 @@
 
     python manage.py seed_demo
 
-Idempotent: running it again reuses the same usernames, resets their
-passwords to the demo password and re-creates any missing profile or
-assignment, so it is safe to run after a partial failure.
+Idempotent: running it again reuses the same usernames, resets their passwords
+to the demo password and re-creates any missing patient or device, so it is safe
+to run after a partial failure.
 """
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from accounts.models import DoctorAssignment, DoctorProfile, PatientProfile, User
+from accounts.models import User
+from devices.models import Device
+from patients.models import Patient
 
 DEMO_PASSWORD = "demo12345"
 
 ADMIN_USERNAME = "admin"
+OPERATOR_USERNAME = "operator"
 
-# (doctor username, speciality, patients assigned to that doctor)
-DOCTORS = [
-    ("doctor1", "Cardiology", ["patient1", "patient2"]),
-    ("doctor2", "Neurology", ["patient3", "patient4"]),
+DEMO_PATIENTS = [
+    ("Aarav Sharma", "+91 98765 43210", "1991-02-14", "male"),
+    ("Meera Iyer", "+91 90000 11122", "1984-07-03", "female"),
+    ("Rohan Das", "+91 90000 33344", None, "male"),
 ]
 
 
 class Command(BaseCommand):
-    help = "Seed 1 admin, 2 doctors and 4 patients (password: demo12345)."
+    help = (
+        "Seed 1 admin, 1 operator, 3 patients and a simulator device "
+        "(password: demo12345)."
+    )
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -34,31 +40,33 @@ class Command(BaseCommand):
                 User.Role.ADMIN,
                 is_staff=True,
                 is_superuser=True,
-            )
+            ),
+            self._upsert_user(OPERATOR_USERNAME, User.Role.OPERATOR),
         ]
 
-        for doctor_username, speciality, patient_usernames in DOCTORS:
-            doctor_user = self._upsert_user(doctor_username, User.Role.DOCTOR)
-            doctor_profile, _ = DoctorProfile.objects.get_or_create(
-                user=doctor_user,
-                defaults={"speciality": speciality},
+        for full_name, phone, date_of_birth, sex in DEMO_PATIENTS:
+            patient, created = Patient.objects.get_or_create(
+                full_name=full_name,
+                defaults={
+                    "phone": phone,
+                    "date_of_birth": date_of_birth,
+                    "sex": sex,
+                    "notes": "Demo patient created by seed_demo.",
+                },
             )
-            seeded.append(doctor_user)
+            if created:
+                self.stdout.write(f"  patient {patient.patient_id} {patient.full_name}")
 
-            for patient_username in patient_usernames:
-                patient_user = self._upsert_user(patient_username, User.Role.PATIENT)
-                patient_profile, _ = PatientProfile.objects.get_or_create(
-                    user=patient_user
-                )
-                DoctorAssignment.objects.get_or_create(
-                    doctor=doctor_profile,
-                    patient=patient_profile,
-                )
-                seeded.append(patient_user)
+        operator = seeded[1]
+        Device.objects.get_or_create(
+            name="ESP32 · AD8232 simulator",
+            defaults={"owner": operator},
+        )
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Seeded {len(seeded)} users (password: {DEMO_PASSWORD})"
+                f"Seeded {len(seeded)} users and {len(DEMO_PATIENTS)} demo patients "
+                f"(password: {DEMO_PASSWORD})"
             )
         )
         for user in seeded:

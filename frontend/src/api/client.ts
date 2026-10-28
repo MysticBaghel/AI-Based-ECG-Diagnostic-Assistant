@@ -1,23 +1,21 @@
 /**
  * The browser's only door to the two backends.
  *
- * Django is reached through `/api` (identity, patients, devices, sessions).
- * FastAPI is reached through `/telemetry` in development; Vite proxies both,
- * so the browser stays on one origin and no CORS configuration is needed.
- *
- * Access tokens are short-lived (60 minutes). A 401 is retried **once** after a
- * refresh, and a refresh that fails clears the session and fires
- * `auth:expired`, which the auth provider turns into a redirect to /login.
- * Concurrent requests share one refresh promise rather than five parallel
- * refresh calls racing each other.
+ * Django is reached through `/api` (identity, patients, devices, sessions,
+ * analysis records, reports). FastAPI is reached through `/telemetry` in
+ * development; Vite proxies both, so the browser stays on one origin.
  */
 
 import type {
+  AnalysisResult,
   Device,
   EcgChunk,
   EcgChunkList,
+  Health,
   Patient,
+  PatientInput,
   ReadingsResponse,
+  ReportMeta,
   Session,
   StatusResponse,
   TokenPair,
@@ -25,10 +23,10 @@ import type {
 } from './types'
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '')
-const TELEMETRY_BASE = (import.meta.env.VITE_TELEMETRY_BASE_URL ?? '/telemetry').replace(
-  /\/$/,
-  '',
-)
+const TELEMETRY_DEFAULT = (
+  import.meta.env.VITE_TELEMETRY_BASE_URL ?? '/telemetry'
+).replace(/\/$/, '')
+const TELEMETRY_OVERRIDE_KEY = 'ecg.telemetryBase'
 
 const ACCESS_KEY = 'ecg.access'
 const REFRESH_KEY = 'ecg.refresh'
@@ -49,23 +47,52 @@ interface ErrorBody {
   detail?: unknown
   code?: string
   errors?: { field?: string; message?: string }[]
+  duplicates?: Patient[]
 }
 
 export class ApiError extends Error {
   readonly status: number
   readonly code: string
   readonly fields: Record<string, string>
+  readonly payload: ErrorBody
 
   constructor(
     message: string,
-    options: { status?: number; code?: string; fields?: Record<string, string> } = {},
+    options: {
+      status?: number
+      code?: string
+      fields?: Record<string, string>
+      payload?: ErrorBody
+    } = {},
   ) {
     super(message)
     this.name = 'ApiError'
     this.status = options.status ?? 0
     this.code = options.code ?? 'network_error'
     this.fields = options.fields ?? {}
+    this.payload = options.payload ?? {}
   }
+}
+
+// --- runtime configuration -------------------------------------------------
+
+export function telemetryBase(): string {
+  return (localStorage.getItem(TELEMETRY_OVERRIDE_KEY) || TELEMETRY_DEFAULT).replace(
+    /\/$/,
+    '',
+  )
+}
+
+export function setTelemetryBase(value: string | null): void {
+  if (value && value.trim()) {
+    localStorage.setItem(TELEMETRY_OVERRIDE_KEY, value.trim().replace(/\/$/, ''))
+  } else {
+    localStorage.removeItem(TELEMETRY_OVERRIDE_KEY)
+  }
+}
+
+export function defaultTelemetryBase(): string {
+  return TELEMETRY_DEFAULT
 }
 
 // --- token storage ---------------------------------------------------------
@@ -99,7 +126,6 @@ function describeDetail(body: ErrorBody): string {
       .join('; ')
   }
   if (body.detail && typeof body.detail === 'object') {
-    // DRF validation errors: {"patient": ["..."]}.
     return Object.entries(body.detail as Record<string, unknown>)
       .map(([field, messages]) => `${field}: ${String(messages)}`)
       .join('; ')
@@ -128,6 +154,7 @@ async function toApiError(response: Response, base: Base): Promise<ApiError> {
     status: response.status,
     code: body.code ?? `http_${response.status}`,
     fields,
+    payload: body,
   })
 }
 
@@ -172,9 +199,12 @@ async function refreshAccessToken(): Promise<string | null> {
 
 // --- request ---------------------------------------------------------------
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function authorizedFetch(
+  path: string,
+  options: RequestOptions = {},
+): Promise<Response> {
   const base: Base = options.base ?? 'django'
-  const root = base === 'telemetry' ? TELEMETRY_BASE : API_BASE
+  const root = base === 'telemetry' ? telemetryBase() : API_BASE
   const wantsAuth = options.auth !== false
 
   const send = (token: string | null): Promise<Response> => {
@@ -222,16 +252,24 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     throw await toApiError(response, base)
   }
 
+  return response
+}
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const response = await authorizedFetch(path, options)
   if (response.status === 204) return undefined as T
   return (await response.json()) as T
 }
 
-// --- Django endpoints ------------------------------------------------------
-
-export interface Health {
-  status: string
-  service: string
+async function requestBlob(
+  path: string,
+  options: RequestOptions = {},
+): Promise<Blob> {
+  const response = await authorizedFetch(path, options)
+  return response.blob()
 }
+
+// --- Django endpoints ------------------------------------------------------
 
 export const api = {
   health(): Promise<Health> {
@@ -250,10 +288,35 @@ export const api = {
     return request<User>('/auth/me/')
   },
 
-  patients(): Promise<Patient[]> {
-    return request<Patient[]>('/patients/')
+  // -- patients ------------------------------------------------------------
+  patients(query = ''): Promise<Patient[]> {
+    const suffix = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ''
+    return request<Patient[]>(`/patients/${suffix}`)
   },
 
+  patient(patientId: number): Promise<Patient> {
+    return request<Patient>(`/patients/${patientId}/`)
+  },
+
+  createPatient(input: PatientInput, confirmDuplicate = false): Promise<Patient> {
+    return request<Patient>('/patients/', {
+      method: 'POST',
+      body: { ...input, confirm_duplicate: confirmDuplicate },
+    })
+  },
+
+  updatePatient(patientId: number, input: Partial<PatientInput>): Promise<Patient> {
+    return request<Patient>(`/patients/${patientId}/`, {
+      method: 'PATCH',
+      body: input,
+    })
+  },
+
+  patientSessions(patientId: number): Promise<Session[]> {
+    return request<Session[]>(`/patients/${patientId}/sessions/`)
+  },
+
+  // -- devices -------------------------------------------------------------
   devices(): Promise<Device[]> {
     return request<Device[]>('/devices/')
   },
@@ -272,8 +335,28 @@ export const api = {
     )
   },
 
-  sessions(): Promise<Session[]> {
-    return request<Session[]>('/sessions/')
+  assignDevicePatient(deviceId: string, patientId: number | null): Promise<Device> {
+    return request<Device>(
+      `/devices/${encodeURIComponent(deviceId)}/assign-patient/`,
+      { method: 'POST', body: { patient: patientId } },
+    )
+  },
+
+  setDeviceStatus(deviceId: string, status: 'active' | 'disabled'): Promise<Device> {
+    return request<Device>(`/devices/${encodeURIComponent(deviceId)}/status/`, {
+      method: 'POST',
+      body: { status },
+    })
+  },
+
+  // -- sessions ------------------------------------------------------------
+  sessions(params: { patient?: number; status?: string; q?: string } = {}): Promise<Session[]> {
+    const query = new URLSearchParams()
+    if (params.patient !== undefined) query.set('patient', String(params.patient))
+    if (params.status) query.set('status', params.status)
+    if (params.q) query.set('q', params.q)
+    const suffix = query.toString() ? `?${query.toString()}` : ''
+    return request<Session[]>(`/sessions/${suffix}`)
   },
 
   session(sessionId: string): Promise<Session> {
@@ -291,6 +374,52 @@ export const api = {
     return request<Session>(`/sessions/${encodeURIComponent(sessionId)}/stop/`, {
       method: 'POST',
     })
+  },
+
+  analyze(sessionId: string): Promise<{
+    status: string
+    result: AnalysisResult
+    error: string
+  }> {
+    return request(`/sessions/${encodeURIComponent(sessionId)}/analyze/`, {
+      method: 'POST',
+    })
+  },
+
+  analysis(sessionId: string): Promise<{
+    status: string
+    result: AnalysisResult
+    error: string
+  }> {
+    return request(`/sessions/${encodeURIComponent(sessionId)}/analysis/`)
+  },
+
+  // -- reports -------------------------------------------------------------
+  generateReport(sessionId: string, regenerate = false): Promise<ReportMeta> {
+    return request<ReportMeta>(`/sessions/${encodeURIComponent(sessionId)}/report/`, {
+      method: 'POST',
+      body: { regenerate },
+    })
+  },
+
+  latestReport(sessionId: string): Promise<ReportMeta> {
+    return request<ReportMeta>(`/sessions/${encodeURIComponent(sessionId)}/report/`)
+  },
+
+  reports(sessionId: string): Promise<ReportMeta[]> {
+    return request<ReportMeta[]>(`/sessions/${encodeURIComponent(sessionId)}/reports/`)
+  },
+
+  async downloadReport(report: ReportMeta): Promise<void> {
+    const blob = await requestBlob(`/reports/${report.id}/download/`)
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `${report.report_id}-${report.patient_code}.pdf`
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 10_000)
   },
 }
 
@@ -326,11 +455,18 @@ export const telemetry = {
       { base: 'telemetry' },
     )
   },
+
+  liveAnalysis(sessionId: string): Promise<AnalysisResult> {
+    return request<AnalysisResult>(
+      `/sessions/${encodeURIComponent(sessionId)}/analysis/live`,
+      { base: 'telemetry' },
+    )
+  },
 }
 
 /**
  * The socket's token is a query parameter because browsers cannot set headers
- * on a WebSocket handshake (docs/api-contract.md section 3).
+ * on a WebSocket handshake.
  */
 export function sensorSocketUrl(sessionId: string): string {
   const token = getAccessToken()
@@ -340,11 +476,11 @@ export function sensorSocketUrl(sessionId: string): string {
   let root: string
   if (explicit) {
     root = explicit.replace(/\/$/, '')
-  } else if (TELEMETRY_BASE.startsWith('http')) {
-    root = TELEMETRY_BASE.replace(/^http/, 'ws')
+  } else if (telemetryBase().startsWith('http')) {
+    root = telemetryBase().replace(/^http/, 'ws')
   } else {
     const scheme = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    root = `${scheme}//${window.location.host}${TELEMETRY_BASE}`
+    root = `${scheme}//${window.location.host}${telemetryBase()}`
   }
 
   return `${root}/ws/sensor?session_id=${encodeURIComponent(

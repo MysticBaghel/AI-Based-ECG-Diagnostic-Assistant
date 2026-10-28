@@ -17,7 +17,11 @@ export function StartSessionDialog({
   onClose: () => void
   onStarted: (session: Session) => void
 }) {
-  const available = devices.filter((device) => device.status === 'active')
+  const activeDevices = devices.filter((device) => device.status === 'active')
+  const available = activeDevices.filter(
+    (device) =>
+      device.assigned_patient === null || device.assigned_patient === patient.id,
+  )
   const [deviceId, setDeviceId] = useState(available[0]?.id ?? '')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -33,7 +37,7 @@ export function StartSessionDialog({
       setError(
         caught instanceof ApiError
           ? caught.message
-          : 'Could not start the session. Is Django running?',
+          : 'Could not start the recording. Is the backend running?',
       )
       setSubmitting(false)
     }
@@ -41,8 +45,8 @@ export function StartSessionDialog({
 
   return (
     <Modal
-      title="Start a monitoring session"
-      subtitle={`${patient.username} · a device can run one active session at a time`}
+      title="Start a new ECG recording"
+      subtitle={`${patient.full_name} · ${patient.patient_id}`}
       onClose={onClose}
       footer={
         <>
@@ -55,7 +59,7 @@ export function StartSessionDialog({
             onClick={() => void start()}
             disabled={!deviceId || submitting}
           >
-            {submitting ? 'Starting…' : 'Start session'}
+            {submitting ? 'Starting…' : 'Start recording'}
             {!submitting && <Icon name="play" size={15} />}
           </button>
         </>
@@ -64,8 +68,12 @@ export function StartSessionDialog({
       {available.length === 0 ? (
         <EmptyState
           icon="devices"
-          title="No available device"
-          description="Every registered device is disabled. Create or enable one first."
+          title={activeDevices.length === 0 ? 'No active device' : 'No device for this patient'}
+          description={
+            activeDevices.length === 0
+              ? 'Every registered device is disabled or none exists. Register one in Settings first.'
+              : 'The active devices are dedicated to other patients. Unassign one in Settings, or register a shared device.'
+          }
         />
       ) : (
         <div className="stack">
@@ -75,35 +83,36 @@ export function StartSessionDialog({
               {available.map((device) => (
                 <option key={device.id} value={device.id}>
                   {device.name}
+                  {device.assigned_patient === patient.id ? ' · dedicated' : ''}
                 </option>
               ))}
             </select>
             <small>
-              The session is registered with FastAPI when it starts, which is what lets
-              the device upload for this session.
+              A device runs one active recording at a time. Starting the session registers
+              it with the telemetry service so the simulator or ESP32 can upload.
             </small>
           </label>
 
           <div className="kv-list">
             <div>
               <span>Patient</span>
-              <strong>{patient.username}</strong>
+              <strong>{patient.full_name}</strong>
             </div>
             <div>
               <span>Patient ID</span>
-              <strong className="mono">{patient.id}</strong>
+              <strong className="mono">{patient.patient_id}</strong>
             </div>
             <div>
-              <span>Started by</span>
-              <strong>you</strong>
+              <span>Starts as</span>
+              <strong>active recording</strong>
             </div>
           </div>
 
           {error && <ErrorBanner message={error} />}
 
           <p className="muted small">
-            Once started, open the live monitor. Run the simulator or connect a device
-            with the session token to see data arrive.
+            After starting, the live monitor opens. Run the simulator or connect the ESP32
+            with this session's device token. The recording is saved under this patient.
           </p>
         </div>
       )}

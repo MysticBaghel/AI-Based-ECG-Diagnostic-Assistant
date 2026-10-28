@@ -145,39 +145,26 @@ async def sensor_status(
     user: UserPrincipal = Depends(require_user),
     session: AsyncSession = Depends(get_session),
 ) -> SensorStatusResponse:
-    """Heartbeat for every device the caller is allowed to see.
+    """Heartbeat for every device known to the service.
 
-    * patient: the devices on their own sessions
-    * doctor: the devices on sessions of patients they are assigned to
-    * admin: every device that has ever been registered
+    The doctor/patient assignment model was removed. The service is operated by
+    authenticated clinic staff, so any operator may see the device pool; the
+    ``device_id`` query parameter narrows the answer when the UI needs one row.
     """
     rows = (
         await session.execute(
-            select(
-                KnownSession.device_id,
-                KnownSession.patient_id,
-                KnownSession.doctor_ids,
-            ).distinct()
+            select(KnownSession.device_id).distinct()
         )
     ).all()
-
-    if user.role == "patient":
-        rows = [row for row in rows if row.patient_id == user.user_id]
-    elif user.role == "doctor":
-        # doctor_ids is a JSON array; the containment test happens here rather
-        # than in SQL because SQLite and PostgreSQL spell it differently and the
-        # table is small by design.
-        rows = [row for row in rows if user.user_id in (row.doctor_ids or [])]
 
     visible: dict[uuid.UUID, dict] = {
         row.device_id: {"device_id": row.device_id, "owner_id": None} for row in rows
     }
 
-    if user.role == "admin":
-        # Admins also see devices that connected but are not on any session yet,
-        # otherwise a new device is invisible until its first session starts.
-        for device in await session.scalars(select(DeviceConnection.device_id)):
-            visible.setdefault(device, {"device_id": device, "owner_id": None})
+    # Devices that connected but are not on any session yet must still appear,
+    # otherwise a newly registered device is invisible until its first session.
+    for device in await session.scalars(select(DeviceConnection.device_id)):
+        visible.setdefault(device, {"device_id": device, "owner_id": None})
 
     if device_id is not None:
         visible = (

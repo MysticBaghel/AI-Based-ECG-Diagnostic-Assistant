@@ -396,7 +396,7 @@ def test_status_for_a_device_that_never_connected_is_offline(
 # --- viewer access --------------------------------------------------------
 
 
-def test_readings_are_visible_to_the_patient_and_the_assigned_doctor(
+def test_readings_are_visible_to_every_operator(
     scoped_client, known_session
 ):
     scoped_client.post(
@@ -404,25 +404,22 @@ def test_readings_are_visible_to_the_patient_and_the_assigned_doctor(
     )
     url = f"/sessions/{known_session}/readings"
 
-    patient = scoped_client.get(url, headers=bearer(issue_user_token(PATIENT_ID, "patient")))
-    doctor = scoped_client.get(url, headers=bearer(issue_user_token()))
+    first = scoped_client.get(url, headers=bearer(issue_user_token(2, "operator")))
+    second = scoped_client.get(url, headers=bearer(issue_user_token(99, "operator")))
 
-    assert patient.status_code == 200
-    assert doctor.status_code == 200
-    assert patient.json()["count"] == 1
-    assert patient.json()["readings"][0]["sensor_type"] == "temperature"
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["count"] == 1
+    assert first.json()["readings"][0]["sensor_type"] == "temperature"
 
 
-def test_readings_are_forbidden_for_an_unassigned_doctor_and_a_stranger(
-    scoped_client, known_session
-):
-    url = f"/sessions/{known_session}/readings"
+def test_a_legacy_role_token_is_rejected(scoped_client, known_session):
+    response = scoped_client.get(
+        f"/sessions/{known_session}/readings",
+        headers=bearer(issue_user_token(2, "doctor")),
+    )
 
-    other_doctor = scoped_client.get(url, headers=bearer(issue_user_token(3, "doctor")))
-    stranger = scoped_client.get(url, headers=bearer(issue_user_token(99, "patient")))
-
-    assert other_doctor.status_code == 403
-    assert stranger.status_code == 403
+    assert response.status_code == 401
 
 
 def test_readings_are_visible_to_an_admin(scoped_client, known_session):
@@ -497,15 +494,15 @@ def test_ecg_chunk_index_is_empty_for_a_session_with_no_chunks(
     }
 
 
-def test_ecg_chunk_index_is_forbidden_for_an_unassigned_doctor(
+def test_ecg_chunk_index_is_visible_to_any_operator(
     scoped_client, known_session
 ):
     response = scoped_client.get(
         f"/sessions/{known_session}/ecg",
-        headers=bearer(issue_user_token(3, "doctor")),
+        headers=bearer(issue_user_token(3, "operator")),
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 200
 
 
 def test_ecg_chunk_index_is_404_for_an_unknown_session(
@@ -537,7 +534,10 @@ def test_health_is_public(scoped_client):
     response = scoped_client.get("/health")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "service": "fastapi"}
+    body = response.json()
+    assert body["status"] == "ok"
+    assert body["service"] == "fastapi"
+    assert body["analysis"]["dsp"] == "available"
 
 
 def test_internal_session_registration_is_idempotent(scoped_client):
@@ -547,7 +547,6 @@ def test_internal_session_registration_is_idempotent(scoped_client):
         "session_id": str(session_id),
         "patient_id": PATIENT_ID,
         "device_id": str(DEVICE_ID),
-        "doctor_ids": [2],
         "status": "active",
     }
 

@@ -1,7 +1,7 @@
 """Shared setup for the two mint scripts.
 
-`mint.py` (Phase 2) reuses the device's existing active session; `mint_new.py`
-(Phase 3) always creates a new one. Everything else - the demo users, the
+`mint.py` reuses the device's existing active session; `mint_new.py` always
+creates a new one. Everything else - the demo operator, the patient record, the
 device, the admin token - is identical, so it lives here and both scripts stay
 short enough to read.
 
@@ -17,67 +17,75 @@ import jwt
 from django.conf import settings
 from django.utils import timezone
 
-from accounts.models import DoctorAssignment, DoctorProfile, PatientProfile, User
+from accounts.models import User
 from devices.models import Device
 from devices.tokens import issue_device_token
 from monitoring.models import Session
+from monitoring.telemetry import sync_session
+from patients.models import Patient
 
 
 def ensure_demo_world():
-    """Get (or create) the admin/doctor/patient/device the smoke tests use."""
+    """Get (or create) the operator/patient/device the smoke tests use."""
     admin, _ = User.objects.get_or_create(
         username="smoke_admin",
         defaults={"role": User.Role.ADMIN, "is_staff": True, "is_superuser": True},
     )
-    doctor, _ = User.objects.get_or_create(
-        username="smoke_doctor", defaults={"role": User.Role.DOCTOR}
+    operator, _ = User.objects.get_or_create(
+        username="smoke_operator", defaults={"role": User.Role.OPERATOR}
     )
-    doctor_profile, _ = DoctorProfile.objects.get_or_create(user=doctor)
-    patient, _ = User.objects.get_or_create(
-        username="smoke_patient", defaults={"role": User.Role.PATIENT}
+    patient, _ = Patient.objects.get_or_create(
+        full_name="Smoke Test Patient",
+        defaults={
+            "phone": "+91 90000 00000",
+            "sex": Patient.Sex.UNKNOWN,
+            "notes": "Created by the smoke-test mint helper.",
+        },
     )
-    patient_profile, _ = PatientProfile.objects.get_or_create(user=patient)
-    DoctorAssignment.objects.get_or_create(doctor=doctor_profile, patient=patient_profile)
-    device, _ = Device.objects.get_or_create(name="smoke device", defaults={"owner": doctor})
+    device, _ = Device.objects.get_or_create(
+        name="smoke device", defaults={"owner": operator}
+    )
+    if device.owner_id != operator.id:
+        device.owner = operator
+        device.save(update_fields=["owner"])
     return {
         "admin": admin,
-        "doctor": doctor,
+        "operator": operator,
         "patient": patient,
-        "doctor_profile": doctor_profile,
-        "patient_profile": patient_profile,
         "device": device,
     }
 
 
-def active_session(device, patient_profile, doctor):
+def active_session(device, patient, operator):
     """The device's current active session, creating one if there is none."""
     session = Session.objects.filter(device=device, status=Session.Status.ACTIVE).first()
     if session is None:
         session = Session.objects.create(
-            patient=patient_profile, device=device, started_by=doctor
+            patient=patient, device=device, started_by=operator
         )
+    sync_session(session)
     return session
 
 
 def close_active_sessions(device):
-    """Mark the device's active session completed, and return its id (or None).
-
-    Django enforces "one active session per device" with a partial unique index,
-    so a *new* session cannot be created until the old one is closed - which is
-    exactly the constraint a second Phase 3 run would otherwise trip over.
-    """
+    """Mark the device's active session completed, and return its id (or None)."""
     session = Session.objects.filter(device=device, status=Session.Status.ACTIVE).first()
     if session is None:
         return None
     session.status = Session.Status.COMPLETED
     session.end_time = timezone.now()
-    session.save(update_fields=["status", "end_time"])
+    session.save(update_fields=["status", "end_time", "updated_at"])
+    sync_session(session)
     return session.id
 
 
-def new_session(device, patient_profile, doctor):
-    """A brand new active session for the device."""
-    return Session.objects.create(patient=patient_profile, device=device, started_by=doctor)
+def new_session(device, patient, operator):
+    """A brand new active session for the device, registered with FastAPI."""
+    session = Session.objects.create(
+        patient=patient, device=device, started_by=operator
+    )
+    sync_session(session)
+    return session
 
 
 def admin_token(admin) -> str:
@@ -88,6 +96,22 @@ def admin_token(admin) -> str:
             "token_type": "access",
             "user_id": admin.id,
             "role": "admin",
+            "iat": now,
+            "exp": now + timedelta(minutes=30),
+        },
+        settings.SIMPLE_JWT["SIGNING_KEY"],
+        algorithm=settings.SIMPLE_JWT["ALGORITHM"],
+    )
+
+
+def operator_token(operator) -> str:
+    """A short-lived operator token for the dashboard/report proxy."""
+    now = timezone.now()
+    return jwt.encode(
+        {
+            "token_type": "access",
+            "user_id": operator.id,
+            "role": "operator",
             "iat": now,
             "exp": now + timedelta(minutes=30),
         },
@@ -107,4 +131,5 @@ __all__ = [
     "device_token",
     "ensure_demo_world",
     "new_session",
+    "operator_token",
 ]

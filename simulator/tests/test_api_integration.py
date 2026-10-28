@@ -138,7 +138,6 @@ async def _register_session(session_factory) -> None:
                 session_id=SESSION_ID,
                 patient_id=PATIENT_ID,
                 device_id=DEVICE_ID,
-                doctor_ids=[DOCTOR_ID],
                 status="active",
             )
         )

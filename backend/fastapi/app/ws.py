@@ -7,7 +7,7 @@ WebSocket handshake and the React dashboard is the main viewer, so
 JSON error frame and closed with 4401/4403 so the client can tell the two cases
 apart (see docs/api-contract.md section 6).
 
-The token may be a user access token (patient, assigned doctor, admin) or a
+The token may be a user access token (operator or admin) or a
 device token for that session's device, so the simulator can watch what it is
 uploading.
 """

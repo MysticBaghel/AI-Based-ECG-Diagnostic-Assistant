@@ -3,7 +3,7 @@
 No endpoint calls Django to find out who is asking. Django signs two kinds of
 token with the shared `JWT_SIGNING_KEY`, and this module verifies both locally:
 
-    user access token : {"token_type": "access", "user_id": 7, "role": "doctor", "exp": ...}
+    user access token : {"token_type": "access", "user_id": 7, "role": "operator", "exp": ...}
     device token      : {"type": "device", "device_id": "...", "owner_id": 7, "exp": ...}
 
 Three things are deliberate:
@@ -30,7 +30,7 @@ from app.db import get_session
 from app.errors import APIError
 from app.models import RevokedDevice
 
-USER_ROLES = {"patient", "doctor", "admin"}
+USER_ROLES = {"operator", "admin"}
 DEVICE_TOKEN_TYPE = "device"
 USER_TOKEN_TYPE = "access"
 

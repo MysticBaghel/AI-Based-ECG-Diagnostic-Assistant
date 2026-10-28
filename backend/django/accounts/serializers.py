@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import PatientProfile, User
+from .models import User
 
 
 class RoleTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -15,7 +15,11 @@ class RoleTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token["user_id"] = user.id
-        token["role"] = user.role
+        # A legacy account may still hold "doctor"/"patient" until the data
+        # migration runs; the API treats it as an operator from now on.
+        token["role"] = (
+            User.Role.ADMIN if user.role == User.Role.ADMIN else User.Role.OPERATOR
+        )
         return token
 
 
@@ -24,17 +28,5 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "role"]
-        read_only_fields = fields
-
-
-class PatientProfileSerializer(serializers.ModelSerializer):
-    """Read-only view of a patient, for the patient list endpoints."""
-
-    username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.EmailField(source="user.email", read_only=True)
-
-    class Meta:
-        model = PatientProfile
-        fields = ["id", "user", "username", "email", "date_of_birth", "notes"]
+        fields = ["id", "username", "role", "is_staff"]
         read_only_fields = fields
