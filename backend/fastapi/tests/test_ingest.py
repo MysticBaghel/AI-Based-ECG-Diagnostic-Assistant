@@ -456,6 +456,70 @@ def test_missing_ecg_chunk_is_404(scoped_client, known_session):
     assert response.status_code == 404
 
 
+def test_ecg_chunk_index_lists_chunks_in_order_without_samples(
+    scoped_client, known_session
+):
+    device = bearer(issue_device_token())
+    # Insert out of order so the endpoint's ORDER BY is what the assertion sees.
+    scoped_client.post("/sensor/ecg", json=_ecg(chunk_index=2), headers=device)
+    scoped_client.post("/sensor/ecg", json=_ecg(chunk_index=0), headers=device)
+    scoped_client.post("/sensor/ecg", json=_ecg(chunk_index=1), headers=device)
+
+    response = scoped_client.get(
+        f"/sessions/{known_session}/ecg", headers=bearer(issue_user_token())
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["session_id"] == str(known_session)
+    assert payload["count"] == 3
+    assert [chunk["chunk_index"] for chunk in payload["chunks"]] == [0, 1, 2]
+    assert payload["chunks"][0]["sample_count"] == 250
+    assert payload["chunks"][0]["sample_rate_hz"] == 250
+    assert payload["chunks"][0]["duration_seconds"] == 1.0
+    # The index is metadata: asking which chunks exist must not ship the
+    # waveform itself.
+    assert "samples" not in payload["chunks"][0]
+
+
+def test_ecg_chunk_index_is_empty_for_a_session_with_no_chunks(
+    scoped_client, known_session
+):
+    response = scoped_client.get(
+        f"/sessions/{known_session}/ecg", headers=bearer(issue_user_token())
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "session_id": str(known_session),
+        "count": 0,
+        "chunks": [],
+    }
+
+
+def test_ecg_chunk_index_is_forbidden_for_an_unassigned_doctor(
+    scoped_client, known_session
+):
+    response = scoped_client.get(
+        f"/sessions/{known_session}/ecg",
+        headers=bearer(issue_user_token(3, "doctor")),
+    )
+
+    assert response.status_code == 403
+
+
+def test_ecg_chunk_index_is_404_for_an_unknown_session(
+    scoped_client, unregistered_session_id
+):
+    response = scoped_client.get(
+        f"/sessions/{unregistered_session_id}/ecg",
+        headers=bearer(issue_user_token()),
+    )
+
+    assert response.status_code == 404
+    assert response.json()["code"] == "unknown_session"
+
+
 def test_readings_for_an_unknown_session_are_404(scoped_client, unregistered_session_id):
     response = scoped_client.get(
         f"/sessions/{unregistered_session_id}/readings",

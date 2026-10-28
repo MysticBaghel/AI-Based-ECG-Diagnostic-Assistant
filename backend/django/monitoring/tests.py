@@ -184,3 +184,16 @@ def test_session_detail_is_visible_to_the_assigned_doctor_and_to_admins(
 
     assert client_for(doctor_a).get(url).status_code == 200
     assert client_for(admin_user).get(url).status_code == 200
+
+
+def test_session_list_carries_display_names(
+    client_for, doctor_a, patient_a, device_a
+):
+    """The dashboard shows a session as a patient and a device, not two UUIDs."""
+    started = _start(client_for(doctor_a), patient_a, device_a)
+
+    row = client_for(doctor_a).get("/api/sessions/").data[0]
+
+    assert row["id"] == started.data["id"]
+    assert row["patient_name"] == patient_a.username
+    assert row["device_name"] == device_a.name

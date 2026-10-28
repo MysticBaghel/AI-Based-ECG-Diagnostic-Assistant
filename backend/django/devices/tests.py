@@ -105,3 +105,12 @@ def test_disabled_device_is_still_listed_for_its_owner(client_for, doctor_a, dis
     assert response.status_code == 200
     assert [row["id"] for row in response.data] == [str(disabled_device.id)]
     assert response.data[0]["status"] == "disabled"
+
+
+def test_device_list_carries_the_owner_username_for_admins(
+    client_for, admin_user, doctor_a, device_a
+):
+    response = client_for(admin_user).get("/api/devices/")
+
+    assert response.status_code == 200
+    assert response.data[0]["owner_username"] == doctor_a.username

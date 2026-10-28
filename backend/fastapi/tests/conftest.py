@@ -112,6 +112,12 @@ def database(monkeypatch):
 
     monkeypatch.setattr(db, "engine", engine)
     monkeypatch.setattr(db, "SessionFactory", session_factory)
+    # `app.ws` imported SessionFactory by value, so the socket would otherwise
+    # keep using the real development engine even though the HTTP routes use the
+    # dependency override. Path it too, or every socket test sees an empty DB.
+    from app import ws as ws_module
+
+    monkeypatch.setattr(ws_module, "SessionFactory", session_factory)
 
     import asyncio
 

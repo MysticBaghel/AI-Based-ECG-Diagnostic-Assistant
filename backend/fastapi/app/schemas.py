@@ -216,6 +216,29 @@ class ECGChunkView(BaseModel):
     samples: list[float]
 
 
+class ECGChunkSummary(BaseModel):
+    """One chunk in a session's recording index - metadata only.
+
+    The dashboard needs to know which chunks exist before it can ask for the
+    samples of the ones it wants to draw. Sending every sample in an index
+    response would turn a small listing into a multi-megabyte payload, so the
+    index is metadata and the waveform is fetched chunk by chunk.
+    """
+
+    chunk_id: uuid.UUID
+    chunk_index: int
+    sample_rate_hz: int
+    sample_count: int
+    start_time: datetime
+    duration_seconds: float
+
+
+class ECGChunkListResponse(BaseModel):
+    session_id: uuid.UUID
+    count: int
+    chunks: list[ECGChunkSummary]
+
+
 # --- internal registry endpoints -----------------------------------------
 
 
@@ -248,7 +271,9 @@ class RevokeDeviceResponse(BaseModel):
 
 __all__ = [
     "ECGChunkRequest",
+    "ECGChunkListResponse",
     "ECGChunkResponse",
+    "ECGChunkSummary",
     "ECGChunkView",
     "MAX_PAYLOAD_BYTES",
     "ReadingsResponse",

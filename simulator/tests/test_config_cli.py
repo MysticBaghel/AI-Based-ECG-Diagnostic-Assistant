@@ -151,7 +151,28 @@ def test_the_parser_accepts_the_documented_flags() -> None:
     assert args.ecg is True
     assert args.noise is True
     assert args.drop_chunks == 0.1
-    assert args.offline_after == 10
+    assert args.offline_after_seconds == 10
+
+
+def test_timing_flags_reach_the_config(monkeypatch) -> None:
+    """The parser's dest names must match the Config fields.
+
+    They did not: `--duration` landed on `args.duration`, `build_config` looked
+    for `args.duration_seconds`, and every timing flag was silently ignored.
+    The run still worked, which is exactly why it went unnoticed.
+    """
+    monkeypatch.delenv(ENV_PREFIX + "DURATION_SECONDS", raising=False)
+    args = build_parser().parse_args(
+        ["--duration", "12", "--interval", "0.5", "--heartbeat-seconds", "3",
+         "--offline-after", "8"]
+    )
+
+    config = build_config(args, argv_provided=set())
+
+    assert config.duration_seconds == 12
+    assert config.interval_seconds == 0.5
+    assert config.heartbeat_seconds == 3
+    assert config.offline_after_seconds == 8
 
 
 def test_build_config_reads_the_mint_file(workdir: Path) -> None:

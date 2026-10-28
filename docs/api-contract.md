@@ -242,6 +242,28 @@ Response `200`:
                "unit": "bpm", "recorded_at": "2026-10-05T12:00:05Z"}]}
 ```
 
+### `GET /sessions/<session_id>/ecg` — user token
+
+The recording index: one metadata row per stored chunk, ordered by
+`chunk_index`. The dashboard uses it to discover which chunks exist before
+asking for samples. It never returns the samples themselves; a session with
+thousands of chunks would otherwise turn a small listing into a multi-megabyte
+payload.
+
+Response `200`:
+
+```json
+{"session_id": "9b2e…", "count": 17,
+ "chunks": [{"chunk_id": "7d1f…", "chunk_index": 0,
+             "sample_rate_hz": 200, "sample_count": 400,
+             "start_time": "2026-10-05T12:00:00Z",
+             "duration_seconds": 2.0}]}
+```
+
+An empty session returns `{"session_id": "…", "count": 0, "chunks": []}`. The
+viewer permission check is the same as the single-chunk read: patient on the
+session, assigned doctor, or admin.
+
 ### `GET /sessions/<session_id>/ecg/<chunk_index>` — user token
 
 One stored chunk, samples included. `404` when the chunk does not exist.
@@ -424,6 +446,8 @@ Cost and limits:
 ## 12. Known limits
 
 * No pagination on `/sessions/<id>/readings` beyond `limit`; a Phase 5 concern.
+* The chunk index (`GET /sessions/<id>/ecg`) is also unpaginated. It is metadata
+  only and small at demo scale, but a very long recording makes it grow linearly.
 * No retention policy: `sensor_readings` and `ecg_chunks` grow forever.
 * No per-token rate limiting; a runaway device can fill the tables.
 * The viewer access check uses the registry snapshot, so a doctor who is

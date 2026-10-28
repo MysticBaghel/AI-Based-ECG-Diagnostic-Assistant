@@ -57,7 +57,10 @@ def _run_alembic(database_url: str) -> subprocess.CompletedProcess:
 @pytest.fixture(scope="module")
 def migrated_database(tmp_path_factory):
     database_path = tmp_path_factory.mktemp("migrations") / "migrated.sqlite3"
-    result = _run_alembic(f"sqlite:///{database_path.as_posix()}")
+    # DATABASE_URL is the application URL (async driver); Alembic swaps the
+    # driver for its synchronous run. Passing a bare `sqlite://` URL here made
+    # `app.db` create an async engine around a sync driver.
+    result = _run_alembic(f"sqlite+aiosqlite:///{database_path.as_posix()}")
 
     assert result.returncode == 0, result.stderr_text
 
@@ -110,12 +113,13 @@ def test_unique_constraints_match(migrated_database):
 def test_migrations_can_be_rolled_back(tmp_path):
     """`downgrade base` on the same file leaves no telemetry tables behind."""
     database_path = tmp_path / "rollback.sqlite3"
-    url = f"sqlite:///{database_path.as_posix()}"
+    database_url = f"sqlite+aiosqlite:///{database_path.as_posix()}"
+    sync_url = f"sqlite:///{database_path.as_posix()}"
 
-    assert _run_alembic(url).returncode == 0
+    assert _run_alembic(database_url).returncode == 0
 
     env = dict(os.environ)
-    env["DATABASE_URL"] = url
+    env["DATABASE_URL"] = database_url
     env["TELEMETRY_SCHEMA"] = ""
     env["JWT_SIGNING_KEY"] = env.get("JWT_SIGNING_KEY", "test-only-jwt-signing-key")
 
@@ -133,7 +137,7 @@ def test_migrations_can_be_rolled_back(tmp_path):
 
     assert downgrade.returncode == 0
 
-    engine = create_engine(url)
+    engine = create_engine(sync_url)
     remaining = set(inspect(engine).get_table_names())
     engine.dispose()
 

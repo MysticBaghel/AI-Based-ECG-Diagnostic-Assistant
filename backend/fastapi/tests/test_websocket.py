@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta, timezone
 
 import pytest
+from starlette.websockets import WebSocketDisconnect
 
 from tests.conftest import (
     DEVICE_ID,
@@ -138,44 +139,67 @@ def test_the_uploading_device_may_watch_its_own_session(scoped_client, known_ses
         assert socket.receive_json()["event"] == "snapshot"
 
 
-def test_a_bad_token_is_closed_with_4401(scoped_client, known_session):
-    with pytest.raises(Exception) as error:
-        with scoped_client.websocket_connect(
-            f"/ws/sensor?session_id={known_session}&token={BAD_TOKEN}"
-        ) as socket:
+def _expect_rejected(client, session_id, token, *, close_code, error_code):
+    """Assert both halves of the rejection: the JSON reason and the close code.
+
+    Starlette's TestClient exposes the error frame as a normal message before
+    the close, so the old `pytest.raises` around the first receive no longer
+    describes the handshake.
+    """
+    query = f"/ws/sensor?session_id={session_id}"
+    if token is not None:
+        query += f"&token={token}"
+
+    with client.websocket_connect(query) as socket:
+        frame = socket.receive_json()
+        with pytest.raises(WebSocketDisconnect) as closed:
             socket.receive_json()
 
-    assert "4401" in str(error.value) or "rejected" in str(error.value).lower()
+    assert frame["event"] == "error"
+    assert frame["error"]["code"] == error_code
+    assert closed.value.code == close_code
+
+
+def test_a_bad_token_is_closed_with_4401(scoped_client, known_session):
+    _expect_rejected(
+        scoped_client,
+        known_session,
+        BAD_TOKEN,
+        close_code=4401,
+        error_code="unauthorized",
+    )
 
 
 def test_a_missing_token_is_closed_with_4401(scoped_client, known_session):
-    with pytest.raises(Exception):
-        with scoped_client.websocket_connect(
-            f"/ws/sensor?session_id={known_session}"
-        ) as socket:
-            socket.receive_json()
+    _expect_rejected(
+        scoped_client,
+        known_session,
+        None,
+        close_code=4401,
+        error_code="unauthorized",
+    )
 
 
 def test_an_unauthorised_viewer_is_closed_with_4403(scoped_client, known_session):
     stranger = issue_user_token(99, "patient")
 
-    with pytest.raises(Exception) as error:
-        with scoped_client.websocket_connect(
-            f"/ws/sensor?session_id={known_session}&token={stranger}"
-        ) as socket:
-            socket.receive_json()
-
-    assert "4403" in str(error.value) or "rejected" in str(error.value).lower()
+    _expect_rejected(
+        scoped_client,
+        known_session,
+        stranger,
+        close_code=4403,
+        error_code="forbidden",
+    )
 
 
 def test_an_unknown_session_is_closed_with_4404(scoped_client, unregistered_session_id):
-    with pytest.raises(Exception) as error:
-        with scoped_client.websocket_connect(
-            f"/ws/sensor?session_id={unregistered_session_id}&token={issue_user_token()}"
-        ) as socket:
-            socket.receive_json()
-
-    assert "4404" in str(error.value) or "rejected" in str(error.value).lower()
+    _expect_rejected(
+        scoped_client,
+        unregistered_session_id,
+        issue_user_token(),
+        close_code=4404,
+        error_code="unknown_session",
+    )
 
 
 def test_the_hub_fans_out_and_unsubscribes():

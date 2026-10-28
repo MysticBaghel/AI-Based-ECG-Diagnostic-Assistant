@@ -7,14 +7,26 @@ from .models import Session
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    """started_by and the timestamps come from the server, never the client."""
+    """started_by and the timestamps come from the server, never the client.
+
+    `patient_name` and `device_name` are read-only conveniences for the
+    dashboard: a session row is otherwise a pair of opaque ids, and every list
+    would need a second round trip (or an id-to-name map) just to say whose
+    session it is. They are derived from the foreign keys, so they cannot be
+    spoofed by a request body.
+    """
+
+    patient_name = serializers.CharField(source="patient.user.username", read_only=True)
+    device_name = serializers.CharField(source="device.name", read_only=True)
 
     class Meta:
         model = Session
         fields = [
             "id",
             "patient",
+            "patient_name",
             "device",
+            "device_name",
             "started_by",
             "start_time",
             "end_time",

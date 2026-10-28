@@ -68,7 +68,15 @@ def _unauthorized(detail: str) -> APIError:
 def _decode(token: str) -> dict:
     """Verify signature, algorithm and expiry. Raises APIError(401) otherwise."""
     try:
-        return jwt.decode(token, JWT_SIGNING_KEY, algorithms=[JWT_ALGORITHM])
+        # `require` is the contract from docs/api-contract.md section 3: a token
+        # without an expiry is not "valid forever", it is malformed. PyJWT
+        # verifies `exp` when present; this makes it mandatory.
+        return jwt.decode(
+            token,
+            JWT_SIGNING_KEY,
+            algorithms=[JWT_ALGORITHM],
+            options={"require": ["exp"]},
+        )
     except jwt.ExpiredSignatureError as exc:
         raise _unauthorized("Token has expired.") from exc
     except jwt.InvalidAlgorithmError as exc:

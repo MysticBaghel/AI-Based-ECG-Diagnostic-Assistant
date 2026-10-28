@@ -103,24 +103,28 @@ def build_parser() -> argparse.ArgumentParser:
     timing = parser.add_argument_group("timing")
     timing.add_argument(
         "--duration",
+        dest="duration_seconds",
         type=float,
         default=None,
         help=f"seconds of data to produce (env {ENV_PREFIX}DURATION_SECONDS)",
     )
     timing.add_argument(
         "--interval",
+        dest="interval_seconds",
         type=float,
         default=None,
         help=f"seconds between scalar batches (env {ENV_PREFIX}INTERVAL_SECONDS)",
     )
     timing.add_argument(
         "--heartbeat-seconds",
+        dest="heartbeat_seconds",
         type=float,
         default=None,
         help=f"seconds between POST /sensor/connect heartbeats (env {ENV_PREFIX}HEARTBEAT_SECONDS)",
     )
     timing.add_argument(
         "--offline-after",
+        dest="offline_after_seconds",
         type=float,
         default=None,
         metavar="SECONDS",

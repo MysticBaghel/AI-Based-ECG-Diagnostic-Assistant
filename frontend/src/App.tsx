@@ -1,72 +1,44 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { Route, Routes } from 'react-router-dom'
 
-type HealthState = 'checking' | 'online' | 'offline'
-
-type HealthPayload = {
-  status?: string
-  service?: string
-}
-
-const LABELS: Record<HealthState, string> = {
-  checking: 'Checking…',
-  online: 'Backend online',
-  offline: 'Backend offline',
-}
+import { AuthProvider } from './auth/AuthContext'
+import { RequireAuth, RoleGate } from './auth/Guards'
+import { AppShell } from './components/AppShell'
+import { DashboardPage } from './pages/DashboardPage'
+import { DevicesPage } from './pages/DevicesPage'
+import { LivePage } from './pages/LivePage'
+import { LoginPage } from './pages/LoginPage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { PatientsPage } from './pages/PatientsPage'
+import { RecordingPage } from './pages/RecordingPage'
+import { SessionsPage } from './pages/SessionsPage'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [health, setHealth] = useState<HealthState>('checking')
-  const [detail, setDetail] = useState('Contacting /api/health …')
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function checkHealth() {
-      try {
-        const response = await fetch('/api/health', { signal: controller.signal })
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
-        const data = (await response.json()) as HealthPayload
-        setHealth('online')
-        setDetail(data.service ? `${data.service}: ${data.status ?? 'ok'}` : 'ok')
-      } catch (error) {
-        if (controller.signal.aborted) return
-        setHealth('offline')
-        setDetail(error instanceof Error ? error.message : 'Request failed')
-      }
-    }
-
-    void checkHealth()
-    return () => controller.abort()
-  }, [])
-
   return (
-    <main className="app">
-      <header className="app__header">
-        <h1>Major Project</h1>
-        <p className="app__subtitle">
-          React + TypeScript (Vite) talking to a Django + FastAPI backend.
-        </p>
-      </header>
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
 
-      <section className={`card card--${health}`}>
-        <h2>{LABELS[health]}</h2>
-        <p className="card__detail">{detail}</p>
-        <p className="card__hint">
-          Start the backend on <code>http://127.0.0.1:8000</code>; Vite proxies{' '}
-          <code>/api</code> there during development.
-        </p>
-      </section>
-
-      <section className="card">
-        <h2>React is working</h2>
-        <button type="button" onClick={() => setCount((value) => value + 1)}>
-          count is {count}
-        </button>
-      </section>
-    </main>
+        <Route element={<RequireAuth />}>
+          <Route element={<AppShell />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="patients" element={<PatientsPage />} />
+            <Route
+              path="devices"
+              element={
+                <RoleGate allow={['doctor', 'admin']}>
+                  <DevicesPage />
+                </RoleGate>
+              }
+            />
+            <Route path="sessions" element={<SessionsPage />} />
+            <Route path="sessions/:sessionId" element={<RecordingPage />} />
+            <Route path="live" element={<LivePage />} />
+            <Route path="live/:sessionId" element={<LivePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </AuthProvider>
   )
 }
 

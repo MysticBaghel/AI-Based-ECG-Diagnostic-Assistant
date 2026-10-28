@@ -34,8 +34,10 @@ from app.models import (
 )
 from app.registry import require_active_session_for_device, require_viewer
 from app.schemas import (
+    ECGChunkListResponse,
     ECGChunkRequest,
     ECGChunkResponse,
+    ECGChunkSummary,
     ECGChunkView,
     ReadingsResponse,
     SENSOR_RULES,
@@ -428,6 +430,46 @@ async def list_readings(
                 "recorded_at": _as_utc(reading.recorded_at).isoformat(),
             }
             for reading in readings
+        ],
+    )
+
+
+@router.get("/sessions/{session_id}/ecg", response_model=ECGChunkListResponse)
+async def list_ecg_chunks(
+    session_id: uuid.UUID,
+    user: UserPrincipal = Depends(require_user),
+    session: AsyncSession = Depends(get_session),
+) -> ECGChunkListResponse:
+    """The recording index for a session: one metadata row per stored chunk.
+
+    The WebSocket announces a new chunk by index only. This endpoint is how a
+    viewer discovers the chunks that already existed when it opened - and how
+    the history viewer knows which samples to ask for - without downloading a
+    single waveform sample.
+    """
+    await require_viewer(session, session_id, user)
+
+    chunks = list(
+        await session.scalars(
+            select(ECGChunk)
+            .where(ECGChunk.session_id == session_id)
+            .order_by(ECGChunk.chunk_index)
+        )
+    )
+
+    return ECGChunkListResponse(
+        session_id=session_id,
+        count=len(chunks),
+        chunks=[
+            ECGChunkSummary(
+                chunk_id=chunk.id,
+                chunk_index=chunk.chunk_index,
+                sample_rate_hz=chunk.sample_rate_hz,
+                sample_count=chunk.sample_count,
+                start_time=_as_utc(chunk.start_time),
+                duration_seconds=chunk.sample_count / chunk.sample_rate_hz,
+            )
+            for chunk in chunks
         ],
     )
 
