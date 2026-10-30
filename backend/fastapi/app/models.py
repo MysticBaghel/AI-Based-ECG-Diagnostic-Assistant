@@ -14,6 +14,10 @@ Rules this file exists to enforce:
   loses at the index and is then answered from the winner's row.
 * Analysis results are stored here because this service owns the ECG samples and
   the DSP/inference run. Django keeps the business copy for the report.
+* `ml_predictions` is the queryable projection of each analysis run's ML output
+  and AI advisory. The full payload stays in `analysis_results.analysis`; the
+  projection exists so model identity, class, confidence and risk can be
+  filtered/audited without parsing JSON.
 """
 
 import uuid
@@ -203,9 +207,84 @@ class AnalysisResult(Base):
     )
 
     session: Mapped[KnownSession] = relationship(back_populates="analyses")
+    ml_predictions: Mapped[list["MLPrediction"]] = relationship(
+        back_populates="analysis_result"
+    )
 
     def __repr__(self) -> str:  # pragma: no cover - debugging aid
         return f"<AnalysisResult {self.session_id} v{self.version} {self.status}>"
+
+
+class MLPrediction(Base):
+    """The classification + advisory record for one analysis version.
+
+    `analysis_results.analysis` already contains the full JSON payload. This
+    table is the queryable projection: one row per signal-processing run, with
+    the model identity, class, confidence, quality and advisory outcome as
+    columns, and the complete ML/advisory snapshots for audit.
+
+    A unique `analysis_result_id` is the idempotency rule: re-running an
+    analysis creates a new version and therefore a new row, while a retry that
+    targets the same version cannot duplicate it.
+    """
+
+    __tablename__ = "ml_predictions"
+    __table_args__ = (
+        UniqueConstraint(
+            "analysis_result_id",
+            name="uq_ml_prediction_analysis",
+        ),
+        Index("ix_ml_prediction_session_created", "session_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=_uuid
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("known_sessions.session_id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    analysis_result_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("analysis_results.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    analysis_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    model_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    model_version: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    model_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    predicted_class: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    predicted_label: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+    quality_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    heart_rate_bpm: Mapped[float | None] = mapped_column(Float, nullable=True)
+    window_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    signal_duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
+    advisor_provider: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    advice_risk_level: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    ml: Mapped[dict] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=False
+    )
+    advice: Mapped[dict] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    session: Mapped[KnownSession] = relationship()
+    analysis_result: Mapped[AnalysisResult] = relationship(
+        back_populates="ml_predictions"
+    )
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return (
+            f"<MLPrediction {self.session_id} v{self.analysis_version} "
+            f"{self.predicted_class}>"
+        )
 
 
 class RevokedDevice(Base):
@@ -276,6 +355,7 @@ __all__ = [
     "ECGChunk",
     "DeviceConnection",
     "KnownSession",
+    "MLPrediction",
     "RevokedDevice",
     "SensorReading",
     "SimulationRun",

@@ -87,15 +87,31 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     # --- Analysis ---------------------------------------------------------
-    #: Optional path to a validated JSON classifier (see app/inference.py).
-    #: Empty means "no model is deployed": analysis still reports deterministic
-    #: DSP measurements, and the AI section explicitly says unavailable.
+    #: Optional path to a trained 1-D CNN checkpoint (see app/inference.py and
+    #: ml/ecg_train.ipynb). Empty means "no model is deployed": analysis still
+    #: reports deterministic DSP measurements, and the ML section explicitly
+    #: says unavailable.
     ecg_model_path: str | None = None
+    #: Torch device for inference. ``cuda`` falls back to CPU when unavailable.
+    ecg_model_device: str = "cpu"
+    #: Maximum number of 30-second windows scored per recording. A 30-minute
+    #: recording must not turn one analysis request into hundreds of CNN passes.
+    ecg_max_windows: int = 8
     #: Minimum signal-quality score (0-100) before rhythm measurements are
     #: reported. Below it the analysis is stored as "unusable".
     min_signal_quality: float = 35.0
     #: A recording shorter than this cannot support a heart-rate estimate.
     min_analysis_seconds: float = 2.5
+
+    # --- AI advisory ------------------------------------------------------
+    #: ``template`` returns the deterministic, hard-coded advice used until the
+    #: real AI API is connected. ``api`` calls an OpenAI-compatible endpoint.
+    #: ``disabled`` stores an explicit "advisor unavailable" result.
+    ai_advisor_provider: Literal["template", "api", "disabled"] = "template"
+    ai_advisor_api_url: str | None = None
+    ai_advisor_api_key: str | None = None
+    ai_advisor_model: str | None = None
+    ai_advisor_timeout_seconds: float = 30.0
 
     @computed_field
     @property
@@ -135,5 +151,12 @@ MAX_ECG_SAMPLES_PER_CHUNK = settings.max_ecg_samples_per_chunk
 MIN_ECG_SAMPLE_RATE_HZ = settings.min_ecg_sample_rate_hz
 MAX_ECG_SAMPLE_RATE_HZ = settings.max_ecg_sample_rate_hz
 ECG_MODEL_PATH = settings.ecg_model_path
+ECG_MODEL_DEVICE = settings.ecg_model_device
+ECG_MAX_WINDOWS = settings.ecg_max_windows
 MIN_SIGNAL_QUALITY = settings.min_signal_quality
 MIN_ANALYSIS_SECONDS = settings.min_analysis_seconds
+AI_ADVISOR_PROVIDER = settings.ai_advisor_provider
+AI_ADVISOR_API_URL = settings.ai_advisor_api_url
+AI_ADVISOR_API_KEY = settings.ai_advisor_api_key
+AI_ADVISOR_MODEL = settings.ai_advisor_model
+AI_ADVISOR_TIMEOUT_SECONDS = settings.ai_advisor_timeout_seconds

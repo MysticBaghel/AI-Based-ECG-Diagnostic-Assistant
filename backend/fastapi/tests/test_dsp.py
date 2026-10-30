@@ -105,3 +105,36 @@ def test_high_heart_rate_is_detected():
 
     assert result["status"] == "completed"
     assert abs(result["measurements"]["heart_rate_bpm"] - 130) < 8
+
+
+def test_extract_signal_returns_raw_samples_and_rate():
+    from app.dsp import extract_signal
+
+    samples = synthetic_ecg(seconds=3)
+    raw, rate = extract_signal(_chunks(samples))
+
+    assert rate == 200
+    assert raw == samples
+
+
+def test_extract_signal_refuses_mixed_rates():
+    from app.dsp import extract_signal
+
+    raw, rate = extract_signal(
+        [
+            {"chunk_index": 0, "sample_rate_hz": 200, "samples": [0.1] * 400},
+            {"chunk_index": 1, "sample_rate_hz": 250, "samples": [0.1] * 400},
+        ]
+    )
+
+    assert raw == []
+    assert rate is None
+
+
+def test_extract_signal_replaces_non_finite_samples():
+    from app.dsp import extract_signal
+
+    raw, rate = extract_signal(_chunks([0.1, float("nan"), float("inf")]))
+
+    assert rate == 200
+    assert raw == [0.1, 0.0, 0.0]

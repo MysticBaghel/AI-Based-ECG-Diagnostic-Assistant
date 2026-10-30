@@ -1,4 +1,5 @@
 import { Icon } from '@/shared/icons/Icon'
+import { getMLResult } from '@/shared/lib/analysis'
 import type { AnalysisResult } from '@/shared/types'
 
 export function AnalysisSummaryCard({
@@ -13,22 +14,25 @@ export function AnalysisSummaryCard({
   onRun: () => void
 }) {
   const quality = analysis?.signal.quality
-  const ai = analysis?.ai
+  const ml = getMLResult(analysis)
+  const advice = analysis?.advice
   const tone = quality && !quality.usable ? 'warn' : 'ok'
   const title = analysis
     ? quality && !quality.usable
       ? 'Signal quality is insufficient'
-      : ai?.available
-        ? `AI screening result: ${ai.predicted_class ?? 'available'}`
+      : ml?.available
+        ? `ML screening result: ${ml.predicted_label ?? ml.predicted_class ?? 'available'}`
         : 'Signal measurements available'
     : 'Analysis has not run'
   const text = !analysis
-    ? 'Run the analysis after stopping the recording to produce measured parameters and, if configured, an AI result.'
+    ? 'Run the analysis after stopping the recording to produce measured parameters, a CNN classification and, if configured, AI advice.'
     : quality && !quality.usable
       ? quality.reasons.join(' ')
-      : ai?.available
-        ? 'The classifier output is experimental and must be interpreted by a qualified clinician.'
-        : 'Deterministic DSP measurements are stored. AI classification is unavailable because no validated model is configured.'
+      : advice?.available
+        ? `${advice.headline} ${advice.confidence_note}`.trim()
+        : ml?.available
+          ? 'The 1-D CNN output is experimental and must be interpreted by a qualified clinician.'
+          : 'Deterministic DSP measurements are stored. ML classification is unavailable because no trained model is configured.'
 
   return (
     <section className="analysis-box">
@@ -41,7 +45,7 @@ export function AnalysisSummaryCard({
             <span>{text}</span>
           </div>
         </div>
-        {!analysis && !active && (
+        {!active && (
           <button
             type="button"
             className="button button--primary button--block"
@@ -49,7 +53,7 @@ export function AnalysisSummaryCard({
             onClick={onRun}
             disabled={busy}
           >
-            {busy ? 'Analysing…' : 'Run Analysis'}
+            {busy ? 'Analysing…' : analysis ? 'Re-run Analysis' : 'Run Analysis'}
           </button>
         )}
       </div>

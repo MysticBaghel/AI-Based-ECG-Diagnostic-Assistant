@@ -1,0 +1,18 @@
+# Optional ML runtime for the 1-D CNN classifier.
+#
+# Install this next to the service requirements when ECG_MODEL_PATH points at a
+# trained ecg_model.pt:
+#
+#   pip install -r requirements.txt -r requirements-ml.txt
+#
+# On Linux/Windows, a CPU-only PyTorch wheel is smaller and does not pull the
+# CUDA runtime. Install it first if the plain requirement is too large:
+#
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch==2.6.0
+#   pip install -r requirements-ml.txt
+#
+# The API stays functional without these packages: app/inference.py reports
+# "PyTorch is not installed" instead of failing to start.
+torch==2.6.0
+numpy==2.2.6
+scipy==1.15.3

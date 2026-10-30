@@ -120,6 +120,7 @@ because the two services share an identifier space, not a database.
 | `ecg_chunks` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `device_id` UUID, `start_time` timestamptz, `sample_rate_hz` int, `samples` JSON, `sample_count` int, `chunk_index` int, `received_at` | **one row per chunk**; **unique** `(session_id, chunk_index)` |
 | `revoked_devices` | `device_id` UUID **PK**, `reason` text, `revoked_at` timestamptz | section 11 |
 | `analysis_results` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `version` int, `status` text, `model_version` text, `analysis` JSON, `analyzed_at` timestamptz | versioned DSP + optional inference output; **unique** `(session_id, version)` |
+| `ml_predictions` | `id` UUID **PK**, `session_id` UUID → `known_sessions`, `analysis_result_id` UUID → `analysis_results`, `analysis_version` int, `model_name`, `model_version`, `model_sha256`, `predicted_class`, `predicted_label`, `confidence` double, `quality_score` double, `heart_rate_bpm` double, `window_count` int, `signal_duration_seconds` double, `advisor_provider`, `advice_risk_level`, `ml` JSON, `advice` JSON, `created_at` | one row per analysis run for audit/history; **unique** `analysis_result_id` |
 
 `device_id` on `sensor_readings`/`ecg_chunks` is copied from the verified token,
 never from the body: a device cannot write data attributed to another device.
@@ -134,8 +135,21 @@ Public. `GET /health` is the liveness probe; `GET /` names the service and
 carries the disclaimer.
 
 ```json
-{"status": "ok", "service": "fastapi"}
+{"status": "ok", "service": "fastapi",
+ "analysis": {"dsp": "available",
+              "inference_available": true,
+              "model_name": "ecg-cnn-physionet2017",
+              "model_version": "1.0.0",
+              "inference_reason": "",
+              "advisor_provider": "template",
+              "advisor_available": true,
+              "advisor_reason": ""}}
 ```
+
+`inference_available` is `false` until `ECG_MODEL_PATH` points at a loadable
+checkpoint and the optional ML runtime is installed; `inference_reason` says
+which of those is missing. `advisor_provider` is `template` by default and
+`api` once a remote AI endpoint is configured.
 
 ```json
 {"service": "ECG telemetry API", "version": "2.0.0", "docs": "/docs",
@@ -294,11 +308,16 @@ device or simulator payload.
 
 ### `POST /sessions/<session_id>/analysis` — user token
 
-Runs DSP and, if a validated model is configured, inference. Refused with `409`
-while the session is `active`; stop the recording first. Each call stores a new
-versioned row in `analysis_results`.
+Runs the full pipeline:
 
-The response includes:
+1. deterministic DSP measurements + signal quality;
+2. the 1-D CNN classifier (N / A / O / ~) when `ECG_MODEL_PATH` points at a
+   trained `ecg_model.pt`;
+3. the configured AI advisor (`AI_ADVISOR_PROVIDER=template|api|disabled`).
+
+Refused with `409` while the session is `active`; stop the recording first.
+Each call stores a new versioned row in `analysis_results` **and** a queryable
+`ml_predictions` row. The response includes:
 
 ```json
 {"session_id": "9b2e…", "analysis_version": 1, "status": "completed",
@@ -307,26 +326,48 @@ The response includes:
                         "reasons": ["No obvious quality problem detected."]}},
  "measurements": {"heart_rate_bpm": 72.9, "rr_intervals_ms": [840.0],
                   "rr_mean_ms": 823.6, "beats_detected": 15},
- "ai": {"available": false,
-        "reason": "No validated ECG classification model is configured…",
-        "predicted_class": null, "probabilities": null},
+ "ml": {"available": true, "model_name": "ecg-cnn-physionet2017",
+        "model_version": "1.0.0", "architecture": "ECGNet-1DCNN",
+        "classes": ["N", "A", "O", "~"],
+        "class_labels": {"N": "Normal rhythm", "A": "Atrial fibrillation pattern",
+                         "O": "Other rhythm", "~": "Noisy / unreadable"},
+        "predicted_class": "N", "predicted_label": "Normal rhythm",
+        "confidence": 0.87,
+        "probabilities": {"N": 0.87, "A": 0.07, "O": 0.04, "~": 0.02},
+        "window_count": 2, "window_seconds": 30.0},
+ "advice": {"available": true, "provider": "template",
+            "prompt_version": "ecg-advisor-v1", "risk_level": "low",
+            "case": "N", "headline": "Normal rhythm pattern suggested",
+            "summary": "…", "recommendations": ["…"], "red_flags": ["…"],
+            "confidence_note": "…", "disclaimer": "…",
+            "input": {"schema_version": "ecg-advisor-input/v1", "…": "…"}},
  "findings": ["…"], "limitations": ["…"]}
 ```
 
 `status` is `completed` or `unusable`. Measurements are withheld when quality is
-insufficient. `ai.available` is `false` unless a model actually produced a
-prediction; `predicted_class` and `probabilities` are then `null`, never
-fabricated.
+insufficient. If no checkpoint is configured, `ml.available` is `false`,
+`predicted_class` and `probabilities` are `null`, and `ml.reason` names the
+missing configuration — nothing is fabricated. The `advice.input` object is the
+exact packaged request that a future AI API receives; it contains no raw
+waveform samples and no direct patient identifiers.
 
-### `GET /sessions/<session_id>/analysis` — user token
+`GET /sessions/<session_id>/analysis` returns the latest stored analysis,
+`404` if none has run.
 
-Returns the latest stored analysis, `404` if none has run.
+### `GET /sessions/<session_id>/ml-predictions` — user token
+
+Returns the stored classification/advisory history for a session, newest first
+(`limit` query parameter, default 50, maximum 200). This is the audit view of
+`ml_predictions`; it can be used to replay the packaged advisor input against a
+different provider later.
 
 ### `GET /sessions/<session_id>/analysis/live` — user token
 
 Computes the same DSP measurements from the stored chunks **without persisting a
-version**. This is what the live monitor polls; it never creates a duplicate
-report.
+version**, and deliberately skips the CNN and the advisor so a 4-second monitor
+poll does not run a model or spend API quota. The response has
+`analysis_version: 0`, `ml.available: false` and `advice.available: false`.
+This is what the live monitor polls; it never creates a duplicate report.
 
 ### `GET /internal/sessions/<session_id>/ecg` — admin token
 
@@ -506,8 +547,10 @@ Cost and limits:
   live frames only to their own viewers. Redis pub/sub is the Phase 7 fix.
 * The token in the WebSocket query string is logged (section 3).
 * No `DELETE` for revocations.
-* DSP runs synchronously inside the request. A very long recording can make the
-  analysis request slow; a queue/worker is the production shape.
-* No classification model is bundled. When `ECG_MODEL_PATH` is empty, the
-  analysis response explicitly says AI is unavailable and contains no class or
-  probability.
+* DSP and CNN inference run inside the request (off the event loop, in a worker
+  thread). A very long recording can still make the analysis request slow; a
+  queue/worker is the production shape.
+* No classification checkpoint is bundled. When `ECG_MODEL_PATH` is empty, the
+  analysis response explicitly says ML classification is unavailable and
+  contains no class or probability. The deterministic template advisor still
+  returns cautious, non-diagnostic guidance.

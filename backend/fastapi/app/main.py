@@ -10,6 +10,10 @@ Layout:
     app/registry.py      known-session lookup and viewer permissions
     app/hub.py           in-process WebSocket fan-out
     app/errors.py        one error shape for everything
+    app/analysis.py      DSP -> 1-D CNN -> AI advisory orchestration
+    app/inference.py     checkpoint lifecycle and the honest unavailable path
+    app/ml/              ECGNet architecture + preprocessing (torch/numpy/scipy)
+    app/ai/              packaged advisory request, system prompt and providers
     app/routes/          sensor.py (device + user), internal.py (Django -> here)
     app/ws.py            WS /ws/sensor
 
@@ -25,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from app.ai.advisory import get_advisor
 from app.core.config import MAX_PAYLOAD_BYTES, settings
 from app.db import create_all, engine
 from app.errors import error_body, install_error_handlers
@@ -129,6 +134,7 @@ def root():
 def health():
     """Liveness probe used by the frontend and by docker compose."""
     inference = get_inference_service().status
+    advisor = get_advisor()
     return {
         "status": "ok",
         "service": "fastapi",
@@ -138,5 +144,8 @@ def health():
             "model_name": inference.model_name,
             "model_version": inference.model_version,
             "inference_reason": inference.reason,
+            "advisor_provider": advisor.provider,
+            "advisor_available": advisor.available,
+            "advisor_reason": advisor.reason,
         },
     }

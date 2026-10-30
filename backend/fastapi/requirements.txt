@@ -15,3 +15,7 @@ alembic==1.20.0
 # Verifies Django's tokens locally, exactly as Django's devices/tokens.py signs
 # them. Pinned to the same version Django uses.
 PyJWT==2.15.1
+
+# The ECG classifier's runtime (PyTorch/NumPy/SciPy) is optional so telemetry
+# can run without a ~200 MB install. Install requirements-ml.txt to enable it:
+#   pip install -r requirements.txt -r requirements-ml.txt

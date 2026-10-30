@@ -46,3 +46,11 @@ simulator/.ecg-data/
 
 # graphify config, local tooling
 .graphifyignore
+
+
+docs/
+# --- ML checkpoints ----------------------------------------------------------
+# Trained model weights are deployment artifacts (tens of MB), not source.
+# Keep the training notebook and the inference code; ship the .pt separately.
+*.pt
+*.pth

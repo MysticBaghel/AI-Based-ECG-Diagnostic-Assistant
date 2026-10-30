@@ -648,3 +648,8 @@ Phase 5 can add analysis without moving the dashboard:
 
 The contract remains the contract: a new field or a new analysis endpoint, not a
 new ingestion format for the ESP32.
+
+---
+
+**Next:** [phase-5-notes.md](phase-5-notes.md) — the DSP, the analysis endpoints and
+the classifier slot that were built on top of this dashboard.

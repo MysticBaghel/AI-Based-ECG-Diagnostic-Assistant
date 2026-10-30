@@ -306,15 +306,47 @@ class AnalysisMeasurements(BaseModel):
     r_peak_seconds: list[float] = Field(default_factory=list)
 
 
-class AIResult(BaseModel):
+class MLResult(BaseModel):
+    """The 1-D CNN outcome, including why it is unavailable when it is."""
+
     available: bool = False
     reason: str = ""
     model_name: str | None = None
     model_version: str | None = None
+    model_sha256: str | None = None
+    architecture: str = "ECGNet-1DCNN"
+    device: str | None = None
     classes: list[str] = Field(default_factory=list)
+    class_labels: dict[str, str] = Field(default_factory=dict)
     predicted_class: str | None = None
+    predicted_label: str | None = None
+    confidence: float | None = None
     probabilities: dict[str, float] | None = None
+    window_count: int = 0
+    window_seconds: float = 0.0
+    signal_duration_seconds: float = 0.0
     analyzed_at: datetime | None = None
+
+
+class AdviceResult(BaseModel):
+    """The AI advisory (template today, external API later)."""
+
+    available: bool = False
+    reason: str = ""
+    provider: str = ""
+    provider_model: str | None = None
+    prompt_version: str = ""
+    generated_at: datetime | None = None
+    case: str = "unavailable"
+    risk_level: Literal["low", "moderate", "high", "unknown"] = "unknown"
+    headline: str = ""
+    summary: str = ""
+    recommendations: list[str] = Field(default_factory=list)
+    red_flags: list[str] = Field(default_factory=list)
+    confidence_note: str = ""
+    disclaimer: str = ""
+    input: dict = Field(default_factory=dict)
+    latency_ms: int | None = None
 
 
 class AnalysisResponse(BaseModel):
@@ -324,12 +356,44 @@ class AnalysisResponse(BaseModel):
     analyzed_at: datetime
     signal: AnalysisSignal
     measurements: AnalysisMeasurements
-    ai: AIResult
+    #: Defaults keep analyses stored before the CNN/advisory integration
+    #: readable: they return an explicit unavailable block instead of a 500.
+    ml: MLResult = Field(default_factory=MLResult)
+    advice: AdviceResult = Field(default_factory=AdviceResult)
     findings: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     #: provenance for a recording produced by the built-in simulator; absent
     #: for a patient recording
     simulation: dict | None = None
+
+
+class MLPredictionRecord(BaseModel):
+    """One stored classification + advisory run, for audit and history."""
+
+    id: uuid.UUID
+    session_id: uuid.UUID
+    analysis_version: int
+    created_at: datetime
+    model_name: str | None = None
+    model_version: str | None = None
+    model_sha256: str | None = None
+    predicted_class: str | None = None
+    predicted_label: str | None = None
+    confidence: float | None = None
+    quality_score: float | None = None
+    heart_rate_bpm: float | None = None
+    window_count: int = 0
+    signal_duration_seconds: float | None = None
+    advisor_provider: str | None = None
+    advice_risk_level: str | None = None
+    ml: MLResult = Field(default_factory=MLResult)
+    advice: AdviceResult = Field(default_factory=AdviceResult)
+
+
+class MLPredictionListResponse(BaseModel):
+    session_id: uuid.UUID
+    count: int
+    predictions: list[MLPredictionRecord]
 
 
 class ScenarioInfo(BaseModel):
@@ -406,10 +470,13 @@ class AnalysisStatusResponse(BaseModel):
     model_name: str | None = None
     model_version: str | None = None
     reason: str = ""
+    advisor_provider: str = ""
+    advisor_available: bool = False
+    advisor_reason: str = ""
 
 
 __all__ = [
-    "AIResult",
+    "AdviceResult",
     "AnalysisMeasurements",
     "AnalysisResponse",
     "AnalysisSignal",
@@ -422,6 +489,9 @@ __all__ = [
     "InternalECGChunk",
     "InternalECGResponse",
     "MAX_PAYLOAD_BYTES",
+    "MLPredictionListResponse",
+    "MLPredictionRecord",
+    "MLResult",
     "ReadingsResponse",
     "RevokeDeviceRequest",
     "RevokeDeviceResponse",

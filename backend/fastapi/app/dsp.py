@@ -346,6 +346,35 @@ def assess_quality(
     )
 
 
+def extract_signal(chunks: list[dict]) -> tuple[list[float], int | None]:
+    """Return the raw, ordered sample stream and its single sample rate.
+
+    The classifier needs the unfiltered trace; ``analyse_chunks`` filters a
+    copy for peak detection. Mixed sample rates have no single legal sampling
+    frequency, so the rate is ``None`` and the caller must not classify.
+
+    This function performs no filtering and no quality assessment. It mirrors
+    the sanitisation in ``analyse_chunks`` (non-finite samples become zeros) so
+    both paths see the same trace.
+    """
+
+    ordered = sorted(chunks, key=lambda item: item.get("chunk_index", 0))
+    rates = {int(item.get("sample_rate_hz") or 0) for item in ordered}
+    rates.discard(0)
+    if len(rates) != 1:
+        return [], None
+
+    samples: list[float] = []
+    for item in ordered:
+        for value in item.get("samples") or []:
+            try:
+                numeric = float(value)
+            except (TypeError, ValueError):
+                numeric = float("nan")
+            samples.append(numeric if math.isfinite(numeric) else 0.0)
+    return samples, rates.pop()
+
+
 def analyse_chunks(
     chunks: list[dict],
     *,

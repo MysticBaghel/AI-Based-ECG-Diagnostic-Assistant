@@ -47,15 +47,46 @@ def _analysis_result():
             "beats_detected": 4,
             "r_peak_seconds": [0.2, 1.08, 1.96, 2.84],
         },
-        "ai": {
-            "available": False,
-            "reason": "No validated model is configured.",
-            "model_name": None,
-            "model_version": None,
-            "classes": [],
-            "predicted_class": None,
-            "probabilities": None,
-            "analyzed_at": None,
+        "ml": {
+            "available": True,
+            "reason": "",
+            "model_name": "demo-cnn",
+            "model_version": "0.1.0",
+            "model_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            "architecture": "ECGNet-1DCNN",
+            "device": "cpu",
+            "classes": ["N", "A", "O", "~"],
+            "class_labels": {
+                "N": "Normal rhythm",
+                "A": "Atrial fibrillation pattern",
+                "O": "Other rhythm",
+                "~": "Noisy / unreadable",
+            },
+            "predicted_class": "N",
+            "predicted_label": "Normal rhythm",
+            "confidence": 0.82,
+            "probabilities": {"N": 0.82, "A": 0.08, "O": 0.06, "~": 0.04},
+            "window_count": 1,
+            "window_seconds": 30.0,
+            "signal_duration_seconds": 4.0,
+            "analyzed_at": "2026-10-28T10:00:00Z",
+        },
+        "advice": {
+            "available": True,
+            "reason": "",
+            "provider": "template",
+            "provider_model": None,
+            "prompt_version": "ecg-advisor-v1",
+            "generated_at": "2026-10-28T10:00:00Z",
+            "case": "N",
+            "risk_level": "low",
+            "headline": "Normal rhythm pattern suggested",
+            "summary": "The experimental classifier found a normal rhythm pattern. This is a screening signal, not a diagnosis.",
+            "recommendations": ["Correlate this result with the patient's symptoms."],
+            "red_flags": ["Chest pain, pressure or tightness."],
+            "confidence_note": "Model confidence is reported separately from clinical certainty.",
+            "disclaimer": "Automated screening aid, not a medical diagnosis.",
+            "input": {},
         },
         "limitations": ["Screening aid only."],
         "findings": ["Measured heart rate: 68 bpm."],
@@ -178,13 +209,16 @@ def test_report_download_requires_authentication(api_client, analysed_session, e
     assert response.status_code == 401
 
 
-def test_report_contains_the_explicit_ai_unavailable_statement(analysed_session, ecg_payload):
+def test_report_contains_ml_and_advice_sections(analysed_session, ecg_payload):
     report = generate_report(analysed_session, user=None)
     # The PDF is compressed? No: the content stream is plain, so a text search is
     # meaningful here and catches a report that silently omits the disclaimer.
     body = bytes(report.pdf)
     assert b"SCREENING AID" in body
-    assert b"AI classification is unavailable" in body
+    assert b"ML CLASSIFICATION" in body
+    assert b"AI ADVISORY" in body
+    assert b"Normal rhythm" in body
+    assert b"Normal rhythm pattern suggested" in body
 
 
 def test_generate_report_requires_stored_analysis(
@@ -206,3 +240,39 @@ def test_generate_report_requires_stored_analysis(
 
     assert response.status_code == 400
     assert "Could not generate the report" in response.data["detail"]
+
+
+def test_report_states_unavailable_ml_and_advice(
+    operator, patient_a, device_a, ecg_payload
+):
+    session = _make_session(operator, patient_a, device_a)
+    payload = _analysis_result()
+    payload["ml"] = {
+        **payload["ml"],
+        "available": False,
+        "reason": "No trained ECG model is configured.",
+        "predicted_class": None,
+        "predicted_label": None,
+        "confidence": None,
+        "probabilities": None,
+    }
+    payload["advice"] = {
+        **payload["advice"],
+        "available": False,
+        "reason": "No AI advisory provider is configured.",
+        "headline": "",
+        "summary": "",
+        "recommendations": [],
+        "red_flags": [],
+    }
+    SessionAnalysis.objects.create(
+        session=session,
+        status=SessionAnalysis.Status.COMPLETED,
+        result=payload,
+    )
+
+    report = generate_report(session, user=None)
+    body = bytes(report.pdf)
+
+    assert b"ML classification is unavailable" in body
+    assert b"AI advice is unavailable" in body

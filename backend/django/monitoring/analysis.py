@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 def store_analysis(session: Session, payload: dict) -> SessionAnalysis:
     """Persist one FastAPI analysis response against the session."""
     signal = payload.get("signal") or {}
-    ai = payload.get("ai") or {}
+    # New analyses carry `ml`; `ai` is the pre-CNN field kept readable so an
+    # analysis stored before this change still renders and reports correctly.
+    ml = payload.get("ml") or payload.get("ai") or {}
 
     remote_status = payload.get("status", "completed")
     quality = (signal.get("quality") or {})
@@ -31,7 +33,7 @@ def store_analysis(session: Session, payload: dict) -> SessionAnalysis:
         defaults={
             "status": status,
             "result": payload,
-            "model_version": (ai.get("model_version") or "")[:100],
+            "model_version": (ml.get("model_version") or "")[:100],
             "analyzed_at": timezone.now(),
             "error": "",
         },

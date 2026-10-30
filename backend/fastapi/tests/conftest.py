@@ -19,6 +19,10 @@ os.environ["FASTAPI_ENV"] = "test"
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 os.environ["TELEMETRY_SCHEMA"] = ""
 os.environ["HEARTBEAT_THRESHOLD_SECONDS"] = "120"
+# Analysis tests must not pick up a developer's checkpoint or call a real AI API.
+os.environ["ECG_MODEL_PATH"] = ""
+os.environ["AI_ADVISOR_PROVIDER"] = "template"
+os.environ["AI_ADVISOR_API_URL"] = ""
 
 from datetime import datetime, timedelta, timezone  # noqa: E402
 

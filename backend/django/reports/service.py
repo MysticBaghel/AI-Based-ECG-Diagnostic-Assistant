@@ -26,7 +26,8 @@ DISCLAIMER = (
 BASE_LIMITATIONS = [
     "Single-lead ECG; rhythm and morphology assessment is limited compared with a clinical ECG.",
     "Signal processing can fail on noisy, clipped, flat or very short recordings; measurements are withheld when quality is insufficient.",
-    "The AI component, when available, is an experimental classifier. Its output is not a diagnosis and has not been validated for clinical use in this deployment.",
+    "The 4-class 1-D CNN (N / A / O / ~) is an experimental screening classifier. Its output is not a diagnosis and has not been validated for clinical use in this deployment.",
+    "The AI advisory is generated from the stored measurements and classifier output. It is a screening aid that requires clinical interpretation.",
     "This report does not replace review by a qualified clinician.",
 ]
 
@@ -111,21 +112,42 @@ def _findings(analysis_payload: dict) -> list[str]:
             "an interpretation of rhythm or a diagnosis."
         )
 
-    ai = analysis_payload.get("ai") or {}
-    if ai.get("available") and ai.get("predicted_class"):
-        probability = (ai.get("probabilities") or {}).get(ai.get("predicted_class"))
-        suffix = f" (model probability {float(probability) * 100:.1f}%)" if probability is not None else ""
-        findings.append(
-            f"The experimental classifier suggested '{ai['predicted_class']}'{suffix}. "
-            "This is a screening signal, not a diagnosis."
+    ml = analysis_payload.get("ml") or analysis_payload.get("ai") or {}
+    advice = analysis_payload.get("advice") or {}
+    if ml.get("available") and ml.get("predicted_class"):
+        probability = ml.get("confidence")
+        if probability is None:
+            probability = (ml.get("probabilities") or {}).get(ml.get("predicted_class"))
+        suffix = (
+            f" (model confidence {float(probability) * 100:.1f}%)"
+            if probability is not None
+            else ""
         )
-    elif not ai.get("available"):
+        label = ml.get("predicted_label") or ml["predicted_class"]
         findings.append(
-            "No validated AI classification model is available, so no AI finding is reported."
+            f"The experimental 1-D CNN classified the recording as "
+            f"'{ml['predicted_class']}' ({label}){suffix}. This is a screening "
+            "signal, not a diagnosis."
+        )
+    elif not ml.get("available"):
+        findings.append(
+            "No ECG classification model produced a result, so no class or "
+            "probability is reported."
+        )
+
+    if advice.get("available") and advice.get("headline"):
+        findings.append(
+            f"AI advisory ({advice.get('provider', 'unknown')}): "
+            f"{advice['headline']}."
+        )
+    elif advice:
+        findings.append(
+            "AI advice is unavailable for this recording; the measurements and "
+            "any classifier result above are still reported."
         )
 
     if not findings:
-        findings.append("No validated measurement or AI finding is available for this recording.")
+        findings.append("No validated measurement or classification is available for this recording.")
     return findings
 
 
@@ -136,7 +158,8 @@ def _payload(session: Session, report: Report | None, version: int) -> dict:
     if analysis is None:
         raise ValueError("Run the analysis before generating a report.")
 
-    ai = snapshot.get("ai") or {}
+    ml = snapshot.get("ml") or snapshot.get("ai") or {}
+    advice = snapshot.get("advice") or {}
     signal = snapshot.get("signal") or {}
     measurements = snapshot.get("measurements") or {}
     samples, rate, duration = _waveform(session)
@@ -178,7 +201,8 @@ def _payload(session: Session, report: Report | None, version: int) -> dict:
             "duration_seconds": duration or signal.get("duration_seconds"),
         },
         "measurements": measurements,
-        "ai": ai,
+        "ml": ml,
+        "advice": advice,
         "findings": _findings(snapshot),
         "limitations": limitations,
         "waveform_samples": samples,

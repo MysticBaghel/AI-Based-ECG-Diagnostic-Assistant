@@ -519,35 +519,101 @@ def render_report(payload: dict) -> bytes:
         peaks=measurements.get("r_peak_seconds") or [],
     )
 
-    ai = payload.get("ai") or {}
-    builder.section("AI-assisted classification")
-    if ai.get("available"):
-        probabilities = ai.get("probabilities") or {}
+    ml = payload.get("ml") or payload.get("ai") or {}
+    builder.section("ML classification")
+    if ml.get("available"):
+        probabilities = ml.get("probabilities") or {}
+        labels = ml.get("class_labels") or {}
+        confidence = ml.get("confidence")
+        if confidence is None:
+            confidence = probabilities.get(ml.get("predicted_class"))
         builder.key_values(
             [
-                ("Predicted class", str(ai.get("predicted_class") or "—")),
-                ("Model", str(ai.get("model_name") or "—")),
-                ("Model version", str(ai.get("model_version") or "—")),
-                ("Analysed at", str(ai.get("analyzed_at") or "—")),
+                (
+                    "Predicted class",
+                    f"{ml.get('predicted_class') or '—'} — {ml.get('predicted_label') or ''}".strip(),
+                ),
+                ("Model", str(ml.get("model_name") or "—")),
+                ("Model version", str(ml.get("model_version") or "—")),
+                ("Architecture", str(ml.get("architecture") or "—")),
+                (
+                    "Model confidence",
+                    f"{float(confidence) * 100:.1f}%" if confidence is not None else "—",
+                ),
+                ("Windows scored", str(ml.get("window_count") or "—")),
+                ("Analysed at", str(ml.get("analyzed_at") or "—")),
+                ("Model checksum", str(ml.get("model_sha256") or "—")[:24]),
             ]
         )
         if probabilities:
             builder.table(
-                ["Class", "Probability"],
-                [[str(name), f"{float(value) * 100:.1f}%"] for name, value in probabilities.items()],
-                [300, 150],
+                ["Class", "Label", "Probability"],
+                [
+                    [
+                        str(name),
+                        str(labels.get(name) or name),
+                        f"{float(value) * 100:.1f}%",
+                    ]
+                    for name, value in probabilities.items()
+                ],
+                [45, 300, 105],
             )
         builder.banner(
-            "The classification above is an experimental screening aid produced by a "
-            "software model. It is not a diagnosis and must be interpreted by a qualified clinician.",
+            "The classification above is an experimental 1-D CNN screening aid. "
+            "It is not a diagnosis and must be interpreted by a qualified clinician.",
             tone=WARN,
         )
     else:
-        reason = ai.get("reason") or (
-            "No validated ECG classification model is configured on this deployment."
+        reason = ml.get("reason") or (
+            "No trained ECG classification model is configured on this deployment."
         )
         builder.banner(
-            "AI classification is unavailable. " + str(reason) + " No prediction has been fabricated.",
+            "ML classification is unavailable. " + str(reason) + " No prediction has been fabricated.",
+            tone=WARN,
+        )
+
+    advice = payload.get("advice") or {}
+    builder.section("AI advisory")
+    if advice.get("available"):
+        builder.key_values(
+            [
+                ("Risk level", str(advice.get("risk_level") or "unknown").capitalize()),
+                ("Provider", str(advice.get("provider") or "—")),
+                ("Prompt version", str(advice.get("prompt_version") or "—")),
+                ("Generated at", str(advice.get("generated_at") or "—")),
+            ]
+        )
+        builder.paragraph(
+            str(advice.get("headline") or "Automated advisory"),
+            size=11,
+            color=ACCENT,
+            font="F2",
+        )
+        if advice.get("summary"):
+            builder.paragraph(str(advice["summary"]))
+        recommendations = advice.get("recommendations") or []
+        if recommendations:
+            builder.paragraph("Cautious next steps", size=8.8, font="F2", color=MUTED)
+            for item in recommendations:
+                builder.bullet(str(item))
+        red_flags = advice.get("red_flags") or []
+        if red_flags:
+            builder.paragraph("Seek urgent care for", size=8.8, font="F2", color=WARN)
+            for item in red_flags:
+                builder.bullet(str(item))
+        if advice.get("confidence_note"):
+            builder.paragraph(str(advice["confidence_note"]), size=8.4, color=MUTED)
+        builder.banner(
+            str(advice.get("disclaimer") or "Automated screening aid, not a medical diagnosis."),
+            tone=WARN,
+        )
+    else:
+        reason = advice.get("reason") or (
+            "No AI advisory provider is configured on this deployment."
+        )
+        builder.banner(
+            "AI advice is unavailable. " + str(reason) + " The measurements and any "
+            "classifier output above are still reported.",
             tone=WARN,
         )
 

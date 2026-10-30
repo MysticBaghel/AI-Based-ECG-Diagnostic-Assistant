@@ -194,8 +194,9 @@ export function AnalysisPage() {
         <Icon name="alert" size={16} />
         <span>
           This is an AI-powered screening aid and not a definitive medical diagnosis. Please
-          consult a qualified healthcare professional for clinical interpretation. AI
-          classification is experimental and unavailable unless a validated model is configured.
+          consult a qualified healthcare professional for clinical interpretation. ML
+          classification is experimental and unavailable unless a trained model is configured;
+          AI advice is generated from the stored analysis and is not a diagnosis.
         </span>
       </div>
 

@@ -12,7 +12,7 @@ export function SystemStatusCard({
   } | null
   deviceCount: number
 }) {
-  const ai = service?.analysis
+  const analysis = service?.analysis
 
   return (
     <SectionCard title="System status" subtitle="Backends and analysis capability">
@@ -27,17 +27,33 @@ export function SystemStatusCard({
         </div>
         <div>
           <span>Signal processing</span>
-          <strong>{ai ? 'deterministic DSP available' : 'waiting for FastAPI'}</strong>
+          <strong>{analysis ? 'deterministic DSP available' : 'waiting for FastAPI'}</strong>
         </div>
         <div>
-          <span>AI classifier</span>
-          <strong>{ai?.inference_available ? 'validated model loaded' : 'not configured'}</strong>
+          <span>ML classifier</span>
+          <strong>{analysis?.inference_available ? 'trained CNN loaded' : 'not configured'}</strong>
+        </div>
+        <div>
+          <span>AI advisor</span>
+          <strong>{analysis?.advisor_available ? analysis.advisor_provider : 'unavailable'}</strong>
         </div>
       </div>
-      {ai && !ai.inference_available && (
+      {analysis && !analysis.inference_available && (
         <Notice tone="warn" icon="alert">
-          <strong>AI analysis is unavailable.</strong> {ai.inference_reason} DSP
+          <strong>ML classification is unavailable.</strong> {analysis.inference_reason} DSP
           measurements are still produced and reports say this explicitly.
+        </Notice>
+      )}
+      {analysis && !analysis.advisor_available && (
+        <Notice tone="warn" icon="alert">
+          <strong>AI advice is unavailable.</strong> {analysis.advisor_reason}
+        </Notice>
+      )}
+      {analysis?.advisor_provider === 'template' && (
+        <Notice tone="info" icon="alert">
+          AI advice is currently produced by the built-in deterministic template. Set
+          <code> AI_ADVISOR_PROVIDER=api </code> and the API URL/key/model to connect the real AI
+          provider; the stored request is already packaged for it.
         </Notice>
       )}
       {deviceCount === 0 && (
